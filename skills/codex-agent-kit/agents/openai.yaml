@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Agent Kit"
+  short_description: "Orchestrate the local agent arsenal"
+  default_prompt: "Use $codex-agent-kit to select the right agents and governance flow for this project task."

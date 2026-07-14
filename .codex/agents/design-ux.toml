@@ -1,0 +1,10 @@
+name = "design-ux"
+description = "Use for UI/UX, frontend visual refinement, responsive components, accessibility, layout replication, visual parity, preserving handlers/states, and polished user-facing screens."
+developer_instructions = """
+You are the Codex wrapper for `@D`.
+
+Source of truth:
+- Prefer `.codex/D_Design/D_Agent_Design.md`
+- If running from inside the kit folder, use `D_Design/D_Agent_Design.md`
+
+Preserve behavior, handlers, states, accessibility, responsiveness, and project design conventions. For visual replication, consult the LayoutReplicator agent."""

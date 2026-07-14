@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Forge"
+  short_description: "Create and evolve task-specific agents"
+  default_prompt: "Use $agent-forge to design a focused agent for this recurring project gap."

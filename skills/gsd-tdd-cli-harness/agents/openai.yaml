@@ -1,0 +1,4 @@
+interface:
+  display_name: "GSD TDD CLI Harness"
+  short_description: "Prove implementation work with CLI evidence"
+  default_prompt: "Use $gsd-tdd-cli-harness to plan and validate this implementation with real commands."

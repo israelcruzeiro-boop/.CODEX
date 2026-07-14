@@ -1,0 +1,34 @@
+[runtime]
+kit_name = "Codex Agent Kit"
+version = "2026-07-13"
+source_of_truth = "AGENTS.md"
+codex_wrappers = ".codex/agents"
+claude_wrappers = ".claude/agents"
+skills = "skills"
+
+[policy]
+keep_original_agents_as_source = true
+create_skill_per_agent = false
+validate_before_release = true
+codex_and_claude_required = true
+
+[[skills]]
+name = "codex-agent-kit"
+path = "skills/codex-agent-kit/SKILL.md"
+purpose = "Select agents, enforce governance, and coordinate the kit."
+
+[[skills]]
+name = "gsd-tdd-cli-harness"
+path = "skills/gsd-tdd-cli-harness/SKILL.md"
+purpose = "Turn implementation work into acceptance criteria and CLI evidence."
+
+[[skills]]
+name = "agent-forge"
+path = "skills/agent-forge/SKILL.md"
+purpose = "Create, evolve, validate, and promote agents."
+
+[bridge]
+codex_structured_source = ".codex/agents/*.toml"
+claude_generated_shape = ".claude/agents/*.md"
+source_reference_rule = "Every wrapper must mention at least one existing source file."
+skill_reference_rule = "Skills must reference source files instead of duplicating agent bodies."
