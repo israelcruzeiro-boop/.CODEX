@@ -76,6 +76,7 @@ Todo agente deve usar o prefixo semantico no nome da pasta e do arquivo:
 |---|---|---|
 | `C10_` | Maestro, orquestracao e memoria do projeto | `C10_Maestro/C10_CAMISA10.md` |
 | `A_` | Arquitetura cross-stack | `A_Architecture/A_Agent_CrossStackArchitect.md` |
+| `AI_` | Integracao de IA/LLM em producao: prompts, RAG, evals, custo e guardrails | `AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md` |
 | `B_` | Backend, API e dominio | `B_BackendDomain/B_Agent_BackendDomain.md` |
 | `BI_` | Business Intelligence, metricas e dashboards | `BI_Dashboards/BI_Agent_DashboardDesigner.md` |
 | `BUG_` | Debug cirurgico full-stack | `BUG_Debugger/BUG_Agent_Debugger.md` |
@@ -128,17 +129,18 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 14. `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`: audita comandos reais, bug sweep e lacunas antes de QA/final.
 15. `Q_Quality`: analista de qualidade; implementa testes unitarios front/back, API e happy paths Playwright e mede cobertura.
 16. `O_Observability`: agente DevOps; implementa GitHub Actions e a pipeline de CI/release com os testes definidos por `@Q`.
-15. `SUP_Supervisor/SUP_STD_StandardsEnforcer.md` e `SUP_Supervisor/SUP_FLOW_DeliveryInspector.md`: verificam padrao e ordem quando necessario.
-16. `V_Validation/final_validator`: revisa diff final antes de merge/deploy.
-16b. `REL_Release/REL_Agent_ReleaseManager.md`: define versao, changelog, gate de release e ordem de migration/deploy quando a entrega vira uma release.
-17. `SUP_Supervisor/SUP_X_ProcessGuardian.md`: entra em modo FOCUSED para entregas relevantes ou FULL em auditorias.
-18. `C10_DOCUMENTADOR`: registra LOG, STATUS, ADRs e aprendizados.
+17. `SUP_Supervisor/SUP_STD_StandardsEnforcer.md` e `SUP_Supervisor/SUP_FLOW_DeliveryInspector.md`: verificam padrao e ordem quando necessario.
+18. `V_Validation/final_validator`: revisa diff final antes de merge/deploy.
+19. `REL_Release/REL_Agent_ReleaseManager.md`: define versao, changelog, gate de release e ordem de migration/deploy quando a entrega vira uma release.
+20. `SUP_Supervisor/SUP_X_ProcessGuardian.md`: entra em modo FOCUSED para entregas relevantes ou FULL em auditorias.
+21. `C10_DOCUMENTADOR`: registra LOG, STATUS, ADRs e aprendizados.
 
 ## Metodos Canonicos
 
 - SDD oficial do kit: `C10_Maestro/C10_Method_SDD.md`.
 - Harness oficial do kit: `SUP_Supervisor/SUP_Method_Harness.md`.
 - Planta tecnica oficial do kit: `A_Architecture/A_Method_PlantaTecnica.md` (ARCHITECTURE.md por repo, derivado do codigo; nenhum executor implementa sem planta).
+- Estrategia de cache oficial do kit: `P_Performance/P_Method_CacheStrategy.md` (camadas, chaves, TTL, invalidacao, stampede; executor desenha, `@P`/`@S` validam).
 - Template de especificacao: `T_Templates/T_Template_SPEC.md`.
 - Template de auditoria CLI: `T_Templates/T_Template_CLI_AUDIT.md`.
 - Template Claude Code: `T_Templates/T_Template_CLAUDE.md`.
@@ -243,6 +245,7 @@ acionar o agente responsavel antes do selo final.
 | Operacao | GitHub Actions, ambientes, deploy, rollback, migrations e smoke pos-deploy estao planejados? | `@E` / `@O` / `@REL` |
 | Dependencias | Lockfile, audit/SCA, Dependabot, CVEs e licencas estao sob controle? | `@DEP` / `@S` |
 | Produto/UX | Estados vazios, erros, permissoes, acessibilidade e copy foram considerados? | `@D` / `@I18N` |
+| IA/LLM | Prompts versionados, evals, custo de tokens, fallback e dados enviados a provedores estao sob controle? | `@AI` |
 | Compliance | Ha requisito legal, loja, pagamento, dado sensivel ou setor regulado? | `@GOV` / `@REG` / `@PAY` / `@S` |
 | Documentacao | Decisoes, status, handoff e aprendizados serao registrados? | `@DOC` / `C10_DOCUMENTADOR` |
 
@@ -280,6 +283,7 @@ Use o prefixo para marcar rapido no chat:
 - `@ONB` para onboarding, pontape inicial e proximo passo do projeto (porta de entrada da pessoa).
 - `@C10` para orquestrar.
 - `@A` para arquitetura.
+- `@AI` para IA/LLM em producao: prompts de produto, RAG, evals, custo de tokens, guardrails e dados enviados a provedores.
 - `@B` para backend, API e dominio.
 - `@BI` para dashboards, metricas e business intelligence.
 - `@BUG` para debug cirurgico full-stack.

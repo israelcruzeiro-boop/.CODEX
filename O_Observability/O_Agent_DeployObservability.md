@@ -48,6 +48,11 @@ timeout, cache seguro, rollback e retencao de artefatos proporcionais ao projeto
 9. Plano de rollback.
 10. Smoke test pos-deploy.
 11. Workflows de CI/release com status checks obrigatorios e evidencia arquivada.
+12. Backup e disaster recovery: backup automatico do banco e de storage critico,
+    com frequencia, retencao e destino declarados; restore TESTADO pelo menos uma
+    vez (backup nunca restaurado e loteria, nao backup); RPO/RTO registrados em
+    `OPERATIONS.md` junto com o runbook de recuperacao. Coordenar com `@DATA`
+    para consistencia de migrations no restore.
 
 ## Protocolo de Evidencia
 
@@ -93,6 +98,7 @@ Nunca logar:
 **Dashboards:** ...
 **Smoke test:** ...
 **Rollback:** ...
+**Backup/DR:** frequencia, retencao, ultimo restore testado, RPO/RTO ...
 **Riscos antes do deploy:** ...
 **CI/GitHub Actions:** jobs, gatilhos, permissoes, caches e artefatos
 **Gate de release:** ...

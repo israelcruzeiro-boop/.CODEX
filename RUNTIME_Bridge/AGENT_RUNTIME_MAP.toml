@@ -1,6 +1,6 @@
 [runtime]
 kit_name = "Codex Agent Kit"
-version = "2026-07-13"
+version = "2026-07-15"
 source_of_truth = "AGENTS.md"
 codex_wrappers = ".codex/agents"
 claude_wrappers = ".claude/agents"

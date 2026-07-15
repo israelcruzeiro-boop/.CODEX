@@ -76,9 +76,15 @@ Antes de emitir veredito:
 
 # REGRAS ESPECIAIS
 
+- Cache: validar contra o metodo canonico `P_Performance/P_Method_CacheStrategy.md`
+  (camadas, chave, TTL, invalidacao, stampede, headers HTTP). Item do checklist do
+  metodo sem resposta = QUESTIONAR.
 - Cache de dado por usuario precisa incluir usuario/tenant/role na chave ou justificativa equivalente.
 - Toda otimizacao em lista grande deve considerar paginacao ou virtualizacao.
 - Toda chamada com retry precisa de timeout, limite e exponential backoff.
 - Toda acao critica repetivel precisa de idempotencia ou deduplicacao.
+- Hot path critico com volume real esperado e sem NENHUMA evidencia de comportamento
+  sob carga: exigir smoke de carga proporcional implementado por `@Q` (k6, Locust ou
+  equivalente) antes de aprovar, ou registrar a lacuna e rebaixar o veredito.
 - Nao aprove remover validacao, auth ou logs criticos em nome de performance.
 """

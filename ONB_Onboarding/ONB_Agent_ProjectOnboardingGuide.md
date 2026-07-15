@@ -85,7 +85,7 @@ responder, marque como lacuna e siga com uma opcao segura.
 3. Publico-alvo e fluxo principal esperado.
 4. Stack desejada ou restricoes conhecidas.
 5. Ambientes esperados: local, preview, staging, production.
-6. Superficies sensiveis: auth, PII, pagamentos, geolocalizacao, upload, terceiros, compliance, producao.
+6. Superficies sensiveis: auth, PII, pagamentos, geolocalizacao, upload, terceiros, IA/LLM em producao, compliance, producao.
 7. Requisitos minimos de plataforma: roda em celular? qual resolucao? idioma? temas? offline? (alimenta a planta tecnica; se a pessoa nao souber, marque lacuna e siga com padrao seguro).
 
 ### Briefing Obrigatorio Para `@DOC`
@@ -119,7 +119,7 @@ Inclua:
 - Sequencia recomendada de agentes.
 - Primeira decisao critica.
 - Primeira pendencia executavel.
-- Riscos que exigem validadores (`@S`, `@P`, `@DATA`, `@E`, `@REL`, `@PAY`, `@GOV`, `@REG`, conforme aplicavel).
+- Riscos que exigem validadores (`@S`, `@P`, `@DATA`, `@E`, `@REL`, `@PAY`, `@AI`, `@GOV`, `@REG`, conforme aplicavel).
 - Criterio de conclusao do kickoff: documentacao minima criada, specs iniciais prontas, fase definida e proximo ciclo registrado em `STATUS.md`.
 
 ### Saida Do Modo Kickoff Completo

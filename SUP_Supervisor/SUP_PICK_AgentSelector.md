@@ -49,6 +49,7 @@ Classifique:
 - Deploy/ambientes/CI/CD.
 - Observabilidade/operacao.
 - Pagamentos/monetizacao.
+- IA/LLM em produto: prompts, RAG, evals, custo de tokens.
 - Trust & Safety/moderacao/abuso.
 - Localizacao/geografia.
 - I18N/copy/localizacao linguistica.
@@ -80,6 +81,7 @@ Escolha por necessidade:
 | Observabilidade/deploy | `@O` |
 | Debug | `@BUG` |
 | Pagamentos | `@PAY` |
+| IA/LLM em produto | `@AI` |
 | Localizacao | `@GEO` |
 | Trust & Safety | `@MOD` |
 | I18N/UX writing | `@I18N` |

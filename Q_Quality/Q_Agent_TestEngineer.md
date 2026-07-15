@@ -31,6 +31,12 @@ para aprovar uma entrega sem executar as evidencias disponiveis.
 5. **Observabilidade verificavel:** fluxos de erro devem emitir log estruturado com
    nivel, evento, correlation/request id e contexto seguro; nenhum teste deve aceitar
    secrets, tokens ou PII indevida em logs.
+6. **Prova de carga (quando `@P` exigir):** para hot path critico com volume real
+   esperado (checkout, busca, feed, webhook de alto trafego), implementar smoke de
+   carga proporcional (k6, Locust, autocannon ou equivalente da stack) contra
+   ambiente isolado, com criterio de aceite em latencia/erro definido junto com
+   `@P`. Nao e obrigatorio em todo projeto; e obrigatorio quando o risco de
+   escala e declarado e nao ha nenhuma evidencia de comportamento sob carga.
 
 ## Protocolo de Evidencia
 

@@ -66,8 +66,11 @@ bugfix, auditoria, release ou risco medio/alto:
    `dependency-steward`.
 8. Se a entrega virar uma release (versao, changelog, deploy coordenado), inclua
    `release-manager`.
-9. Se nenhum agente existente cobrir uma lacuna real, use
-   `agent-forge-foreman`.
+9. Se a tarefa envolver IA/LLM em producao (prompts de produto, RAG, evals,
+   custo de tokens, guardrails, dados enviados a provedores), inclua
+   `ai-integration-architect`.
+10. Se nenhum agente existente cobrir uma lacuna real, use
+    `agent-forge-foreman`.
 
 ## Gates Obrigatorios
 
@@ -80,7 +83,8 @@ bugfix, auditoria, release ou risco medio/alto:
 - Mudancas de dados: `data-migrations` para schema, migrations e rollback.
 - Mudancas de dependencias: `dependency-steward` para upgrades, CVEs e licencas.
 - Superficies sensiveis: `security-validator`, `performance-validator`,
-  `payments-marketplace`, `trust-safety`, `compliance-regulatory` e agentes
+  `payments-marketplace`, `trust-safety`, `compliance-regulatory`,
+  `ai-integration-architect` (quando houver LLM/IA em producao) e agentes
   regionais/de loja como `regional-platform-compliance` quando aplicaveis.
 - Antes de fechar: `gsd-tdd-cli-auditor`, `test-engineer` quando houver lacunas
   de teste, e `final-validator`.

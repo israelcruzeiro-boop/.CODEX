@@ -247,6 +247,16 @@ que a entrega tenha prova.
 Use `@A` antes de APIs, schemas, auth, jobs, webhooks, integracoes, workers,
 pagamentos ou qualquer mudanca que atravesse ambientes.
 
+### AI_AIIntegration - Integracao De IA/LLM
+
+- `AI_Agent_AIIntegrationArchitect.md`: prompts como contrato versionado, RAG,
+  evals e golden sets, custo de tokens, guardrails, prompt injection, fallback
+  e politica de dados enviados a provedores de modelo.
+
+Use `@AI` sempre que o produto usar LLM/IA em producao: criacao ou mudanca de
+prompt de produto, escolha/troca de modelo, RAG, custo, ou conteudo de usuario
+enviado a provedor externo.
+
 ### B_BackendDomain - Backend E Dominio
 
 - `B_Agent_BackendDomain.md`: APIs, DTOs, permissoes, regras de negocio,
@@ -517,6 +527,8 @@ aprova por simpatia; aprova por evidencia.
 - Seguranca, performance, QA, dependencias, release, compliance geral e regional.
 - Pagamentos, marketplace, trust & safety, BI, localizacao, i18n, debug e prompt
   ops.
+- Integracao de IA/LLM em producao: `@AI` (prompts, RAG, evals, custo,
+  guardrails e dados a provedores).
 - Compatibilidade Claude Code por wrappers em `.claude/agents/`.
 
 ### Especializacoes Que Podem Virar Agentes Sob Demanda
@@ -528,7 +540,6 @@ pelo menos 70% do dominio:
 | Candidato | Quando criar | Cobertura atual |
 |---|---|---|
 | `A11Y_Agent_AccessibilityAuditor` | Produto web/mobile precisa WCAG formal e auditoria dedicada | `@D`, `@Q`, `@M`, `@IOS` |
-| `AI_Agent_AIIntegrationArchitect` | Produto usa LLMs, RAG, evals, prompts ou agentes em producao | `@A`, `@B`, `@S`, `@P`, `@PR` |
 | `SEO_Agent_GrowthWeb` | Site publico depende de SEO tecnico, schema.org e conteudo indexavel | `@D`, `@I18N`, `@BI` |
 | `LEGAL_Agent_ContractReviewer` | Produto passa a depender de termos, contratos comerciais ou DPA recorrentes | `@GOV`, `@REG`, `@PAY` |
 
@@ -559,6 +570,7 @@ substituem o arsenal; apenas adaptam o roteamento.
 Wrappers existentes hoje:
 
 - `agent-forge-foreman`
+- `ai-integration-architect`
 - `backend-domain`
 - `bi-dashboard`
 - `camisa10-maestro`

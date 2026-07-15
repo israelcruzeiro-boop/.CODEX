@@ -53,6 +53,8 @@ Antes de recomendar arquitetura em projeto existente:
 7. Usar transacoes/operacoes atomicas em fluxos financeiros, estoque, permissao e billing.
 8. Planejar paginacao e filtros para qualquer lista potencialmente grande.
 9. Identificar hot paths e pontos de cache possiveis, sem otimizar cedo demais.
+   Quando houver cache, desenhar conforme `P_Performance/P_Method_CacheStrategy.md`
+   (camada, chave, TTL, invalidacao) e registrar na planta tecnica.
 10. Prever logs, metricas e alertas para os fluxos mais caros ou arriscados.
 11. Materializar a decisao na planta tecnica: atualizar (ou briefar `@DOC` para
     atualizar) o `ARCHITECTURE.md` do repo afetado no mesmo ciclo, seguindo
