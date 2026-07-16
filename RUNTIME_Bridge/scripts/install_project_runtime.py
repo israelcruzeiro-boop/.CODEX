@@ -19,6 +19,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Callable, Iterable, Mapping
@@ -27,14 +28,9 @@ from typing import Callable, Iterable, Mapping
 MANIFEST_RELATIVE_PATH = PurePosixPath(".codex/.runtime-install-manifest.json")
 MANIFEST_VERSION = 1
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
-CANONICAL_SKILLS = (
-    "agent-forge",
-    "architecture-blueprint",
-    "codex-agent-kit",
-    "gsd-tdd-cli-harness",
-    "multi-agent-delivery",
-    "spec-driven-breakdown",
-)
+SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+RUNTIME_MANIFEST = PurePosixPath("RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml")
+SUPPORTED_RUNTIME_SCHEMA = 1
 
 
 class InstallError(RuntimeError):
@@ -190,7 +186,7 @@ def _is_allowed_target(relative_path: str) -> bool:
     if (
         len(path.parts) >= 4
         and path.parts[:2] == (".agents", "skills")
-        and path.parts[2] in CANONICAL_SKILLS
+        and SKILL_NAME_PATTERN.fullmatch(path.parts[2])
     ):
         return True
     return (
@@ -441,6 +437,74 @@ def _source_tree_files(kit_root: Path, directory: Path) -> Iterable[Path]:
             raise InstallError(f"canonical skill source must be a regular file: {source}")
 
 
+def _canonical_skills(kit_root: Path) -> tuple[tuple[str, Path], ...]:
+    """Load the canonical skill set from the governed runtime manifest."""
+
+    manifest_path = kit_root / Path(*RUNTIME_MANIFEST.parts)
+    _source_path(kit_root, manifest_path)
+    try:
+        manifest_bytes = _stable_regular_file_bytes(
+            manifest_path,
+            guard=lambda: _source_path(kit_root, manifest_path),
+        )
+        manifest = tomllib.loads(manifest_bytes.decode("utf-8-sig"))
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as exc:
+        raise InstallError(f"invalid runtime manifest: {exc}") from exc
+
+    runtime = manifest.get("runtime")
+    if not isinstance(runtime, dict):
+        raise InstallError("runtime manifest is missing [runtime]")
+    if runtime.get("schema_version") != SUPPORTED_RUNTIME_SCHEMA:
+        raise InstallError(
+            "unsupported runtime manifest schema: "
+            f"{runtime.get('schema_version')!r}"
+        )
+
+    entries = manifest.get("skills")
+    if not isinstance(entries, list) or not entries:
+        raise InstallError("runtime manifest contains no [[skills]] entries")
+
+    skill_sources = kit_root / "skills"
+    declared: dict[str, Path] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise InstallError("runtime manifest [[skills]] entry must be a table")
+        name = str(entry.get("name", "")).strip()
+        path = str(entry.get("path", "")).replace("\\", "/").strip()
+        expected = f"skills/{name}/SKILL.md"
+        if not SKILL_NAME_PATTERN.fullmatch(name):
+            raise InstallError(f"invalid canonical skill name: {name!r}")
+        if name in declared:
+            raise InstallError(f"duplicate canonical skill name: {name}")
+        if path != expected:
+            raise InstallError(
+                f"canonical skill {name} must use manifest path {expected!r}"
+            )
+        skill_root = skill_sources / name
+        entrypoint = skill_root / "SKILL.md"
+        _source_path(kit_root, entrypoint)
+        if not entrypoint.is_file():
+            raise InstallError(f"canonical skill has no regular SKILL.md: {skill_root}")
+        declared[name] = skill_root
+
+    actual = {
+        child.name
+        for child in skill_sources.iterdir()
+        if child.is_dir() and (child / "SKILL.md").is_file()
+    }
+    if set(declared) != actual:
+        missing = sorted(actual - set(declared))
+        stale = sorted(set(declared) - actual)
+        details: list[str] = []
+        if missing:
+            details.append(f"unlisted skill directories: {missing}")
+        if stale:
+            details.append(f"manifest skills without canonical directories: {stale}")
+        raise InstallError("runtime skill catalog mismatch: " + "; ".join(details))
+
+    return tuple(sorted(declared.items()))
+
+
 def _desired_files(kit_root: Path) -> dict[str, tuple[Path, bytes, ManagedFile]]:
     desired: dict[str, tuple[Path, bytes, ManagedFile]] = {}
 
@@ -468,13 +532,7 @@ def _desired_files(kit_root: Path) -> dict[str, tuple[Path, bytes, ManagedFile]]
     for source in _source_files(kit_root, claude_sources, "*.md"):
         add(PurePosixPath(".claude/agents") / source.name, source)
 
-    skill_sources = kit_root / "skills"
-    for skill_name in CANONICAL_SKILLS:
-        skill_root = skill_sources / skill_name
-        entrypoint = skill_root / "SKILL.md"
-        _source_path(kit_root, entrypoint)
-        if not entrypoint.is_file():
-            raise InstallError(f"canonical skill has no regular SKILL.md: {skill_root}")
+    for skill_name, skill_root in _canonical_skills(kit_root):
         found = False
         for source in _source_tree_files(kit_root, skill_root):
             found = True

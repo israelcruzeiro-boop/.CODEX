@@ -56,6 +56,6 @@
 - Backups/migrations:
 - Lockfiles do backend:
 - Audit de dependencias e Dependabot:
-- Cobertura backend (meta 100%):
-- E2E Playwright (happy paths):
-- Pipeline GitHub Actions/release:
+- Metas de cobertura por artefato/risco:
+- Testes de sistema/E2E aplicaveis e ferramenta observada:
+- Provedor e pipeline CI/CD/release observados:

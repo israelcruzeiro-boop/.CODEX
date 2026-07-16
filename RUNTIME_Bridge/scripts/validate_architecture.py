@@ -22,6 +22,37 @@ from pathlib import Path
 
 PRESENCES = {"OBSERVADO", "PARCIAL", "NAO_OBSERVADO"}
 MATERIALITIES = {"SIM", "NAO"}
+PATTERN_FAMILIES = {"DESIGN", "ARCHITECTURE", "INTEGRATION", "DATA", "RESILIENCE"}
+PATTERN_TAGS = {
+    "BOUNDARY",
+    "COMPOSITION",
+    "DOMAIN",
+    "MODULARITY",
+    "MIGRATION",
+    "REQUEST_REPLY",
+    "EVENT_DRIVEN",
+    "MESSAGING",
+    "TRANSACTION",
+    "CONSISTENCY",
+    "READ_MODEL",
+    "CACHE",
+    "CONCURRENCY",
+    "FAILURE_CONTROL",
+    "TRAFFIC_CONTROL",
+    "RECOVERY",
+}
+PATTERN_AUDIT_REQUIREMENTS = (
+    "presenca observado nao foi tratada automaticamente como decisao aprovado",
+    "decisao proposto com presenca naoobservado nao aparece no as-is como implementada",
+    "todo descartado preserva o motivo e nao aparece como regra vigente",
+    "todo depreciado possui migracao, dono e prazo",
+    "todo proibido possui gate bloqueante",
+    "todo pattern declara trade-off material = sim/nao",
+    "todo pattern declara uma familia primaria e ao menos uma tag canonica",
+    "toda escolha material aponta adr",
+    "links de mod-/con-/req-/task-/test-/evd- existem",
+)
+ASIS_STALE_DAYS = 180
 DECISIONS = {
     "SEM_DECISAO",
     "PROPOSTO",
@@ -58,6 +89,7 @@ ID = {
         "FIT",
         "PAT",
         "DELTA",
+        "GAP",
     )
 }
 
@@ -357,6 +389,13 @@ def _valid_date(value: str) -> bool:
     return True
 
 
+def _parse_date(value: str) -> dt.date | None:
+    try:
+        return dt.date.fromisoformat(value.strip())
+    except ValueError:
+        return None
+
+
 def _justified_na(value: str) -> bool:
     return bool(re.search(r"(?i)(?:^|[/|])\s*N/A\s*[-:–—]\s*\S.{5,}$", value.strip()))
 
@@ -411,11 +450,11 @@ def _validate_evidence(
         re.search(r"\b(?:COMANDO(?:/RESULTADO)?|COMMAND)\s*:\s*\S", value, re.IGNORECASE)
     )
     path_matches = re.findall(
-        r"(?<![\w:/])([A-Za-z0-9_.-]+(?:[/\\][A-Za-z0-9_.-]+)*\.[A-Za-z0-9]+):[A-Za-z_][\w.:-]*",
+        r"(?<![\w:/])([A-Za-z0-9_.-]+(?:[/\\][A-Za-z0-9_.-]+)*\.[A-Za-z0-9]+):([A-Za-z_][\w.:-]*)",
         value,
     )
     valid_path = False
-    for raw_path in path_matches:
+    for raw_path, raw_symbol in path_matches:
         candidate = Path(raw_path)
         resolved = candidate if candidate.is_absolute() else document.parent / candidate
         if not resolved.is_file():
@@ -426,6 +465,15 @@ def _validate_evidence(
             )
         else:
             valid_path = True
+            symbol = re.split(r"[.:]", raw_symbol)[-1]
+            if re.fullmatch(r"[A-Za-z_]\w*", symbol):
+                content = resolved.read_text(encoding="utf-8", errors="replace")
+                if not re.search(rf"(?<!\w){re.escape(symbol)}(?!\w)", content):
+                    result.error(
+                        "missing-evidence-symbol",
+                        document,
+                        f"{context} cites symbol {raw_symbol!r} absent from {raw_path}.",
+                    )
     if external or command or valid_path:
         return True
     if not path_matches:
@@ -487,8 +535,23 @@ def _validate_asis(result: ValidationResult, path: Path) -> None:
     )
     if _plain(_metadata(text, "Fonte")) != "analise direta do codigo":
         result.error("invalid-source", path, "AS-IS must cite direct code analysis as source.")
-    if not _valid_date(_metadata(text, "Data da analise")):
+    analysis_date = _parse_date(_metadata(text, "Data da analise"))
+    if analysis_date is None:
         result.error("invalid-date", path, "AS-IS must declare a real ISO analysis date.")
+    else:
+        today = dt.date.today()
+        if analysis_date > today:
+            result.error(
+                "future-analysis-date",
+                path,
+                "AS-IS analysis date cannot be in the future.",
+            )
+        elif (today - analysis_date).days > ASIS_STALE_DAYS:
+            result.warning(
+                "stale-analysis-date",
+                path,
+                f"AS-IS analysis is older than {ASIS_STALE_DAYS} days; review drift before relying on it.",
+            )
     if _plain(_metadata(text, "Horizonte")) != "as-is":
         result.error("invalid-horizon", path, "ARCHITECTURE.md horizon must be AS-IS.")
 
@@ -607,6 +670,67 @@ def _validate_dependency_table(
         if len(origin) == 1 and len(destination) == 1 and not unknown:
             edges.add((next(iter(origin)), next(iter(destination))))
     return edges
+
+
+def _dependency_policy_keys(table: Table) -> set[tuple[str, str]]:
+    """Return exact origin/destination scopes without collapsing `MOD internals`."""
+
+    return {
+        (_plain(row[0]), _plain(row[1]))
+        for row in _actual_rows(table)
+        if not _placeholder(row[0]) and not _placeholder(row[1])
+    }
+
+
+def _dependency_cycles(
+    modules: set[str], edges: set[tuple[str, str]]
+) -> list[tuple[str, ...]]:
+    """Return strongly connected module groups, including self-loops."""
+
+    adjacency = {module: set() for module in modules}
+    for origin, destination in edges:
+        adjacency.setdefault(origin, set()).add(destination)
+        adjacency.setdefault(destination, set())
+
+    index = 0
+    indices: dict[str, int] = {}
+    lowlinks: dict[str, int] = {}
+    stack: list[str] = []
+    on_stack: set[str] = set()
+    components: list[tuple[str, ...]] = []
+
+    def visit(node: str) -> None:
+        nonlocal index
+        indices[node] = index
+        lowlinks[node] = index
+        index += 1
+        stack.append(node)
+        on_stack.add(node)
+
+        for neighbor in sorted(adjacency[node]):
+            if neighbor not in indices:
+                visit(neighbor)
+                lowlinks[node] = min(lowlinks[node], lowlinks[neighbor])
+            elif neighbor in on_stack:
+                lowlinks[node] = min(lowlinks[node], indices[neighbor])
+
+        if lowlinks[node] != indices[node]:
+            return
+        component: list[str] = []
+        while stack:
+            member = stack.pop()
+            on_stack.remove(member)
+            component.append(member)
+            if member == node:
+                break
+        ordered = tuple(sorted(component))
+        if len(ordered) > 1 or (len(ordered) == 1 and (node, node) in edges):
+            components.append(ordered)
+
+    for module in sorted(adjacency):
+        if module not in indices:
+            visit(module)
+    return sorted(components)
 
 
 GRAPH_ARROW = re.compile(r"(?:-->|-\.->|==>|->)")
@@ -801,6 +925,37 @@ def _validate_target_patterns(
             )
 
 
+def _validate_target_gaps(
+    result: ValidationResult, path: Path, text: str, state: str
+) -> None:
+    section = _section(text, "13. Lacunas E Decisoes Pendentes")
+    blocking: list[str] = []
+    tables = _find_tables(section, "ID", "Lacuna", "Impacto", "Dono", "Prazo", "Bloqueia")
+    if tables:
+        table = tables[0]
+        blocking_col = _column(table, "Bloqueia")
+        for row_number, row in enumerate(_actual_rows(table), table.line + 2):
+            identifier = row[0].strip()
+            if not ID["GAP"].fullmatch(identifier):
+                result.error(
+                    "invalid-gap-id",
+                    path,
+                    f"Target gap rows need GAP-NNN, got {identifier!r}.",
+                    row_number,
+                )
+            if _plain(row[blocking_col]) in {"sim", "yes", "true"}:
+                blocking.append(identifier or f"line {row_number}")
+    elif re.search(r"(?i)\bbloqueia\??(?:\s*[:=]|\s+)\s*sim\b", section):
+        blocking.append("declared blocking gap")
+
+    if blocking and state in {"APROVADO", "EM_TRANSICAO", "ATINGIDO"}:
+        result.error(
+            "blocking-target-gap",
+            path,
+            f"TARGET state {state} is incompatible with blocking gaps: {blocking}.",
+        )
+
+
 def _validate_target(result: ValidationResult, path: Path) -> None:
     raw, text = _read_artifact(result, path)
     result.validated.append(path.name)
@@ -886,6 +1041,7 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
     )
     modules: set[str] = set()
     module_contracts: set[str] = set()
+    public_contract_modules: dict[str, set[str]] = {}
     invariant_definitions: set[str] = set()
     if not module_tables or not _actual_rows(module_tables[0]):
         result.error("missing-target-modules", path, "Target module catalog is empty.")
@@ -917,6 +1073,8 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
             if not contracts:
                 result.error("missing-target-public-contract", path, f"{identifier} lacks CON-NNN.")
             module_contracts.update(contracts)
+            for contract in contracts:
+                public_contract_modules.setdefault(contract, set()).add(identifier)
             invariants = ID["INV"].findall(row[invariant_col])
             if not invariants:
                 result.error("missing-target-invariant", path, f"{identifier} lacks INV-NNN.")
@@ -948,6 +1106,7 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
     )
     contracts: set[str] = set()
     events: set[str] = set()
+    contract_owners: dict[str, set[str]] = {}
     if not contract_tables or not _actual_rows(contract_tables[0]):
         result.error("missing-target-contracts", path, "TO-BE contract/event catalog is empty.")
     else:
@@ -969,6 +1128,7 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
                     )
                 else:
                     contracts.add(identifier)
+                contract_owners[identifier] = set(ID["MOD"].findall(row[owner_col]))
             elif ID["EVT"].fullmatch(identifier):
                 if identifier in events:
                     result.error(
@@ -1021,6 +1181,17 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
             path,
             f"Module catalog references undefined contracts: {sorted(undefined_public)}.",
         )
+    for contract, expected_modules in sorted(public_contract_modules.items()):
+        if contract not in contracts:
+            continue
+        actual_modules = contract_owners.get(contract, set())
+        if len(expected_modules) != 1 or actual_modules != expected_modules:
+            result.error(
+                "public-contract-owner-mismatch",
+                path,
+                f"{contract} is public for {sorted(expected_modules)} but declares owner/producer "
+                f"{sorted(actual_modules)}.",
+            )
 
     ownership_tables = _find_tables(text, "Dado/entidade", "Modulo owner", "Invariantes", "Gate")
     if not ownership_tables or not _actual_rows(ownership_tables[0]):
@@ -1049,6 +1220,17 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
         result.error("missing-prohibited-dependency", path, "At least one prohibited dependency is required.")
     else:
         _validate_dependency_table(result, path, prohibited[0], modules, "Prohibited")
+    if permitted and prohibited:
+        contradictions = _dependency_policy_keys(permitted[0]) & _dependency_policy_keys(
+            prohibited[0]
+        )
+        if contradictions:
+            result.error(
+                "contradictory-dependency-policy",
+                path,
+                "Dependency scopes cannot be both permitted and prohibited: "
+                f"{sorted(contradictions)}.",
+            )
 
     graph_masked = _section(text, "7. Grafo E Ciclos")
     graph_raw = _section_raw(raw, text, "7. Grafo E Ciclos")
@@ -1083,6 +1265,20 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
         result.error("missing-cycle-policy", path, "TO-BE must explicitly declare cycle policy.")
     if _placeholder(cycle_gate):
         result.error("missing-cycle-gate", path, "TO-BE must define a cycle-detection gate.")
+    dependency_cycles = _dependency_cycles(modules, permitted_edges)
+    if dependency_cycles:
+        if _plain(cycles) == "nenhum":
+            result.error(
+                "dependency-cycle",
+                path,
+                f"TO-BE declares no cycles but dependency graph contains {dependency_cycles}.",
+            )
+        elif not ID["ADR"].search(cycles):
+            result.error(
+                "unapproved-dependency-cycle",
+                path,
+                f"Dependency cycles require an explicit ADR: {dependency_cycles}.",
+            )
 
     transaction_tables = _find_tables(
         text,
@@ -1155,6 +1351,7 @@ def _validate_target(result: ValidationResult, path: Path) -> None:
     _validate_target_traceability(
         result, path, text, modules, contracts, events
     )
+    _validate_target_gaps(result, path, text, state)
 
 
 def _pattern_blocks(text: str) -> list[tuple[str, str]]:
@@ -1177,18 +1374,31 @@ def _validate_final_verdict(result: ValidationResult, path: Path, text: str) -> 
         result.error("invalid-final-verdict", path, "Pattern Map must declare one canonical final verdict.")
         return
     verdict = candidates[0]
-    if verdict == "APROVADO":
+    if verdict in {"APROVADO", "APROVADO_COM_RESSALVAS"}:
         audit = _section(text, "Auditoria De Consistencia")
         checklist = re.findall(
-            r"(?m)^\s*[-*]\s*\[([ xX])\]\s+\S.+$",
+            r"(?m)^\s*[-*]\s*\[([ xX])\]\s+(.+?)\s*$",
             audit,
         )
-        if not checklist or any(mark.lower() != "x" for mark in checklist):
+        normalized_items = [_plain(label) for _, label in checklist]
+        missing_requirements = [
+            requirement
+            for requirement in PATTERN_AUDIT_REQUIREMENTS
+            if not any(requirement in item for item in normalized_items)
+        ]
+        if (
+            not checklist
+            or any(mark.lower() != "x" for mark, _ in checklist)
+            or missing_requirements
+        ):
             result.error(
                 "incomplete-audit-checklist",
                 path,
-                "APROVADO requires every Pattern Map audit checklist item to be marked.",
+                "An approving Pattern Map verdict requires every canonical audit item "
+                f"to exist and be marked; missing={missing_requirements}.",
             )
+
+    if verdict == "APROVADO":
         justification = _metadata(section, "Justificativa")
         justification_words = re.findall(r"\b[\w-]{2,}\b", justification)
         concrete_justification = (
@@ -1296,9 +1506,20 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
         result.error("missing-metadata", path, "PATTERN_MAP missing concrete AS-IS.")
 
     catalog_tables = _find_tables(
-        text, "ID", "Pattern", "Presenca", "Decisao", "Escopo", "Evidencia", "ADR", "Gate", "Dono"
+        text,
+        "ID",
+        "Pattern",
+        "Familia",
+        "Tags",
+        "Presenca",
+        "Decisao",
+        "Escopo",
+        "Evidencia",
+        "ADR",
+        "Gate",
+        "Dono",
     )
-    catalog: dict[str, tuple[str, str, str, str, bool]] = {}
+    catalog: dict[str, tuple[str, str, str, str, bool, str, frozenset[str]]] = {}
     if not catalog_tables:
         result.error("missing-pattern-catalog", path, "Pattern catalog table is missing.")
     else:
@@ -1308,6 +1529,8 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
         evidence_col = _column(table, "Evidencia")
         adr_col = _column(table, "ADR")
         gate_col = _column(table, "Gate")
+        family_col = _column(table, "Familia")
+        tags_col = _column(table, "Tags")
         material_columns = [
             index
             for index, header in enumerate(table.headers)
@@ -1325,11 +1548,14 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
             presence = row[presence_col].strip()
             decision = row[decision_col].strip()
             adr = row[adr_col].strip()
+            family = row[family_col].strip()
+            raw_tags = [item.strip() for item in row[tags_col].split(",") if item.strip()]
+            tags = frozenset(raw_tags)
             explicit_materiality = material_col is not None
             materiality = (
                 row[material_col].strip()
                 if material_col is not None
-                else ("SIM" if ID["ADR"].search(adr) else "")
+                else ""
             )
             catalog[identifier] = (
                 presence,
@@ -1337,7 +1563,22 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
                 materiality,
                 adr,
                 explicit_materiality,
+                family,
+                tags,
             )
+            if family not in PATTERN_FAMILIES:
+                result.error(
+                    "invalid-pattern-family",
+                    path,
+                    f"{identifier} family {family!r} is invalid.",
+                )
+            unknown_tags = tags - PATTERN_TAGS
+            if not raw_tags or unknown_tags or len(raw_tags) != len(tags):
+                result.error(
+                    "invalid-pattern-tags",
+                    path,
+                    f"{identifier} needs unique canonical tags; unknown={sorted(unknown_tags)}.",
+                )
             if presence not in PRESENCES:
                 result.error("invalid-pattern-presence", path, f"{identifier} presence {presence!r} is invalid.")
             if decision not in DECISIONS:
@@ -1388,20 +1629,36 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
     for identifier, block in blocks:
         presence = _metadata(block, "Presenca")
         decision = _metadata(block, "Decisao")
+        family = _metadata(block, "Familia").strip()
+        raw_tags = [item.strip() for item in _metadata(block, "Tags").split(",") if item.strip()]
+        tags = frozenset(raw_tags)
         evolution = _section(block, "ADR E Evolucao")
         adr = _metadata(evolution, "ADR")
         materiality = _metadata(block, "Trade-off material").strip()
         explicit_detail_materiality = materiality in MATERIALITIES
-        if not explicit_detail_materiality and ID["ADR"].search(adr):
-            materiality = "SIM"
         if presence not in PRESENCES:
             result.error("invalid-pattern-presence", path, f"{identifier} detail presence is invalid.")
         if decision not in DECISIONS:
             result.error("invalid-pattern-decision", path, f"{identifier} detail decision is invalid.")
+        if family not in PATTERN_FAMILIES:
+            result.error("invalid-pattern-family", path, f"{identifier} detail family is invalid.")
+        unknown_tags = tags - PATTERN_TAGS
+        if not raw_tags or unknown_tags or len(raw_tags) != len(tags):
+            result.error(
+                "invalid-pattern-tags",
+                path,
+                f"{identifier} detail needs unique canonical tags; unknown={sorted(unknown_tags)}.",
+            )
         if identifier in catalog:
-            catalog_presence, catalog_decision, catalog_materiality, _, catalog_explicit = catalog[
-                identifier
-            ]
+            (
+                catalog_presence,
+                catalog_decision,
+                catalog_materiality,
+                _,
+                catalog_explicit,
+                catalog_family,
+                catalog_tags,
+            ) = catalog[identifier]
             if (catalog_presence, catalog_decision) != (presence, decision):
                 result.error(
                     "pattern-state-mismatch",
@@ -1419,6 +1676,12 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
                     "missing-pattern-materiality",
                     path,
                     f"{identifier} detail must explicitly declare Trade-off material.",
+                )
+            if catalog_family != family or catalog_tags != tags:
+                result.error(
+                    "pattern-taxonomy-mismatch",
+                    path,
+                    f"{identifier} catalog/detail family or tags differ.",
                 )
         if decision == "DEPRECIADO" and presence not in {"OBSERVADO", "PARCIAL"}:
             result.error("invalid-deprecation-presence", path, f"{identifier} deprecated decision needs observed/partial presence.")
@@ -1465,12 +1728,116 @@ def _validate_pattern(result: ValidationResult, path: Path) -> None:
             adr,
             "detail",
         )
-        if decision == "DEPRECIADO" and any(
-            _placeholder(_metadata(evolution, label))
-            for label in ("Plano de migracao/remocao", "Dono/prazo")
-        ):
-            result.error("incomplete-deprecation", path, f"{identifier} lacks migration owner/deadline.")
+        if decision == "DEPRECIADO":
+            migration = _metadata(evolution, "Plano de migracao/remocao")
+            owner_deadline = _metadata(evolution, "Dono/prazo")
+            deadline_match = re.search(r"\b\d{4}-\d{2}-\d{2}\b", owner_deadline)
+            owner = owner_deadline.split("/", 1)[0].strip()
+            deadline_valid = bool(
+                deadline_match and _valid_date(deadline_match.group(0))
+            )
+            if (
+                _placeholder(migration)
+                or _placeholder(owner)
+                or "/" not in owner_deadline
+                or not deadline_valid
+            ):
+                result.error(
+                    "incomplete-deprecation",
+                    path,
+                    f"{identifier} needs a migration plan, concrete owner and ISO deadline.",
+                )
     _validate_final_verdict(result, path, text)
+
+
+def _semantic_text(path: Path) -> str:
+    raw = path.read_text(encoding="utf-8-sig")
+    return _mask_fenced(
+        _mask_indented_code(
+            _mask_raw_html_blocks(_mask_html_comments(raw))
+        )
+    )
+
+
+def _target_pattern_decisions(text: str) -> dict[str, str]:
+    tables = _find_tables(
+        text,
+        "Pattern",
+        "Presenca alvo",
+        "Decisao atual",
+        "Decisao alvo",
+        "Modulos",
+        "ADR",
+        "Gate",
+    )
+    if not tables:
+        return {}
+    table = tables[0]
+    decision_col = _column(table, "Decisao atual")
+    return {
+        row[0].strip(): row[decision_col].strip()
+        for row in _actual_rows(table)
+        if ID["PAT"].fullmatch(row[0].strip())
+    }
+
+
+def _pattern_map_decisions(text: str) -> dict[str, str]:
+    tables = _find_tables(text, "ID", "Pattern", "Presenca", "Decisao")
+    if not tables:
+        return {}
+    table = tables[0]
+    decision_col = _column(table, "Decisao")
+    return {
+        row[0].strip(): row[decision_col].strip()
+        for row in _actual_rows(table)
+        if ID["PAT"].fullmatch(row[0].strip())
+    }
+
+
+def _validate_package_integrity(
+    result: ValidationResult,
+    architecture: Path,
+    target_architecture: Path,
+    pattern_map: Path,
+) -> None:
+    target_text = _semantic_text(target_architecture)
+    pattern_text = _semantic_text(pattern_map)
+
+    target_patterns = _target_pattern_decisions(target_text)
+    map_patterns = _pattern_map_decisions(pattern_text)
+    missing_patterns = set(target_patterns) - set(map_patterns)
+    if missing_patterns:
+        result.error(
+            "unknown-pattern-map-reference",
+            target_architecture,
+            f"TO-BE references patterns absent from PATTERN_MAP.md: {sorted(missing_patterns)}.",
+        )
+    for identifier in sorted(set(target_patterns) & set(map_patterns)):
+        if target_patterns[identifier] != map_patterns[identifier]:
+            result.error(
+                "target-pattern-decision-mismatch",
+                target_architecture,
+                f"{identifier} current TO-BE decision {target_patterns[identifier]!r} "
+                f"differs from PATTERN_MAP.md {map_patterns[identifier]!r}.",
+            )
+
+    if not architecture.is_file():
+        return
+    architecture_text = _semantic_text(architecture)
+    analysis_date = _metadata(architecture_text, "Data da analise").strip()
+    asis_reference = _metadata(target_text, "AS-IS de referencia")
+    referenced_date = re.search(r"\b\d{4}-\d{2}-\d{2}\b", asis_reference)
+    if (
+        analysis_date
+        and referenced_date
+        and analysis_date != referenced_date.group(0)
+    ):
+        result.error(
+            "asis-reference-date-mismatch",
+            target_architecture,
+            f"TO-BE references AS-IS date {referenced_date.group(0)} but "
+            f"ARCHITECTURE.md declares {analysis_date}.",
+        )
 
 
 def validate_architecture(path: str | Path) -> ValidationResult:
@@ -1528,8 +1895,27 @@ def validate_architecture(path: str | Path) -> ValidationResult:
         result.warning("missing-tobe", target, "No TARGET_ARCHITECTURE.md to validate.")
     if pattern_map.is_file():
         _validate_pattern(result, pattern_map)
+        if has_target:
+            _validate_package_integrity(
+                result,
+                architecture,
+                target_architecture,
+                pattern_map,
+            )
     elif target.is_dir():
-        result.warning("missing-pattern-map", target, "No PATTERN_MAP.md to validate.")
+        target_patterns = (
+            _target_pattern_decisions(_semantic_text(target_architecture))
+            if has_target
+            else {}
+        )
+        if target_patterns:
+            result.error(
+                "missing-pattern-map",
+                target,
+                "TO-BE references PAT-NNN entries but PATTERN_MAP.md is missing.",
+            )
+        else:
+            result.warning("missing-pattern-map", target, "No PATTERN_MAP.md to validate.")
     return result
 
 

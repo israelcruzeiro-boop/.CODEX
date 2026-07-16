@@ -3,6 +3,12 @@
 This folder makes the arsenal executable across Codex, Claude, and
 Hermes-style runtimes without replacing the original agents.
 
+The runtime contract is versioned in `AGENT_RUNTIME_MAP.toml`. Schema `1`
+requires Python 3.11 or newer and is validated on Linux and Windows. Project
+coverage is a separate, machine-readable contract in
+`PROJECT_COVERAGE_MAP.toml`; it records limitations and fallbacks instead of
+claiming universal specialist coverage.
+
 ## Source And Installed Layout
 
 The kit is a Git checkout at `PROJECT_ROOT/.codex`. Files inside the checkout
@@ -32,10 +38,18 @@ PROJECT_ROOT/
 Original agent files stay in semantic folders such as `A_Architecture`,
 `SUP_Supervisor`, and `F_AgentForge`. Runtime wrappers point back to those
 sources. Skills remain reserved for reusable workflows, not every specialist.
+The manifest is the exhaustive source of the canonical skill set; the
+installer rejects unlisted directories, noncanonical paths and unsupported
+schema versions.
 
 ## Installation
 
-Run from `PROJECT_ROOT`:
+Clone the governed kit to the exact case-sensitive destination and run from
+`PROJECT_ROOT`:
+
+```powershell
+git clone <GITHUB_REPOSITORY_URL> .codex
+```
 
 ```powershell
 python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .
@@ -105,18 +119,24 @@ conflicts require resolution.
 Validate the kit sources from the kit root:
 
 ```powershell
-python RUNTIME_Bridge/scripts/validate_arsenal.py
-python -m unittest discover -s RUNTIME_Bridge/scripts -p "test_*.py" -v
+python RUNTIME_Bridge/scripts/run_quality_gate.py
 ```
+
+The quality gate compiles the Python tooling, checks generated Claude wrappers,
+validates runtime and coverage catalogs, validates skill contracts, executes
+the complete unittest suite and rejects a generated diff. The same gate runs
+in the repository CI on Linux and Windows.
 
 Validate semantic artifacts in a target project:
 
 ```powershell
 python RUNTIME_Bridge/scripts/validate_specs.py PROJECT_ROOT
 python RUNTIME_Bridge/scripts/validate_architecture.py PROJECT_ROOT
+python RUNTIME_Bridge/scripts/validate_multi_agent.py MULTI_AGENT_PLAN.md --phase complete --tasks-dir agent-tasks --results-dir agent-results
+python RUNTIME_Bridge/scripts/validate_cli_audit.py CLI_AUDIT.md
 ```
 
-Both semantic validators are read-only, use only the Python standard library,
+The semantic validators are read-only, use only the Python standard library,
 support `--json`, and return a nonzero exit code when a blocking contract fails.
 
 Run the installer after adding, renaming, or removing wrappers or canonical

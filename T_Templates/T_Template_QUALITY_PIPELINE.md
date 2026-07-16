@@ -1,42 +1,57 @@
-# QUALITY_PIPELINE - [NOME DO PROJETO]
+# QUALITY_PIPELINE - [NOME DO PROJETO/UNIDADE]
+
+## Perfil E Canal
+
+**Perfil(es):** ...
+**CI detectado:** GitHub Actions | GitLab CI | Azure Pipelines | Jenkins | outro | N/A
+**Artefato:** app | service | package | binary | dataset/job | model | IaC | outro
+**Canal:** deploy | registry | store | orchestrator | model registry | apply | N/A
 
 ## Responsabilidades
 
-| Responsavel | Entrega |
+| Responsavel | Entrega aplicavel |
 |---|---|
-| `@Q` | Testes unitarios front/back, API e happy paths Playwright |
-| `@O` | Workflow GitHub Actions, caches, artefatos, secrets de CI e protecao de branch |
-| `@DEP` + `@S` | Lockfiles, audit/SCA, Dependabot e tratamento de alertas |
-| `@REL` | Gate, versao, changelog, rollback e promocao de release |
+| `@Q` | Matriz de testes proporcional ao perfil |
+| `@O` | Pipeline no CI detectado, artefatos e operacao |
+| Especialista | Invariantes: `@B`/`@D`/`@PKG`/`@DE`/`@ML`/`@IAC`/outro |
+| `@DEP` + `@S` | Supply-chain, secrets e controles aplicaveis |
+| `@REL` | Versao, canal, gate, comunicacao e recovery |
 | `@GSD` + `@V` | Evidencia CLI e selo final |
 
-## Gates Obrigatorios de Pull Request
+## Gates Proporcionais
 
-- Instalar dependencias de forma reproduzivel a partir do lockfile.
-- Lint, typecheck, build e testes unitarios do frontend e backend.
-- Cobertura do backend: 100% lines/functions/branches/statements, exceto exclusoes documentadas.
-- Testes de API/contrato afetados.
-- Playwright somente para happy paths de funcionalidades criticas afetadas.
-- Audit de dependencias sem vulnerabilidade bloqueante sem plano de remediacao aprovado.
-- Verificacao de lockfile: todo manifesto alterado deve atualizar o lockfile correspondente.
+| Gate | Aplicavel? | Comando/evidencia real | Criterio | Owner |
+|---|---|---|---|---|
+| Instalacao/build reproduzivel | ... | ... | ... | ... |
+| Unit/component/domain | ... | ... | ... | ... |
+| API/contract | ... | ... | ... | ... |
+| Browser/device/installer smoke | ... | ... | ... | ... |
+| Consumer/package/install | ... | ... | ... | ... |
+| Data quality/replay | ... | ... | ... | ... |
+| ML eval/drift/rollback | ... | ... | ... | ... |
+| IaC validate/policy/plan | ... | ... | ... | ... |
+| Audit/SCA/secret scan | ... | ... | ... | ... |
 
-## Fluxo De Release
+Playwright e apenas para UI browser critica. API, cobertura backend, device,
+data quality, ML eval e IaC plan entram somente quando o perfil exigir.
+
+## Fluxo De Promocao
 
 ```text
-pull request -> quality/security gates -> merge protegido
--> deploy em staging -> smoke/Playwright selecionado -> aprovacao de release
--> tag + deploy de producao -> smoke + observabilidade -> rollback se necessario
+change -> gates do perfil -> artefato imutavel -> aprovacao do canal
+-> deploy/publish/promote/apply -> smoke/reconciliacao -> rollback/yank/replay/recovery
 ```
 
 ## Evidencia Por Execucao
 
-| Comando | CWD | Exit code | Resultado | Responsavel |
-|---|---|---:|---|---|
-| ... | ... | ... | ... | ... |
+| Comando | CWD | Exit code | Resultado | Artefato/EVD | Responsavel |
+|---|---|---:|---|---|---|
+| ... | ... | ... | ... | ... | ... |
 
 ## Pendencias E Excecoes
 
-- Excecao de cobertura:
-- Vulnerabilidade sem fix:
-- E2E temporariamente indisponivel:
-- Plano de rollback:
+- Gate `N/A` + motivo:
+- Excecao de cobertura/threshold:
+- Vulnerabilidade/policy finding:
+- Falta de ambiente/runner:
+- Plano de rollback/yank/replay/recovery:

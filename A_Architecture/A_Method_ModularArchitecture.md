@@ -12,6 +12,10 @@ existe com o que se pretende construir.
 | `PATTERN_MAP.md` | Presenca + decisao dos patterns | Evidencia + decisao | Apenas como `PROPOSTO` |
 | `DECISIONS.md` ou `docs/adr/*.md` | Decisoes | Trade-off aceito | Sim, como ADR |
 
+`A_Reference_PatternCatalog.md` e uma referencia nao prescritiva. Ele ajuda a
+comparar forcas, contraindicacoes e falhas conhecidas, mas nunca substitui o
+`PATTERN_MAP.md` do projeto nem autoriza adocao automatica.
+
 Regra: `TARGET_ARCHITECTURE.md` nunca corrige silenciosamente o AS-IS.
 Divergencia entre os dois vira gap, task de transicao e, quando houver
 trade-off relevante, ADR. Mudanca TO-BE nao entra em implementacao sem spec
@@ -134,6 +138,11 @@ Toda transicao AS-IS -> TO-BE informa:
 
 Cada gate deve apontar comando, teste, regra de lint ou checklist de review.
 Gate sem executor, frequencia e evidencia e apenas intencao.
+
+Patterns arquiteturais ou de integracao declarados no desenho devem apontar o
+respectivo `PAT-NNN`, familia primaria, tags, ADR quando material e fitness
+gate. Nomes como "hexagonal", "event-driven" ou "CQRS" sem fronteira,
+contrato, ownership e evidencia nao satisfazem o catalogo modular.
 
 ## Veredito
 

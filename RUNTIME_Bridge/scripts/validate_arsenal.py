@@ -21,18 +21,13 @@ import stat
 import subprocess
 import sys
 import tomllib
+from datetime import date
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 
-REQUIRED_SKILLS = {
-    "agent-forge",
-    "architecture-blueprint",
-    "codex-agent-kit",
-    "gsd-tdd-cli-harness",
-    "multi-agent-delivery",
-    "spec-driven-breakdown",
-}
+SUPPORTED_RUNTIME_SCHEMA = 1
+SEMVER_RE = re.compile(r"^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$")
 CANONICAL_VERDICTS = {
     "APROVADO",
     "APROVADO_COM_RESSALVAS",
@@ -372,6 +367,11 @@ def _manifest_indexes(
             continue
         if not path or not purpose:
             errors.append(f"Manifest skill {name}: path and purpose are required.")
+        expected_path = f"skills/{name}/SKILL.md"
+        if path and path != expected_path:
+            errors.append(
+                f"Manifest skill {name}: path must be exactly {expected_path!r}."
+            )
         if path:
             _validate_governed_path(
                 kit,
@@ -382,15 +382,65 @@ def _manifest_indexes(
             )
         skills[name] = dict(entry, path=path)
 
+    skill_root = kit / "skills"
+    actual_skill_names = {
+        path.parent.name
+        for path in skill_root.glob("*/SKILL.md")
+        if path.is_file()
+    }
     manifest_skill_names = set(skills)
-    if manifest_skill_names != REQUIRED_SKILLS:
-        missing = sorted(REQUIRED_SKILLS - manifest_skill_names)
-        extra = sorted(manifest_skill_names - REQUIRED_SKILLS)
+    if manifest_skill_names != actual_skill_names:
+        missing = sorted(actual_skill_names - manifest_skill_names)
+        extra = sorted(manifest_skill_names - actual_skill_names)
         if missing:
-            errors.append(f"Manifest missing required runtime skills: {missing}.")
+            errors.append(f"Manifest missing canonical runtime skills: {missing}.")
         if extra:
-            errors.append(f"Manifest has unsupported runtime skills: {extra}.")
+            errors.append(f"Manifest references absent runtime skills: {extra}.")
     return agents, skills
+
+
+def validate_runtime_metadata(
+    kit: Path, manifest: dict[str, Any], errors: list[str]
+) -> None:
+    runtime = manifest.get("runtime")
+    if not isinstance(runtime, dict):
+        errors.append("Manifest is missing the [runtime] table.")
+        return
+
+    if runtime.get("schema_version") != SUPPORTED_RUNTIME_SCHEMA:
+        errors.append(
+            "Manifest runtime.schema_version must be "
+            f"{SUPPORTED_RUNTIME_SCHEMA}, got {runtime.get('schema_version')!r}."
+        )
+    kit_version = str(runtime.get("kit_version", "")).strip()
+    if not SEMVER_RE.fullmatch(kit_version):
+        errors.append("Manifest runtime.kit_version must be SemVer MAJOR.MINOR.PATCH.")
+    release_date = str(runtime.get("release_date", "")).strip()
+    try:
+        date.fromisoformat(release_date)
+    except ValueError:
+        errors.append("Manifest runtime.release_date must be a valid ISO date.")
+    if str(runtime.get("python_requires", "")).strip() != ">=3.11":
+        errors.append("Manifest runtime.python_requires must be '>=3.11'.")
+    supported_os = runtime.get("supported_os")
+    if not isinstance(supported_os, list) or not {"linux", "windows"}.issubset(
+        {str(value).strip().lower() for value in supported_os}
+    ):
+        errors.append(
+            "Manifest runtime.supported_os must include both 'linux' and 'windows'."
+        )
+
+    coverage_map = str(runtime.get("coverage_map", "")).strip()
+    if not coverage_map:
+        errors.append("Manifest runtime.coverage_map is required.")
+    else:
+        _validate_governed_path(
+            kit,
+            coverage_map,
+            "Manifest runtime.coverage_map",
+            errors,
+            expect_file=True,
+        )
 
 
 def _validate_wrapper_source_contract(
@@ -661,6 +711,12 @@ def validate_skills(
         count += 1
         text = skill.read_text(encoding="utf-8-sig")
         fm, _ = _frontmatter(text)
+        unexpected_frontmatter = sorted(set(fm) - {"name", "description"})
+        if unexpected_frontmatter:
+            errors.append(
+                f"{skill.relative_to(kit).as_posix()}: unsupported frontmatter "
+                f"fields {unexpected_frontmatter}."
+            )
         if fm.get("name") != name:
             errors.append(f"{skill.relative_to(kit).as_posix()}: frontmatter name mismatch.")
         description = fm.get("description", "")
@@ -668,6 +724,10 @@ def validate_skills(
             errors.append(f"{skill.relative_to(kit).as_posix()}: missing description.")
         if "TODO" in description or "Complete and informative" in description:
             errors.append(f"{skill.relative_to(kit).as_posix()}: placeholder description remains.")
+        if len(text.splitlines()) >= 500:
+            errors.append(
+                f"{skill.relative_to(kit).as_posix()}: SKILL.md must stay below 500 lines."
+            )
         if not openai_yaml.exists() and not _is_reparse(openai_yaml):
             errors.append(f"skills/{name}: missing agents/openai.yaml.")
         else:
@@ -684,7 +744,25 @@ def validate_skills(
             for field in ("display_name", "short_description", "default_prompt"):
                 if not ui_fields.get(field):
                     errors.append(f"skills/{name}/agents/openai.yaml: missing {field}.")
-            if f"${name}" not in ui_fields.get("default_prompt", ""):
+            for field in ("display_name", "short_description", "default_prompt"):
+                if not re.search(
+                    rf"^  {field}:\s*(['\"]).*\1\s*$",
+                    ui,
+                    flags=re.MULTILINE,
+                ):
+                    errors.append(
+                        f"skills/{name}/agents/openai.yaml: {field} must be a quoted string."
+                    )
+            short_description = ui_fields.get("short_description", "")
+            if short_description and not 25 <= len(short_description) <= 64:
+                errors.append(
+                    f"skills/{name}/agents/openai.yaml: short_description must have "
+                    "25 to 64 characters."
+                )
+            if not re.search(
+                rf"(?<![a-z0-9-])\${re.escape(name)}(?![a-z0-9-])",
+                ui_fields.get("default_prompt", ""),
+            ):
                 errors.append(
                     f"skills/{name}/agents/openai.yaml: default_prompt should mention ${name}."
                 )
@@ -873,6 +951,7 @@ def main() -> int:
         if "RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml" in validated_required
         else {}
     )
+    validate_runtime_metadata(kit, manifest, errors)
     agents, skills = _manifest_indexes(kit, manifest, errors)
     codex_count, codex = validate_codex_wrappers(kit, agents, errors)
     claude_count = validate_claude_wrappers(kit, agents, codex, errors)
@@ -886,7 +965,7 @@ def main() -> int:
     print(f"Manifest agents: {len(agents)}")
     print(f"Codex wrappers: {codex_count}")
     print(f"Claude wrappers: {claude_count}")
-    print(f"Runtime skills: {skill_count}/{len(REQUIRED_SKILLS)}")
+    print(f"Runtime skills: {skill_count}/{len(skills)}")
     print(f"Versioning: {versioning}")
 
     for warning in warnings:

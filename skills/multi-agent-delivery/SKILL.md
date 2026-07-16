@@ -37,6 +37,9 @@ Use subagents only for concrete bounded work that can progress independently. Pr
 ## Workflow
 
 1. Create a DAG with stable task IDs, dependencies, join conditions, agent role, read-set, write-set, and expected evidence.
+   Include timeout, retry origin, isolation, source fingerprint, and final
+   integration proof. Validate it with `validate_multi_agent.py --phase plan`
+   before the first spawn.
 2. Reserve one runtime thread for the root. Respect the active runtime cap; never assume every planned task can run simultaneously. Keep direct-child fan-out as the default and recursive delegation disabled unless configuration and the plan explicitly allow it.
 3. Give each subagent the minimum context packet from `T_Template_AGENT_TASK.md`. Include raw artifacts and constraints, not the intended answer.
 4. Spawn independent tasks in parallel. A writer's write-set must not overlap
@@ -44,8 +47,11 @@ Use subagents only for concrete bounded work that can progress independently. Pr
    snapshots/worktrees or serialize when isolation cannot be proven.
 5. Monitor and steer only when scope, evidence, or blockers change. Do not duplicate a running task silently.
 6. Wait for every required join dependency. Collect the result envelope from `T_Template_AGENT_RESULT.md` instead of raw logs.
+   Run `validate_multi_agent.py --phase fan-in` before accepting the envelopes.
 7. Reconcile contradictions against primary evidence. Record unresolved conflicts and run a bounded challenge pass when the decision is material.
 8. Integrate writes through one owner, then rerun affected validation after integration.
+   Reconcile every result claim in the ledger and run
+   `validate_multi_agent.py --phase complete` before the final verdict.
 9. Synthesize facts, inferences, gaps, commands, exit codes, and the final verdict in the root thread.
 
 ## Hard Rules
@@ -58,6 +64,10 @@ Use subagents only for concrete bounded work that can progress independently. Pr
   it; pin a source fingerprint or isolate the reader.
 - Do not broaden permissions through delegation; subagents inherit the parent runtime boundary.
 - Record timeouts, interrupted agents, and incomplete evidence as gaps.
+- Treat case variants, parent/child paths and globs as overlapping until
+  dependency, immutable snapshot, or distinct worktrees prove isolation.
+- Reject an expanded actual write-set, stale start fingerprint, orphan retry,
+  unnamespaced claim, unresolved ledger entry, or missing post-fan-in proof.
 
 ## Output
 

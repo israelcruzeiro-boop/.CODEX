@@ -77,18 +77,20 @@ Se a pasta e apenas um agente especializado, mantenha como agente.
 As seis skills recomendadas tem fonte canonica dentro deste kit em `skills/`.
 O instalador as projeta em `PROJECT_ROOT/.agents/skills`, caminho repo-scoped
 descoberto pelo Codex. Elas referenciam os agentes originais em vez de duplicar
-conteudo.
+conteudo. O conjunto canonico vem de `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml`;
+instalador e validadores nao mantem uma segunda lista.
 
-Valide com:
+Cada skill deve possuir contratos versionados em
+`RUNTIME_Bridge/evals/skills/cases.toml`, com no minimo dois triggers, um caso
+de fronteira e um non-trigger. Esses casos verificam roteamento declarado,
+fontes e contrato de saida; nao substituem forward-test com agente novo e
+contexto isolado quando a mudanca de comportamento for material.
+
+Valide o conjunto com:
 
 ```powershell
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\codex-agent-kit
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\gsd-tdd-cli-harness
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\agent-forge
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\architecture-blueprint
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\spec-driven-breakdown
-python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\multi-agent-delivery
-python RUNTIME_Bridge\scripts\validate_arsenal.py
+python RUNTIME_Bridge\scripts\run_skill_contract_evals.py
+python RUNTIME_Bridge\scripts\run_quality_gate.py
 ```
 
 ## Proximo Passo Para Criar Novas Skills
@@ -101,3 +103,5 @@ deste kit ou no caminho escolhido pelo usuario, seguindo `skill-creator`:
 3. Manter `SKILL.md` com menos de 500 linhas.
 4. Referenciar arquivos do kit em vez de duplicar conteudo.
 5. Validar com `quick_validate.py`.
+6. Adicionar casos positivos, de fronteira e negativos ao contrato versionado.
+7. Fazer forward-test isolado quando gatilho ou workflow mudar materialmente.

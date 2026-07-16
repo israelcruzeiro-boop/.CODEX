@@ -2,8 +2,12 @@
 
 **Agente/papel:**
 **Status:** COMPLETE | PARTIAL | BLOCKED | TIMEOUT | INTERRUPTED | FAILED | CONFLICT
+**Modo executado:** READ | WRITE
+**Retry de:** N/A - tentativa inicial | AGT-NNN
 **Escopo executado:**
+**Read-set efetivamente usado:**
 **Write-set alterado:**
+**Isolation usada:** SNAPSHOT:<fingerprint> | WORKTREE:<id> | N/A - motivo
 **Fingerprint lido no inicio:** branch + commit + hash do diff/working tree
 **Fingerprint confirmado no fim:**
 
@@ -39,3 +43,8 @@ Claim IDs usam `CLM-<TASK_ID>-NNN` e sao globais dentro da DAG.
 **Join condition atendida:** SIM | NAO
 **Proxima tarefa desbloqueada:**
 **Recomendacao ao integrador:**
+
+O read-set e o write-set realizados devem estar contidos nos conjuntos
+autorizados. Um resultado `READ` nao altera arquivos. O integrador rejeita
+fingerprint inicial diferente do plano, claim fora do namespace da task ou
+write-set expandido sem replanejamento.

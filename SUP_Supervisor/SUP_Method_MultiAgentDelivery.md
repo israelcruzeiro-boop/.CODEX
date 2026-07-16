@@ -38,6 +38,9 @@ Cada no declara:
 - contexto minimo;
 - evidencia e formato de saida;
 - timeout ou criterio de interrupcao quando aplicavel.
+- isolation (`SNAPSHOT:<fingerprint>` ou `WORKTREE:<id>`) quando houver
+  concorrencia sobre caminhos relacionados;
+- evidencia/saida esperada e tentativa original quando for retry.
 
 Toda DAG declara a versao das fontes (branch, commit e hash do diff/working tree
 ou equivalente). Cada resultado registra o fingerprint efetivamente lido no
@@ -45,6 +48,17 @@ inicio e no fim. Mudanca dessa identidade antes do fan-in invalida resultados de
 replanejamento. Cada task recebe timeout explicito; nao existe duracao global
 arbitraria. Retry e limitado pelo plano e ganha sufixo `-R1`, `-R2`, sem apagar
 a tentativa anterior.
+
+Antes do primeiro spawn, validar o pacote planejado:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_multi_agent.py MULTI_AGENT_PLAN.md `
+  --tasks-dir agent-tasks --phase plan
+```
+
+O validador usa os mesmos IDs, dependencias, file-sets, isolation, timeout e
+retry do plano. Colisao e conservadora e considera diferenca de caixa,
+diretorios e globs; declaracao `SERIAL` sem dependencia na DAG nao isola nada.
 
 O plano deve distinguir grupos paralelos de barreiras seriais. Reservar capacidade para o agente raiz e respeitar o limite real exposto pelo runtime. O Codex usa filhos diretos como padrao; profundidade recursiva so pode ser usada quando configurada e justificada. Mais profundidade aumenta custo, latencia e risco de fan-out descontrolado.
 
@@ -86,6 +100,20 @@ Na barreira de join:
 6. Executar challenge pass independente quando a contradicao muda arquitetura, seguranca, dados, escopo ou release.
 7. Registrar no ledger: claim, fonte, agente, status, conflito e decisao do integrador.
 
+Na coleta e no fechamento, executar respectivamente:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_multi_agent.py MULTI_AGENT_PLAN.md `
+  --tasks-dir agent-tasks --results-dir agent-results --phase fan-in
+python RUNTIME_Bridge/scripts/validate_multi_agent.py MULTI_AGENT_PLAN.md `
+  --tasks-dir agent-tasks --results-dir agent-results --phase complete
+```
+
+`complete` exige correspondencia plano/task/result, write-set realizado contido
+no autorizado, todas as claims no ledger, joins coerentes, fingerprints,
+veredito global e prova pos-fan-in. Conteudo em comments, HTML, fences ou codigo
+indentado nao satisfaz o contrato.
+
 Antes da coleta, a claim usa `NAO_AVALIADO`; depois, somente `CONFIRMADO`,
 `PARCIAL` ou `REFUTADO`. O challenge pass usa `@C` por padrao, salvo especialista
 mais adequado declarado no plano, e recebe timeout e criterio de desempate. O
@@ -98,6 +126,8 @@ raiz decide pela evidencia primaria; conflito material ainda sem prova vira
   entrega e uma sintese READ-only sem diff.
 - A integracao respeita ownership e preserva mudancas preexistentes do usuario.
 - Depois do merge logico, rodar novamente validacoes afetadas; testes isolados dos agentes nao provam a integracao.
+- Registrar a validacao pos-fan-in como evidencia (`EVD-*`) e preencher o
+  veredito global separado do status operacional da DAG.
 - Conflito nao resolvido vira `QUESTIONAR` ou `REPROVADO`, conforme evidencia e risco.
 
 ## Falhas E Retomada

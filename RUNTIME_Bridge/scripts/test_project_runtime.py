@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -13,7 +14,22 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
 import install_project_runtime as installer
+
+
+TEST_SKILLS = (
+    "agent-forge",
+    "architecture-blueprint",
+    "codex-agent-kit",
+    "gsd-tdd-cli-harness",
+    "multi-agent-delivery",
+    "spec-driven-breakdown",
+)
 
 
 class ProjectRuntimeInstallerTest(unittest.TestCase):
@@ -25,7 +41,8 @@ class ProjectRuntimeInstallerTest(unittest.TestCase):
         (self.kit_root / ".codex" / "agents").mkdir(parents=True)
         (self.kit_root / ".claude" / "agents").mkdir(parents=True)
         (self.kit_root / "C10_Maestro").mkdir(parents=True)
-        for skill_name in installer.CANONICAL_SKILLS:
+        (self.kit_root / "RUNTIME_Bridge").mkdir(parents=True)
+        for skill_name in TEST_SKILLS:
             skill_root = self.kit_root / "skills" / skill_name
             (skill_root / "agents").mkdir(parents=True)
             (skill_root / "SKILL.md").write_text(
@@ -34,6 +51,21 @@ class ProjectRuntimeInstallerTest(unittest.TestCase):
             (skill_root / "agents" / "openai.yaml").write_text(
                 f"name: {skill_name}\n", encoding="utf-8"
             )
+
+        runtime_manifest = ["[runtime]", "schema_version = 1", ""]
+        for skill_name in TEST_SKILLS:
+            runtime_manifest.extend(
+                [
+                    "[[skills]]",
+                    f'name = "{skill_name}"',
+                    f'path = "skills/{skill_name}/SKILL.md"',
+                    'purpose = "fixture"',
+                    "",
+                ]
+            )
+        (self.kit_root / "RUNTIME_Bridge" / "AGENT_RUNTIME_MAP.toml").write_text(
+            "\n".join(runtime_manifest), encoding="utf-8"
+        )
 
         (self.kit_root / ".codex" / "agents" / "architect.toml").write_text(
             'name = "architect"\n', encoding="utf-8"
@@ -537,6 +569,40 @@ class ProjectRuntimeInstallerTest(unittest.TestCase):
             installer.install_runtime(self.kit_root, self.project_root)
 
         self.assertFalse((self.project_root / ".agents" / "skills").exists())
+
+    def test_runtime_manifest_is_the_exhaustive_skill_source_of_truth(self) -> None:
+        unlisted = self.kit_root / "skills" / "unlisted-skill"
+        unlisted.mkdir()
+        (unlisted / "SKILL.md").write_text("# Unlisted\n", encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            installer.InstallError,
+            "runtime skill catalog mismatch.*unlisted-skill",
+        ):
+            installer.install_runtime(self.kit_root, self.project_root)
+
+    def test_runtime_manifest_rejects_noncanonical_skill_path_and_schema(self) -> None:
+        manifest_path = (
+            self.kit_root / "RUNTIME_Bridge" / "AGENT_RUNTIME_MAP.toml"
+        )
+        original = manifest_path.read_text(encoding="utf-8")
+        manifest_path.write_text(
+            original.replace(
+                "skills/agent-forge/SKILL.md",
+                "skills/agent-forge/../architecture-blueprint/SKILL.md",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(installer.InstallError, "must use manifest path"):
+            installer.install_runtime(self.kit_root, self.project_root)
+
+        manifest_path.write_text(
+            original.replace("schema_version = 1", "schema_version = 99", 1),
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(installer.InstallError, "unsupported runtime manifest schema"):
+            installer.install_runtime(self.kit_root, self.project_root)
 
     def test_skill_source_drift_conflict_and_unmanaged_skill_preservation(self) -> None:
         unmanaged_skill = (

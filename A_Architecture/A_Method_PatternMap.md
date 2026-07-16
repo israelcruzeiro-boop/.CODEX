@@ -3,6 +3,31 @@
 Metodo para registrar patterns reais e decisoes de padronizacao sem transformar
 preferencia tecnica em lei universal.
 
+Use `A_Reference_PatternCatalog.md` apenas como repertorio de hipoteses e
+contraexemplos. O catalogo nao aprova nenhum pattern: a decisao pertence ao
+contexto do projeto e continua sujeita a evidencia, alternativas, ADR e gate.
+
+## Taxonomia Verificavel
+
+Todo pattern declara exatamente uma familia primaria:
+
+- `DESIGN`: composicao e comportamento dentro de uma fronteira.
+- `ARCHITECTURE`: estrutura macro, modulos e evolucao do sistema.
+- `INTEGRATION`: comunicacao e traducao entre fronteiras.
+- `DATA`: persistencia, leitura, transacao e historico.
+- `RESILIENCE`: controle de falha, concorrencia, trafego e recuperacao.
+
+Todo pattern tambem declara uma ou mais tags canonicas, separadas por virgula:
+`BOUNDARY`, `COMPOSITION`, `DOMAIN`, `MODULARITY`, `MIGRATION`,
+`REQUEST_REPLY`, `EVENT_DRIVEN`, `MESSAGING`, `TRANSACTION`, `CONSISTENCY`,
+`READ_MODEL`, `CACHE`, `CONCURRENCY`, `FAILURE_CONTROL`, `TRAFFIC_CONTROL` e
+`RECOVERY`. A familia expressa o problema primario; tags registram forcas
+transversais. Pattern ausente do catalogo usa a familia mais proxima e tags
+canonicas, sem inventar uma sexta familia. Alterar familia/tags exige evidencia
+e revisao do registro, mas nao implica mudar automaticamente sua decisao.
+Mapas anteriores sem esses campos devem ser migrados no catalogo e em cada
+bloco detalhado; ausencia ou divergencia recebe `QUESTIONAR` do validador.
+
 ## Presenca E Decisao Sao Dimensoes Separadas
 
 Presenca no codigo:
@@ -35,7 +60,8 @@ Cada pattern possui ID estavel (`PAT-001`) e informa:
 
 | Campo | Conteudo esperado |
 |---|---|
-| Nome/presenca/decisao/escopo | O que existe, qual norma vale e desde quando |
+| Nome/familia/tags | Identidade, problema primario e forcas transversais |
+| Presenca/decisao/escopo | O que existe, qual norma vale e desde quando |
 | Evidencia | Arquivos, simbolos, comandos ou incidentes |
 | Problema e forcas | Tensoes reais que o pattern equilibra |
 | Solucao | Estrutura e responsabilidades, sem copiar receita generica |
@@ -50,14 +76,16 @@ Cada pattern possui ID estavel (`PAT-001`) e informa:
 ## Protocolo De Decisao
 
 1. Coletar evidencia do codigo e classificar a presenca.
-2. Explicitar problema, contexto e forcas.
-3. Comparar alternativas e contraindicações.
-4. Classificar explicitamente `Trade-off material` como `SIM` ou `NAO`.
+2. Classificar familia primaria e tags canonicas pelo problema e pelas forcas,
+   nao pelo nome da biblioteca ou pasta.
+3. Explicitar problema, contexto e forcas.
+4. Comparar alternativas e contraindicações.
+5. Classificar explicitamente `Trade-off material` como `SIM` ou `NAO`.
    Se for `SIM`, criar ADR. Se for `NAO`, registrar ADR relacionada ou
    `N/A` com justificativa concreta; `N/A` simples nao e suficiente.
-5. Registrar decisao como `APROVADO`, `DESCARTADO`, `DEPRECIADO` ou `PROIBIDO` apenas com justificativa.
-6. Definir gate, responsavel, frequencia e evidencia esperada.
-7. Registrar plano de transicao quando o estado mudar.
+6. Registrar decisao como `APROVADO`, `DESCARTADO`, `DEPRECIADO` ou `PROIBIDO` apenas com justificativa.
+7. Definir gate, responsavel, frequencia e evidencia esperada.
+8. Registrar plano de transicao quando o estado mudar.
 
 ## Transicoes Validas
 
@@ -77,7 +105,8 @@ Mudanca de presenca ou decisao sem evidencia e, para decisoes relevantes, sem AD
 
 O mapa so passa quando:
 
-- Todo pattern tem ID, presenca, decisao, escopo e evidencia proporcional.
+- Todo pattern tem ID, familia primaria, pelo menos uma tag canonica, presenca,
+  decisao, escopo e evidencia proporcional.
 - `APROVADO` possui forcas, alternativas, contraindicações e trade-offs.
 - `PROPOSTO` e `DESCARTADO` nao sao aplicados como regra vigente.
 - `DEPRECIADO` tem presenca observada/parcial, plano de migracao, dono e prazo.

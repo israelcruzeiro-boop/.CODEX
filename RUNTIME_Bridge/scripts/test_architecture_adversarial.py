@@ -28,19 +28,9 @@ TRACE_ROW = (
 
 def pattern_with_materiality(materiality: str, adr: str) -> str:
     pattern = VALID_PATTERN.replace(
-        "| ID | Pattern | Presenca | Decisao | Escopo | Evidencia | ADR | Gate | Dono |",
-        "| ID | Pattern | Presenca | Decisao | Trade-off material | Escopo | Evidencia | ADR | Gate | Dono |",
-    ).replace(
-        "|---|---|---|---|---|---|---|---|---|",
-        "|---|---|---|---|---|---|---|---|---|---|",
-        1,
-    ).replace(
-        "| PAT-001 | Repository | OBSERVADO | APROVADO | MOD-002 | src/repository.py:Repository | ADR-001 | python scripts/check_repository.py | Architecture team |",
-        f"| PAT-001 | Repository | OBSERVADO | APROVADO | {materiality} | MOD-002 | src/repository.py:Repository | {adr} | python scripts/check_repository.py | Architecture team |",
-    ).replace(
-        "**Decisao:** APROVADO\n",
-        f"**Decisao:** APROVADO\n**Trade-off material:** {materiality}\n",
-    )
+        "| PAT-001 | Repository | DESIGN | BOUNDARY, DOMAIN | OBSERVADO | APROVADO | SIM | MOD-002 | src/repository.py:Repository | ADR-001 | python scripts/check_repository.py | Architecture team |",
+        f"| PAT-001 | Repository | DESIGN | BOUNDARY, DOMAIN | OBSERVADO | APROVADO | {materiality} | MOD-002 | src/repository.py:Repository | {adr} | python scripts/check_repository.py | Architecture team |",
+    ).replace("**Trade-off material:** SIM", f"**Trade-off material:** {materiality}")
     return pattern.replace("- ADR: ADR-001", f"- ADR: {adr}")
 
 
@@ -60,6 +50,164 @@ class ArchitectureAdversarialTests(unittest.TestCase):
     def _codes(self, name: str, content: str) -> set[str]:
         result = validate_architecture.validate_architecture(self._file(name, content))
         return {issue.code for issue in result.errors}
+
+    def _package_result(
+        self,
+        *,
+        asis: str = VALID_ASIS,
+        target: str = VALID_TARGET,
+        pattern: str = VALID_PATTERN,
+    ) -> validate_architecture.ValidationResult:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        (root / "src").mkdir()
+        (root / "src" / "api.py").write_text(
+            "def publish_item(): pass\n", encoding="utf-8"
+        )
+        (root / "src" / "repository.py").write_text(
+            "class Repository: pass\n", encoding="utf-8"
+        )
+        (root / "ARCHITECTURE.md").write_text(asis, encoding="utf-8")
+        (root / "TARGET_ARCHITECTURE.md").write_text(target, encoding="utf-8")
+        (root / "PATTERN_MAP.md").write_text(pattern, encoding="utf-8")
+        return validate_architecture.validate_architecture(root)
+
+    def test_actual_dependency_cycles_and_self_loops_are_rejected(self) -> None:
+        cycle = VALID_TARGET.replace(
+            "| MOD-001 | MOD-002 | sync | publish item | import check |",
+            "| MOD-001 | MOD-002 | sync | publish item | import check |\n"
+            "| MOD-002 | MOD-001 | sync | callback | cycle check |",
+        ).replace(
+            '  M1["MOD-001"] --> M2["MOD-002"]',
+            '  M1["MOD-001"] --> M2["MOD-002"]\n'
+            '  M2["MOD-002"] --> M1["MOD-001"]',
+        )
+        self.assertIn(
+            "dependency-cycle",
+            self._codes("TARGET_ARCHITECTURE.md", cycle),
+        )
+
+        self_loop = VALID_TARGET.replace(
+            "| MOD-001 | MOD-002 | sync | publish item | import check |",
+            "| MOD-001 | MOD-002 | sync | publish item | import check |\n"
+            "| MOD-002 | MOD-002 | sync | recursive call | cycle check |",
+        ).replace(
+            '  M1["MOD-001"] --> M2["MOD-002"]',
+            '  M1["MOD-001"] --> M2["MOD-002"]\n'
+            '  M2["MOD-002"] --> M2["MOD-002"]',
+        )
+        self.assertIn(
+            "dependency-cycle",
+            self._codes("TARGET_ARCHITECTURE.md", self_loop),
+        )
+
+    def test_same_dependency_rule_cannot_be_permitted_and_prohibited(self) -> None:
+        contradictory = VALID_TARGET.replace(
+            "| MOD-001 | MOD-002 internals | internal import | preserve owner | import check |",
+            "| MOD-001 | MOD-002 | same edge also prohibited | preserve owner | import check |",
+        )
+        self.assertIn(
+            "contradictory-dependency-policy",
+            self._codes("TARGET_ARCHITECTURE.md", contradictory),
+        )
+
+    def test_module_public_contract_owner_must_match(self) -> None:
+        bad = VALID_TARGET.replace(
+            "| CON-001 | HTTP | POST /items | MOD-001 |",
+            "| CON-001 | HTTP | POST /items | MOD-002 |",
+        )
+        self.assertIn(
+            "public-contract-owner-mismatch",
+            self._codes("TARGET_ARCHITECTURE.md", bad),
+        )
+
+    def test_target_pattern_must_exist_in_pattern_map(self) -> None:
+        bad = VALID_TARGET.replace("| PAT-001 | PRESENTE |", "| PAT-999 | PRESENTE |")
+        result = self._package_result(target=bad)
+        self.assertIn(
+            "unknown-pattern-map-reference",
+            {issue.code for issue in result.errors},
+        )
+
+    def test_pattern_materiality_is_explicit_in_catalog_and_detail(self) -> None:
+        bad = VALID_PATTERN.replace(
+            "| ID | Pattern | Familia | Tags | Presenca | Decisao | Trade-off material | Escopo | Evidencia | ADR | Gate | Dono |",
+            "| ID | Pattern | Familia | Tags | Presenca | Decisao | Escopo | Evidencia | ADR | Gate | Dono |",
+        ).replace(
+            "|---|---|---|---|---|---|---|---|---|---|---|---|",
+            "|---|---|---|---|---|---|---|---|---|---|---|",
+            1,
+        ).replace(
+            "| OBSERVADO | APROVADO | SIM | MOD-002 |",
+            "| OBSERVADO | APROVADO | MOD-002 |",
+        ).replace("**Trade-off material:** SIM\n", "")
+        self.assertIn(
+            "missing-pattern-materiality",
+            self._codes("PATTERN_MAP.md", bad),
+        )
+
+    def test_approved_pattern_requires_every_canonical_audit_item(self) -> None:
+        bad = VALID_PATTERN.replace(
+            "- [x] Links de MOD-/CON-/REQ-/TASK-/TEST-/EVD- existem.\n",
+            "",
+        )
+        self.assertIn(
+            "incomplete-audit-checklist",
+            self._codes("PATTERN_MAP.md", bad),
+        )
+
+    def test_deprecated_pattern_requires_owner_and_iso_deadline(self) -> None:
+        bad = VALID_PATTERN.replace(
+            "| OBSERVADO | APROVADO | SIM |",
+            "| OBSERVADO | DEPRECIADO | SIM |",
+        ).replace(
+            "**Decisao:** APROVADO",
+            "**Decisao:** DEPRECIADO",
+        ).replace(
+            "- Dono/prazo: Domain team / 2026-08-01",
+            "- Dono/prazo: someday",
+        )
+        self.assertIn(
+            "incomplete-deprecation",
+            self._codes("PATTERN_MAP.md", bad),
+        )
+
+    def test_approved_target_rejects_blocking_gap(self) -> None:
+        variants = (
+            "| ID | Lacuna | Impacto | Dono | Prazo | Bloqueia? |\n"
+            "|---|---|---|---|---|---|\n"
+            "| GAP-001 | ownership unresolved | cross-write | Architecture team | 2026-08-01 | SIM |",
+            "GAP-001: ownership unresolved; Bloqueia? SIM",
+        )
+        for gap in variants:
+            with self.subTest(gap=gap):
+                bad = VALID_TARGET.replace("No blocking gaps.", gap)
+                self.assertIn(
+                    "blocking-target-gap",
+                    self._codes("TARGET_ARCHITECTURE.md", bad),
+                )
+
+    def test_internal_evidence_symbol_must_exist(self) -> None:
+        bad = VALID_PATTERN.replace(
+            "src/repository.py:Repository",
+            "src/repository.py:MissingSymbol",
+        )
+        self.assertIn(
+            "missing-evidence-symbol",
+            self._codes("PATTERN_MAP.md", bad),
+        )
+
+    def test_target_asis_reference_date_must_match_document(self) -> None:
+        stale = VALID_ASIS.replace(
+            "**Data da analise:** 2026-07-16",
+            "**Data da analise:** 2026-07-15",
+        )
+        result = self._package_result(asis=stale)
+        self.assertIn(
+            "asis-reference-date-mismatch",
+            {issue.code for issue in result.errors},
+        )
 
     def test_graph_rejects_modules_absent_from_catalog(self) -> None:
         bad = VALID_TARGET.replace(
@@ -192,7 +340,7 @@ class ArchitectureAdversarialTests(unittest.TestCase):
 
     def test_duplicate_pattern_catalog_definition_does_not_overwrite_first(self) -> None:
         catalog_row = (
-            "| PAT-001 | Repository | OBSERVADO | APROVADO | MOD-002 | "
+            "| PAT-001 | Repository | DESIGN | BOUNDARY, DOMAIN | OBSERVADO | APROVADO | SIM | MOD-002 | "
             "src/repository.py:Repository | ADR-001 | python scripts/check_repository.py | Architecture team |"
         )
         contradictory = catalog_row.replace("APROVADO", "PROIBIDO").replace(
@@ -373,8 +521,8 @@ class ArchitectureAdversarialTests(unittest.TestCase):
             self._codes("PATTERN_MAP.md", hidden_verdict),
         )
         hidden_checklist = VALID_PATTERN.replace(
-            "- [x] Presence and decision agree.",
-            "<details>\n- [x] Presence and decision agree.\n</details>",
+            "- [x] Presenca `OBSERVADO` nao foi tratada automaticamente como decisao `APROVADO`.",
+            "<details>\n- [x] Presenca `OBSERVADO` nao foi tratada automaticamente como decisao `APROVADO`.\n</details>",
         )
         self.assertIn(
             "incomplete-audit-checklist",
@@ -383,8 +531,8 @@ class ArchitectureAdversarialTests(unittest.TestCase):
 
     def test_approved_pattern_requires_checked_audit_and_concrete_justification(self) -> None:
         bad = VALID_PATTERN.replace(
-            "- [x] Presence and decision agree.",
-            "- [ ] Presence and decision agree.",
+            "- [x] Presenca `OBSERVADO` nao foi tratada automaticamente como decisao `APROVADO`.",
+            "- [ ] Presenca `OBSERVADO` nao foi tratada automaticamente como decisao `APROVADO`.",
         ).replace(
             "**Justificativa:** evidence and ADR complete",
             "**Justificativa:** x",

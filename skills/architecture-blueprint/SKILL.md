@@ -28,6 +28,10 @@ Read completely:
 - `A_Architecture/A_Method_ModularArchitecture.md`
 - `A_Architecture/A_Method_PatternMap.md`
 
+Read `A_Architecture/A_Reference_PatternCatalog.md` only when discovering,
+comparing, approving, deprecating, or prohibiting patterns. Treat it as a
+decision aid, never as a default architecture.
+
 Load the matching templates only when creating artifacts:
 
 - Brownfield AS-IS: `DOC_Documentation/DOC_Template_ARCHITECTURE.md`
@@ -59,6 +63,18 @@ Never describe a proposed module as if it already exists.
 7. Define fitness gates that can detect drift: dependency rules, contract tests, schema checks, route checks, build/test commands, or review checks with an owner.
 8. Materialize or update the correct artifacts. Keep AS-IS, TO-BE, ADRs, and pattern map linked but non-duplicated.
 9. Return facts, inferences, gaps, trade-offs, validation commands, and the next mandatory agent.
+
+## Deterministic Closure
+
+After creating or updating `ARCHITECTURE.md`, `TARGET_ARCHITECTURE.md`, or
+`PATTERN_MAP.md`, run from `KIT_ROOT`:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_architecture.py PROJECT_ROOT
+```
+
+Record cwd, command, exit code, errors, warnings, and validated artifacts. A
+nonzero exit blocks readiness; do not replace it with a prose-only review.
 
 ## Completion Gate
 

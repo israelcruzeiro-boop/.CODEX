@@ -211,13 +211,16 @@ VALID_PATTERN = """# PATTERN_MAP - API
 **TO-BE:** TARGET_ARCHITECTURE.md
 **Dono:** Architecture team
 ## Catalogo
-| ID | Pattern | Presenca | Decisao | Escopo | Evidencia | ADR | Gate | Dono |
-|---|---|---|---|---|---|---|---|---|
-| PAT-001 | Repository | OBSERVADO | APROVADO | MOD-002 | src/repository.py:Repository | ADR-001 | python scripts/check_repository.py | Architecture team |
+| ID | Pattern | Familia | Tags | Presenca | Decisao | Trade-off material | Escopo | Evidencia | ADR | Gate | Dono |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| PAT-001 | Repository | DESIGN | BOUNDARY, DOMAIN | OBSERVADO | APROVADO | SIM | MOD-002 | src/repository.py:Repository | ADR-001 | python scripts/check_repository.py | Architecture team |
 ## Registro Detalhado
 ### PAT-001 - Repository
 **Presenca:** OBSERVADO
 **Decisao:** APROVADO
+**Familia:** DESIGN
+**Tags:** BOUNDARY, DOMAIN
+**Trade-off material:** SIM
 **Escopo:** MOD-002 writes
 **Modulos/contratos:** MOD-002 / CON-002
 **Data/decisor:** 2026-07-16 / Architecture team
@@ -252,7 +255,15 @@ VALID_PATTERN = """# PATTERN_MAP - API
 |---|---|---|---|
 | python scripts/check_repository.py | PR/CI | EVD-001 | SIM |
 ## Auditoria De Consistencia
-- [x] Presence and decision agree.
+- [x] Presenca `OBSERVADO` nao foi tratada automaticamente como decisao `APROVADO`.
+- [x] Decisao `PROPOSTO` com presenca `NAO_OBSERVADO` nao aparece no AS-IS como implementada.
+- [x] Todo `DESCARTADO` preserva o motivo e nao aparece como regra vigente.
+- [x] Todo `DEPRECIADO` possui migracao, dono e prazo.
+- [x] Todo `PROIBIDO` possui gate bloqueante.
+- [x] Todo pattern declara `Trade-off material = SIM/NAO`.
+- [x] Todo pattern declara uma familia primaria e ao menos uma tag canonica; catalogo e detalhe concordam.
+- [x] Toda escolha material aponta ADR; `N/A` so aparece em escolha nao material e possui justificativa concreta.
+- [x] Links de MOD-/CON-/REQ-/TASK-/TEST-/EVD- existem.
 ## Veredito
 APROVADO
 **Justificativa:** evidence and ADR complete
@@ -534,6 +545,33 @@ class ArchitectureValidatorTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.assertIn(
             "pattern-state-mismatch",
+            {issue.code for issue in validate_architecture.validate_architecture(root / "PATTERN_MAP.md").errors},
+        )
+
+    def test_pattern_family_must_be_canonical(self) -> None:
+        bad = VALID_PATTERN.replace("| DESIGN | BOUNDARY, DOMAIN |", "| PLATFORM | BOUNDARY, DOMAIN |")
+        temporary, root = self._project(pattern=bad)
+        self.addCleanup(temporary.cleanup)
+        self.assertIn(
+            "invalid-pattern-family",
+            {issue.code for issue in validate_architecture.validate_architecture(root / "PATTERN_MAP.md").errors},
+        )
+
+    def test_pattern_tags_must_be_unique_and_canonical(self) -> None:
+        bad = VALID_PATTERN.replace("BOUNDARY, DOMAIN", "BOUNDARY, MAGIC, BOUNDARY")
+        temporary, root = self._project(pattern=bad)
+        self.addCleanup(temporary.cleanup)
+        self.assertIn(
+            "invalid-pattern-tags",
+            {issue.code for issue in validate_architecture.validate_architecture(root / "PATTERN_MAP.md").errors},
+        )
+
+    def test_pattern_catalog_and_detail_taxonomy_must_match(self) -> None:
+        bad = VALID_PATTERN.replace("**Tags:** BOUNDARY, DOMAIN", "**Tags:** BOUNDARY, COMPOSITION")
+        temporary, root = self._project(pattern=bad)
+        self.addCleanup(temporary.cleanup)
+        self.assertIn(
+            "pattern-taxonomy-mismatch",
             {issue.code for issue in validate_architecture.validate_architecture(root / "PATTERN_MAP.md").errors},
         )
 

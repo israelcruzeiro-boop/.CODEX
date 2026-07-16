@@ -140,6 +140,17 @@ Use `SUP_Supervisor/SUP_Method_Harness.md` como metodo e
 comandos usam `PASS`, `FAIL`, `LACUNA` ou `SKIP_JUSTIFICADO`; o veredito global
 usa apenas `APROVADO`, `APROVADO_COM_RESSALVAS`, `QUESTIONAR` ou `REPROVADO`.
 
+Antes de emitir o veredito, valide o artefato executavel:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_cli_audit.py CLI_AUDIT.md --json
+```
+
+O validador exige comando, CWD, objetivo, exit code, status, `EVD-*`,
+rastreabilidade e coerencia do veredito. Fences, comments e HTML nao contam.
+`PASS` sem exit `0`, `FAIL` mascarado, `LACUNA` sem justificativa ou
+`APROVADO_COM_RESSALVAS` sem acao/dono/prazo bloqueiam o fechamento.
+
 ---
 
 ## Bug Sweep Obrigatorio
@@ -270,5 +281,6 @@ Depois deste passo:
 10. Nunca aprovar com DoD incompleta ou elo critico quebrado entre requisito,
     arquitetura/contrato, task, teste e evidencia.
 11. Nunca renumerar IDs para esconder item removido, falha ou evidencia antiga.
+12. Nunca aprovar um CLI Audit que falhe em `validate_cli_audit.py`.
 
 O `@GSD` existe para fazer a entrega andar, mas andar com os olhos abertos.

@@ -1,10 +1,15 @@
 [runtime]
 kit_name = "Codex Agent Kit"
-version = "2026-07-16"
+schema_version = 1
+kit_version = "1.1.0"
+release_date = "2026-07-16"
+python_requires = ">=3.11"
+supported_os = ["linux", "windows"]
 source_of_truth = "AGENTS.md"
 codex_wrappers = ".codex/agents"
 claude_wrappers = ".claude/agents"
 skills = "skills"
+coverage_map = "RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml"
 
 [policy]
 keep_original_agents_as_source = true
@@ -22,8 +27,12 @@ contract_files = [
   "C_Cetico/C_Agent_Cetico.md",
   "C10_Maestro/C10_Method_SDD.md",
   "DOC_Documentation/DOC_Agent_ProjectDocumentationArchitect.md",
+  "DE_DataEngineering/DE_Agent_DataPipeline.md",
   "GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md",
+  "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md",
+  "ML_MLEngineering/ML_Agent_MLEngineering.md",
   "P_Performance/P_Agent_PerformanceValidator.toml",
+  "PKG_PackageSDK/PKG_Agent_PackageCLISDK.md",
   "S_Seguranca/S_Agent_SecurityValidator.toml",
   "SPEC_Specs/SPEC_Agent_SpecArchitect.md",
   "SUP_Supervisor/SUP_Method_MultiAgentDelivery.md",
@@ -131,6 +140,12 @@ alias = "@DATA"
 purpose = "Own persistent-state modeling, migrations, integrity, and rollback."
 
 [[agents]]
+name = "data-pipeline"
+source = "DE_DataEngineering/DE_Agent_DataPipeline.md"
+alias = "@DE"
+purpose = "Own ETL and ELT pipelines, lineage, replay, data quality, orchestration, and data SLAs."
+
+[[agents]]
 name = "debugger"
 source = "BUG_Debugger/BUG_Agent_Debugger.md"
 alias = "@BUG"
@@ -197,6 +212,12 @@ alias = "@IOS"
 purpose = "Own native iOS, TestFlight, signing, privacy, and App Review readiness."
 
 [[agents]]
+name = "infrastructure-as-code"
+source = "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md"
+alias = "@IAC"
+purpose = "Own IaC state, plans, modules, drift, policy checks, safe apply, and teardown controls."
+
+[[agents]]
 name = "layout-replicator"
 source = "D_Design/D_Agent_LayoutReplicator.md"
 alias = "@D:layout"
@@ -221,10 +242,22 @@ alias = "@M"
 purpose = "Own mobile behavior, permissions, offline sync, stores, and releases."
 
 [[agents]]
+name = "ml-engineering"
+source = "ML_MLEngineering/ML_Agent_MLEngineering.md"
+alias = "@ML"
+purpose = "Own classical ML datasets, training, evaluation, registry, serving, drift, and retraining."
+
+[[agents]]
 name = "observability-deploy"
 source = "O_Observability/O_Agent_DeployObservability.md"
 alias = "@O"
 purpose = "Build CI/CD and operational evidence through logs, metrics, alerts, and rollback."
+
+[[agents]]
+name = "package-cli-sdk"
+source = "PKG_PackageSDK/PKG_Agent_PackageCLISDK.md"
+alias = "@PKG"
+purpose = "Own CLI, package, library, and SDK contracts, compatibility, packaging, publication, and consumer tests."
 
 [[agents]]
 name = "payments-marketplace"

@@ -11,9 +11,15 @@
 
 ## Catalogo
 
-| ID | Pattern | Presenca | Decisao | Trade-off material | Escopo | Evidencia | ADR | Gate | Dono |
-|---|---|---|---|---|---|---|---|---|---|
-| PAT-001 |  | OBSERVADO/PARCIAL/NAO_OBSERVADO | SEM_DECISAO/PROPOSTO/APROVADO/DESCARTADO/DEPRECIADO/PROIBIDO | SIM/NAO |  | arquivo:simbolo ou evidencia da necessidade | ADR- se SIM; ADR-/N/A justificado se NAO |  |  |
+Familias: `DESIGN`, `ARCHITECTURE`, `INTEGRATION`, `DATA`, `RESILIENCE`.
+Tags canonicas: `BOUNDARY`, `COMPOSITION`, `DOMAIN`, `MODULARITY`,
+`MIGRATION`, `REQUEST_REPLY`, `EVENT_DRIVEN`, `MESSAGING`, `TRANSACTION`,
+`CONSISTENCY`, `READ_MODEL`, `CACHE`, `CONCURRENCY`, `FAILURE_CONTROL`,
+`TRAFFIC_CONTROL`, `RECOVERY`.
+
+| ID | Pattern | Familia | Tags | Presenca | Decisao | Trade-off material | Escopo | Evidencia | ADR | Gate | Dono |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| PAT-001 |  | DESIGN/ARCHITECTURE/INTEGRATION/DATA/RESILIENCE | BOUNDARY, DOMAIN | OBSERVADO/PARCIAL/NAO_OBSERVADO | SEM_DECISAO/PROPOSTO/APROVADO/DESCARTADO/DEPRECIADO/PROIBIDO | SIM/NAO |  | arquivo:simbolo ou evidencia da necessidade | ADR- se SIM; ADR-/N/A justificado se NAO |  |  |
 
 ## Registro Detalhado
 
@@ -21,6 +27,8 @@
 
 **Presenca:** OBSERVADO | PARCIAL | NAO_OBSERVADO
 **Decisao:** SEM_DECISAO | PROPOSTO | APROVADO | DESCARTADO | DEPRECIADO | PROIBIDO
+**Familia:** DESIGN | ARCHITECTURE | INTEGRATION | DATA | RESILIENCE
+**Tags:** BOUNDARY, DOMAIN
 **Trade-off material:** SIM | NAO
 **Escopo:**
 **Modulos/contratos:** MOD- / CON- / EVT-
@@ -81,6 +89,8 @@
 - [ ] Todo `DEPRECIADO` possui migracao, dono e prazo.
 - [ ] Todo `PROIBIDO` possui gate bloqueante.
 - [ ] Todo pattern declara `Trade-off material = SIM/NAO`.
+- [ ] Todo pattern declara uma familia primaria e ao menos uma tag canonica;
+      catalogo e detalhe concordam.
 - [ ] Toda escolha material aponta ADR; `N/A` so aparece em escolha nao
       material e possui justificativa concreta.
 - [ ] Links de MOD-/CON-/REQ-/TASK-/TEST-/EVD- existem.

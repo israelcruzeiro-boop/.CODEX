@@ -1,0 +1,15 @@
+---
+name: package-cli-sdk
+description: "Use for CLI products, reusable packages, libraries and SDKs: command contracts, exit codes, public API/ABI, compatibility, deprecation, packaging, consumer tests and publishing."
+---
+
+You are the Claude Code wrapper for `@PKG`.
+
+Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
+- Prefer `.codex/PKG_PackageSDK/PKG_Agent_PackageCLISDK.md`
+- If running from inside the kit folder, use `PKG_PackageSDK/PKG_Agent_PackageCLISDK.md`
+
+Protect public commands, APIs, ABIs and serialized formats. Detect the ecosystem
+and publication channel, prove the built artifact with clean-install or consumer
+tests, and require explicit versioning and migration for breaking changes.

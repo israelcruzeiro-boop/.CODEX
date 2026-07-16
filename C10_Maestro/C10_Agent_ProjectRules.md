@@ -58,7 +58,9 @@ PROJECT_ROOT/
 
 Os nomes reais podem variar. Antes de agir, mapear a estrutura existente e
 classificar cada pasta como backend, frontend, admin, mobile, pacote
-compartilhado, infra, docs, scripts, dados, testes ou outro.
+compartilhado, CLI, desktop, infra/IaC, data pipeline, ML, docs, scripts,
+dados, testes ou outro. Classificar tambem o perfil de cada unidade conforme
+`.codex/C10_Maestro/C10_Method_ProjectProfiles.md`; nunca alegar cobertura total.
 
 Regra de autoridade: os agentes do arsenal podem trabalhar dentro de qualquer
 subpasta de `PROJECT_ROOT` quando a tarefa exigir, mas devem preservar a
@@ -99,7 +101,7 @@ vira o canonico e precisa estar documentado em `PROJECT.md`, `DATA_MODEL.md` ou
 
 Preencher com a stack real. Nao use estes exemplos como padrao obrigatorio.
 
-- **Produto/plataforma:** [web | mobile | API | CLI | desktop | automacao | dados | IA | outro]
+- **Produto/plataforma:** [web | mobile | API | CLI/package/SDK | desktop | automacao | ETL/data | ML | IA/LLM | IaC | embedded | game | outro]
 - **Frontend/UI:** [stack real ou N/A]
 - **Backend/API:** [stack real ou N/A]
 - **Banco/dados:** [stack real ou N/A]
@@ -108,6 +110,8 @@ Preencher com a stack real. Nao use estes exemplos como padrao obrigatorio.
 - **Filas/jobs:** [stack real ou N/A]
 - **Observabilidade:** [stack real ou N/A]
 - **Testes:** [frameworks reais]
+- **Perfil(es) de engenharia:** [IDs de `C10_Method_ProjectProfiles.md` por unidade]
+- **CI e canal de release:** [provider e deploy/registry/store/model registry/apply/N/A]
 
 ---
 
@@ -158,9 +162,12 @@ formalizacao. Nao impor preferencia pessoal.
 11. Atualizar documentacao/memoria quando houver decisao, entrega ou aprendizado relevante.
 12. Fechar cada ciclo com `STATUS.md` geral e status dos ambientes afetados atualizados.
 13. Salvar toda migration no diretorio canonico de migrations definido para o projeto.
-14. Versionar lockfile do backend e executar instalacao reproduzivel antes de validar.
+14. Versionar lockfiles aplicaveis de cada ecossistema e executar instalacao/build reproduzivel antes de validar.
 15. Executar audit de dependencias e tratar findings bloqueantes; manter Dependabot configurado para os ecossistemas reais do repositorio.
-16. Criar/manter unitarios de frontend e backend, API/contrato e happy paths Playwright para fluxos criticos; backend tem meta de 100% de cobertura com excecao documentada.
+16. Criar/manter testes proporcionais ao perfil: Playwright apenas para UI
+    browser critica; API apenas quando houver API; consumer/install para
+    package/SDK; data-quality/replay para pipelines; eval/drift para ML; plan/policy
+    para IaC. Thresholds devem vir da politica real e toda excecao e documentada.
 17. Definir dominios de problema, ownership e contratos antes de criar modulos relevantes.
 18. Garantir logs estruturados e seguros nos erros relevantes.
 
@@ -178,7 +185,7 @@ formalizacao. Nao impor preferencia pessoal.
 10. Nunca reverter mudanca de usuario sem pedido explicito.
 11. Nunca encerrar ciclo relevante com progresso de ambiente desatualizado.
 12. Nunca criar migration fora do caminho canonico ou sem plano de rollback/replicacao.
-13. Nunca aceitar backend sem lockfile aplicavel ou PR que altere manifesto sem atualizar lockfile.
+13. Nunca aceitar ecossistema sem lockfile aplicavel ou mudanca de manifesto sem atualizar lockfile.
 14. Nunca silenciar audit, cobertura ou teste para liberar merge sem excecao rastreavel e aprovada.
 
 ---
@@ -195,8 +202,8 @@ Toda entrega relevante deve avaliar:
 | Seguranca | Auth, roles, PII, secrets, uploads, logs e webhooks estao seguros? | `@S` |
 | Performance | Hot paths, listas, cache, queries, concorrencia e custo foram avaliados? | `@P` |
 | Observabilidade | Logs, metricas, traces, alertas e health checks existem para fluxos criticos? | `@O` |
-| Testes | Unitarios front/back, API, cobertura backend e Playwright happy path estao cobertos? | `@GSD`/`@Q` |
-| Operacao | GitHub Actions, ambientes, deploy, rollback e migrations estao planejados? | `@E`/`@O`/`@REL` |
+| Testes | As provas sao proporcionais ao perfil, contrato e risco reais? | `@GSD`/`@Q` |
+| Operacao | CI detectado, canal, artefato, promocao e recovery estao planejados ou `N/A` justificado? | `@E`/`@O`/`@REL` |
 | Dependencias | Lockfile, audit, Dependabot, CVEs e licencas estao sob controle? | `@DEP`/`@S` |
 | Produto/UX | Estados vazios, erro, permissoes, acessibilidade e copy foram pensados? | `@D`/`@I18N` |
 | Compliance | Ha requisito legal, loja, setor regulado, pagamento ou dado sensivel? | agente aplicavel |
@@ -216,6 +223,10 @@ Agentes comuns:
 - `@A`: arquitetura.
 - `@B`: backend/API/dominio.
 - `@D`: design/frontend/UX.
+- `@PKG`: CLI/packages/bibliotecas/SDKs.
+- `@DE`: data engineering/ETL/ELT.
+- `@ML`: ML classico/MLOps; nao LLM/RAG.
+- `@IAC`: Infrastructure as Code/state/plan/apply/drift.
 - `@E`: environment/secrets.
 - `@GSD`: TDD/Harness.
 - `@S`: seguranca.

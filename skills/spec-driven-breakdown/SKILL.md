@@ -51,6 +51,18 @@ Read completely:
 9. Evaluate Definition of Ready before handoff and Definition of Done before closure.
 10. Emit readiness, the canonical global verdict, and the next mandatory agent.
 
+## Deterministic Closure
+
+After creating or updating a spec package, run from `KIT_ROOT`:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_specs.py PROJECT_ROOT
+```
+
+Record cwd, command, exit code, errors, warnings, and validated changes. A
+nonzero exit blocks the handoff; do not infer readiness only from checked
+Markdown boxes.
+
 ## Quality Rules
 
 - Write measurable acceptance criteria; never use "works well" or equivalent.

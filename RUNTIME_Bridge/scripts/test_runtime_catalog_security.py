@@ -129,6 +129,56 @@ APROVADO APROVADO_COM_RESSALVAS QUESTIONAR REPROVADO
                 )
 
 
+class RuntimeMetadataTests(unittest.TestCase):
+    def _manifest(self) -> dict[str, object]:
+        return {
+            "runtime": {
+                "schema_version": 1,
+                "kit_version": "1.1.0",
+                "release_date": "2026-07-16",
+                "python_requires": ">=3.11",
+                "supported_os": ["linux", "windows"],
+                "coverage_map": "RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml",
+            }
+        }
+
+    def test_versioned_runtime_metadata_accepts_supported_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            kit = Path(directory)
+            coverage = kit / "RUNTIME_Bridge" / "PROJECT_COVERAGE_MAP.toml"
+            coverage.parent.mkdir()
+            coverage.write_text("schema_version = 1\n", encoding="utf-8")
+            errors: list[str] = []
+            validator.validate_runtime_metadata(kit, self._manifest(), errors)
+            self.assertEqual(errors, [])
+
+    def test_runtime_metadata_rejects_schema_semver_os_and_missing_map(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            kit = Path(directory)
+            manifest = self._manifest()
+            runtime = manifest["runtime"]
+            assert isinstance(runtime, dict)
+            runtime.update(
+                {
+                    "schema_version": 99,
+                    "kit_version": "2026-07-16",
+                    "release_date": "2026-02-31",
+                    "python_requires": ">=3.12",
+                    "supported_os": ["linux"],
+                    "coverage_map": "RUNTIME_Bridge/missing.toml",
+                }
+            )
+            errors: list[str] = []
+            validator.validate_runtime_metadata(kit, manifest, errors)
+            joined = "\n".join(errors)
+            self.assertIn("schema_version", joined)
+            self.assertIn("SemVer", joined)
+            self.assertIn("valid ISO date", joined)
+            self.assertIn("python_requires", joined)
+            self.assertIn("both 'linux' and 'windows'", joined)
+            self.assertIn("does not exist", joined)
+
+
 class RuntimeFixture:
     def __init__(self, root: Path) -> None:
         self.root = root

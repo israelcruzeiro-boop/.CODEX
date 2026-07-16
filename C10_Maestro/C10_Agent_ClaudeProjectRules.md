@@ -56,6 +56,9 @@ plano, impacto, validacao e decisao documentada.
 ## Regras
 
 1. Para tarefa complexa, começar por `pick-agent-selector`.
+   Classificar tambem o artefato por
+   `.codex/RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`; perfil parcial/ausente
+   exige limitacao e fallback explicitos.
 2. Para qualquer implementacao, bugfix ou refatoracao comportamental, usar
    `gsd-tdd-cli-auditor`.
 3. Para plano antes de codigo, usar `cetico` e `impact-validator` quando houver
@@ -66,10 +69,18 @@ plano, impacto, validacao e decisao documentada.
 7. Para duas ou mais frentes independentes, planejar DAG, ownership, contexto,
    joins e integracao conforme
    `.codex/SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`.
+8. Usar `package-cli-sdk`, `data-pipeline`, `ml-engineering` e
+   `infrastructure-as-code` quando esses forem os artefatos principais.
 
 Subagentes escritores nunca compartilham arquivos ao mesmo tempo. O agente
 principal aguarda os joins obrigatorios, confronta resultados pela evidencia
 primaria e revalida a integracao antes do veredito.
+
+Validadores aplicaveis:
+
+- `.codex/RUNTIME_Bridge/scripts/validate_multi_agent.py`
+- `.codex/RUNTIME_Bridge/scripts/validate_cli_audit.py`
+- `.codex/RUNTIME_Bridge/scripts/run_quality_gate.py`
 
 ## Fonte Da Verdade
 

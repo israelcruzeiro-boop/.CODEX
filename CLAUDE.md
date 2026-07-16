@@ -56,6 +56,10 @@ bugfix, auditoria, release ou risco medio/alto:
 2. Ele deve selecionar o time certo e a ordem de acionamento.
 3. Se a tarefa nasce de ideia, legado ou feature grande, inclua
    `spec-architect` antes de arquitetura e execucao.
+   Classifique tambem o artefato pelo mapa
+   `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`; perfil `PARCIAL` ou `AUSENTE`
+   exige limitacao explicita e `agent-forge-foreman` quando a cobertura real
+   ficar abaixo de 70%.
 4. Se a tarefa envolve criar, auditar ou sincronizar documentacao estrutural,
    inclua `project-documentation-architect`.
 5. Se houver implementacao, bugfix ou refatoracao comportamental, inclua
@@ -69,6 +73,8 @@ bugfix, auditoria, release ou risco medio/alto:
 9. Se a tarefa envolver IA/LLM em producao (prompts de produto, RAG, evals,
    custo de tokens, guardrails, dados enviados a provedores), inclua
    `ai-integration-architect`.
+   Use `package-cli-sdk` para packages/CLI/SDK, `data-pipeline` para ETL/ELT,
+   `ml-engineering` para ML classico/MLOps e `infrastructure-as-code` para IaC.
 10. Se nenhum agente existente cobrir uma lacuna real, use
     `agent-forge-foreman`.
 
@@ -129,6 +135,7 @@ dependencias e pattern map seguem:
 
 - `A_Architecture/A_Method_ModularArchitecture.md`
 - `A_Architecture/A_Method_PatternMap.md`
+- `A_Architecture/A_Reference_PatternCatalog.md`
 
 ## Metodo Multiagente
 
@@ -141,6 +148,9 @@ Para trabalho paralelo, usar:
 
 O agente principal continua responsavel por integracao, reconciliacao de
 conflitos e veredito final.
+
+Valide o plano/envelopes nas fases aplicaveis com
+`RUNTIME_Bridge/scripts/validate_multi_agent.py`.
 
 ## Metodo Harness
 
@@ -162,6 +172,8 @@ Template:
 
 - `T_Templates/T_Template_CLI_AUDIT.md`
 
+Valide o artefato com `RUNTIME_Bridge/scripts/validate_cli_audit.py`.
+
 ## Politica De Organizacao
 
 - Nao mova, renomeie ou reescreva os agentes originais para adequar ao Claude.
@@ -174,7 +186,7 @@ Template:
 - Use `RUNTIME_Bridge/RUNTIME.md` como mapa de compatibilidade quando precisar
   entender como Codex, Claude e skills se conectam.
 - Depois de alterar wrappers ou agentes, rode:
-  `python RUNTIME_Bridge/scripts/validate_arsenal.py`.
+  `python RUNTIME_Bridge/scripts/run_quality_gate.py`.
 - Depois de checkout ou `git pull`, a partir de `PROJECT_ROOT`, rode
   `python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .`
   e depois o mesmo comando com `--check`. Ele tambem projeta as skills Codex em

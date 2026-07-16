@@ -90,6 +90,7 @@ Todo agente deve usar o prefixo semantico no nome da pasta e do arquivo:
 | `C_` | Cetico cirurgico e revisao de planos | `C_Cetico/C_Agent_Cetico.md` |
 | `D_` | Design, UX, frontend visual e replicacao fiel de layout | `D_Design/D_Agent_Design.md`, `D_Design/D_Agent_LayoutReplicator.md` |
 | `DATA_` | Banco de dados, migrations, integridade e modelagem de dados | `DATA_Database/DATA_Agent_DataMigrations.md` |
+| `DE_` | Engenharia de dados, ETL/ELT, lineage, replay e data quality | `DE_DataEngineering/DE_Agent_DataPipeline.md` |
 | `DEP_` | Dependencias, supply-chain, upgrades, CVEs e licencas | `DEP_Dependencies/DEP_Agent_DependencySteward.md` |
 | `DOC_` | Documentacao estrutural do projeto, progresso e handoff | `DOC_Documentation/DOC_Agent_ProjectDocumentationArchitect.md` |
 | `E_` | Environment, secrets, deploy vars e paridade de ambientes | `E_Environment/E_Agent_Environment.md`, `E_Environment/E_Agent_DigitalOceanEnvironment.md` |
@@ -98,13 +99,16 @@ Todo agente deve usar o prefixo semantico no nome da pasta e do arquivo:
 | `GOV_` | Compliance geral, privacidade e regulacao | `GOV_Compliance/GOV_Agent_ComplianceRegulatory.md` |
 | `GSD_` | Delivery discipline, TDD e auditoria CLI | `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md` |
 | `I18N_` | Localizacao, ingles de produto e UX writing | `I18N_LocalizationUX/I18N_Agent_LocalizationUX.md` |
+| `IAC_` | Infrastructure as Code, state, drift, policy e apply seguro | `IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md` |
 | `IOS_` | iOS nativo, Apple platforms e App Store approval | `IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md` |
 | `M_` | Mobile, apps nativos/hibridos, lojas e release | `M_MobilePlaystore/M_Agent_MobilePlaystore.md` |
+| `ML_` | ML classico e MLOps: datasets, treino, registry, serving e drift | `ML_MLEngineering/ML_Agent_MLEngineering.md` |
 | `MOD_` | Trust & Safety, denuncias e moderacao | `MOD_TrustSafety/MOD_Agent_TrustSafety.md` |
 | `O_` | Observabilidade, deploy e operacao | `O_Observability/O_Agent_DeployObservability.md` |
 | `ONB_` | Onboarding e pontape inicial: guia a pessoa por fase e proximo passo | `ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md` |
 | `P_` | Performance e escalabilidade | `P_Performance/P_Agent_PerformanceValidator.toml` |
 | `PAY_` | Pagamentos, marketplace e monetizacao | `PAY_PaymentsMarketplace/PAY_Agent_PaymentsMarketplace.md` |
+| `PKG_` | Packages, bibliotecas, CLI e SDK: contratos, compatibilidade e publicacao | `PKG_PackageSDK/PKG_Agent_PackageCLISDK.md` |
 | `PR_` | Prompt engineering, briefing e refinamento de pedidos | `PR_PromptOps/PR_Agent_PromptRefiner_v2.md` |
 | `Q_` | QA, testes e confiabilidade | `Q_Quality/Q_Agent_TestEngineer.md` |
 | `S_` | Seguranca | `S_Seguranca/S_Agent_SecurityValidator.toml` |
@@ -120,7 +124,9 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 ## Pipeline Recomendado
 
 0. `ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md`: porta de entrada da pessoa. Descobre se o projeto e novo ou em andamento, posiciona fase/gargalos/alinhamento e encaminha ao agente certo. Quando o usuario pedir fundacao completa, usar o **Modo Kickoff Completo** para gerar briefings iniciais para `@DOC`, `@SPEC` e `@C10`. Opcional quando o pedido ja e uma tarefa clara.
-1. `SUP_Supervisor/SUP_PICK_AgentSelector.md`: seleciona o time certo de agentes e detecta lacunas.
+1. `SUP_Supervisor/SUP_PICK_AgentSelector.md`: identifica o perfil do artefato,
+consulta `PROJECT_COVERAGE_MAP.toml`, seleciona o time certo e encaminha para
+`@F` quando a cobertura comprovada ficar abaixo de 70%.
 1b. `skills/multi-agent-delivery`: quando houver dois ou mais workstreams
 independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 2. `SUP_Supervisor/SUP_CRED_AccessGatekeeper.md`: entra antes de qualquer acesso externo, API, banco, navegador, deploy ou producao.
@@ -134,10 +140,10 @@ independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 10. `S_Seguranca/security_validator`: entra quando tocar auth, PII, secrets, upload, headers, permissoes ou pagamentos.
 11. `P_Performance/performance_validator`: entra quando tocar hot path, cache, queries, listas grandes, imagens, filas, concorrencia ou custo.
 12. `DEP_Dependencies`: garante lockfiles, audit/SCA, Dependabot e higiene de supply-chain antes de aprovar dependencias.
-13. Agente executor especializado: `B_BackendDomain`, `DATA_Database`, `D_Design`, `E_Environment`, `GEO_Location`, `I18N_LocalizationUX`, `IOS_AppleAppstore`, `M_MobilePlaystore`, `MOD_TrustSafety`, `PAY_PaymentsMarketplace`, `BI_Dashboards`, `BUG_Debugger`, etc.
+13. Agente executor especializado, escolhido pelo perfil real: `B_BackendDomain`, `DATA_Database`, `DE_DataEngineering`, `D_Design`, `E_Environment`, `IAC_PlatformEngineering`, `ML_MLEngineering`, `PKG_PackageSDK`, `GEO_Location`, `I18N_LocalizationUX`, `IOS_AppleAppstore`, `M_MobilePlaystore`, `MOD_TrustSafety`, `PAY_PaymentsMarketplace`, `BI_Dashboards`, `BUG_Debugger`, etc.
 14. `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`: audita comandos reais, bug sweep e lacunas antes de QA/final.
-15. `Q_Quality`: analista de qualidade; implementa testes unitarios front/back, API e happy paths Playwright e mede cobertura.
-16. `O_Observability`: agente DevOps; implementa GitHub Actions e a pipeline de CI/release com os testes definidos por `@Q`.
+15. `Q_Quality`: seleciona e implementa testes proporcionais ao artefato e ao risco: unitarios, contrato/consumidor, integracao, sistema, UI ou hardware quando aplicavel.
+16. `O_Observability`: implementa ou ajusta a pipeline CI/CD observada no projeto, sem impor GitHub Actions quando outro provedor for a fonte real.
 17. `SUP_Supervisor/SUP_STD_StandardsEnforcer.md` e `SUP_Supervisor/SUP_FLOW_DeliveryInspector.md`: verificam padrao e ordem quando necessario.
 18. `V_Validation/final_validator`: revisa diff final antes de merge/deploy.
 19. `REL_Release/REL_Agent_ReleaseManager.md`: define versao, changelog, gate de release e ordem de migration/deploy quando a entrega vira uma release.
@@ -156,6 +162,12 @@ independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
   (catalogo de modulos, dependencias, contratos, consistencia e fitness gates).
 - Mapa de padroes oficial: `A_Architecture/A_Method_PatternMap.md` (padroes
   observados/propostos/aprovados/depreciados/proibidos, sempre com evidencia e gate).
+- Catalogo contextual de patterns: `A_Architecture/A_Reference_PatternCatalog.md`;
+  e referencia neutra, nunca aprovacao global.
+- Perfis de projeto oficiais: `C10_Maestro/C10_Method_ProjectProfiles.md` e
+  `T_Templates/T_Template_PROJECT_PROFILE.md`.
+- Mapa verificavel de cobertura: `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`;
+  perfil parcial/ausente exige limitacao e fallback explicitos.
 - Estrategia de cache oficial do kit: `P_Performance/P_Method_CacheStrategy.md` (camadas, chaves, TTL, invalidacao, stampede; executor desenha, `@P`/`@S` validam).
 - Entrega multiagente oficial: `SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`
   (DAG, contexto minimo, write-set, join, evidence ledger e integracao).
@@ -164,6 +176,9 @@ independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 - Template Claude Code: `T_Templates/T_Template_CLAUDE.md`.
 - Estrategia de skills: `C10_Maestro/C10_Skill_Strategy.md`.
 - Runtime bridge Codex/Claude/Hermes-style: `RUNTIME_Bridge/RUNTIME.md`.
+- Gate integrado do arsenal: `RUNTIME_Bridge/scripts/run_quality_gate.py`.
+- Validadores multiagente e Harness: `RUNTIME_Bridge/scripts/validate_multi_agent.py`
+  e `RUNTIME_Bridge/scripts/validate_cli_audit.py`.
 - Manifesto de compatibilidade runtime: `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml`.
 - Validador local do arsenal: `RUNTIME_Bridge/scripts/validate_arsenal.py`.
 - Validador semantico de specs: `RUNTIME_Bridge/scripts/validate_specs.py`.
@@ -196,6 +211,11 @@ Skills oficiais locais:
 - `skills/spec-driven-breakdown`: specs granulares com IDs e rastreabilidade.
 - `skills/multi-agent-delivery`: execucao paralela controlada e protecao de contexto.
 
+Os contratos de trigger, boundary e non-trigger das seis skills vivem em
+`RUNTIME_Bridge/evals/skills/cases.toml` e sao verificados por
+`RUNTIME_Bridge/scripts/run_skill_contract_evals.py`. Essa verificacao
+deterministica nao substitui forward-test isolado quando o comportamento mudar.
+
 Regra: nao criar uma skill por agente. Promova para skill apenas workflows
 recorrentes, enxutos e acionaveis. Os agentes `.md` continuam sendo a fonte
 de verdade.
@@ -204,8 +224,7 @@ Para validar compatibilidade depois de qualquer mudanca em wrappers, skills ou
 agentes promovidos:
 
 ```powershell
-python RUNTIME_Bridge/scripts/validate_arsenal.py
-python -m unittest discover -s RUNTIME_Bridge/scripts -p "test_*.py" -v
+python RUNTIME_Bridge/scripts/run_quality_gate.py
 ```
 
 ## Compatibilidade Claude Code
@@ -245,8 +264,8 @@ Todo agente desta pasta deve proteger a base oculta do iceberg, nao apenas a pon
 - Todo projeto deve executar audit de dependencias no ciclo de CI e em mudancas de dependencias; findings bloqueantes exigem correcao ou excecao rastreavel.
 - Audit de dependencias nao substitui varredura de secrets: o pipeline e `@S` devem tratar vazamento de credenciais como gate independente.
 - Todo repositorio GitHub deve avaliar/ajustar `.github/dependabot.yml` aos ecossistemas e diretorios reais; nao copiar configuracao generica sem adequacao.
-- Testes unitarios sao obrigatorios no frontend e backend. Backend busca 100% de cobertura em linhas, funcoes, branches e statements, com excecoes estreitas e documentadas.
-- Testes de API/contrato cobrem endpoints e contratos afetados. Playwright cobre apenas happy paths de funcionalidades criticas, usando dados isolados e estaveis.
+- Testes sao obrigatorios de forma proporcional ao perfil, ao risco e ao comportamento afetado. Metas de cobertura precisam ser declaradas pelo projeto; 100% so e gate quando houver justificativa e contrato explicito.
+- APIs, eventos, CLIs, SDKs, packages, pipelines e modelos cobrem seus contratos e consumidores afetados. Teste end-to-end de UI usa a ferramenta observada no projeto; Playwright e condicional a uma UI web que o adote, nunca requisito universal.
 - Erros relevantes devem gerar logs estruturados, correlacionaveis e seguros; logs nunca podem vazar secrets ou PII indevida.
 - A arquitetura deve declarar dominios de problema, ownership e contratos entre dominios antes de expandir modulos relevantes.
 - Aplicar Harness CLI em toda implementacao, bugfix ou refatoracao com risco comportamental.
@@ -272,14 +291,18 @@ acionar o agente responsavel antes do selo final.
 | Arquitetura | AS-IS/TO-BE, fronteiras, modulos, ownership, dependencias, contratos, pattern map e gates estao claros? | `@A` |
 | Backend/dominio | Regra critica esta no backend/servico certo, nao so na UI? | `@B` |
 | Dados | Schema, migration, constraint, indice, integridade e rollback estao definidos? | `@DATA` / `@B` / `@A` |
+| Engenharia de dados | Lineage, watermark, replay, idempotencia, data quality e SLA do pipeline estao definidos? | `@DE` / `@DATA` / `@O` |
 | Seguranca | Auth, roles, PII, secrets, uploads, webhooks e logs estao protegidos? | `@S` |
 | Performance | Hot paths, listas, queries, cache, concorrencia e custo foram avaliados? | `@P` |
 | Observabilidade | Logs, metricas, traces, alertas e health checks existem para fluxos criticos? | `@O` |
-| Testes | Unitarios front/back, cobertura backend, API e Playwright happy path estao cobertos? | `@GSD` / `@Q` |
-| Operacao | GitHub Actions, ambientes, deploy, rollback, migrations e smoke pos-deploy estao planejados? | `@E` / `@O` / `@REL` |
+| Testes | Os testes adequados ao perfil, contratos, consumidores e risco estao cobertos? | `@GSD` / `@Q` |
+| Operacao | CI/CD observada, ambientes, deploy/distribuicao, rollback, migrations e smoke estao planejados? | `@E` / `@O` / `@REL` |
 | Dependencias | Lockfile, audit/SCA, Dependabot, CVEs e licencas estao sob controle? | `@DEP` / `@S` |
+| Packages/CLI/SDK | API/ABI, exit codes, stdout/stderr, matriz de versoes, packaging, publicacao e consumer tests estao definidos? | `@PKG` / `@DEP` / `@REL` |
+| IaC/plataforma | State, plan/apply, drift, policy-as-code, teardown e rollback de infra estao controlados? | `@IAC` / `@E` / `@O` / `@S` |
 | Produto/UX | Estados vazios, erros, permissoes, acessibilidade e copy foram considerados? | `@D` / `@I18N` |
 | IA/LLM | Prompts versionados, evals, custo de tokens, fallback e dados enviados a provedores estao sob controle? | `@AI` |
+| ML/MLOps | Dataset, leakage, treino, metricas, registry, serving, drift e retraining estao sob controle? | `@ML` / `@DATA` / `@O` |
 | Compliance | Ha requisito legal, loja, pagamento, dado sensivel ou setor regulado? | `@GOV` / `@REG` / `@PAY` / `@S` |
 | Documentacao | Decisoes, status, handoff e aprendizados serao registrados? | `@DOC` / `C10_DOCUMENTADOR` |
 
@@ -324,6 +347,7 @@ Use o prefixo para marcar rapido no chat:
 - `@C` para revisao cetica de planos.
 - `@D` para design/frontend visual.
 - `@DATA` para banco de dados, migrations, integridade e isolamento multi-tenant.
+- `@DE` para ETL/ELT, pipelines de dados, lineage, replay, qualidade e SLAs.
 - `@DEP` para dependencias, supply-chain, upgrades, CVEs e licencas.
 - `@DOC` para documentacao estrutural: progresso, status, agents, Claude, design, arquitetura, contratos e handoff.
 - `@E` para environment, secrets, deploy vars e paridade de ambientes.
@@ -332,11 +356,14 @@ Use o prefixo para marcar rapido no chat:
 - `@GOV` para compliance geral, privacidade, retencao, consentimento e regulacao.
 - `@GSD` para GSD, TDD proporcional, Harness CLI e auditoria de bug antes de fechar implementacao.
 - `@I18N` para i18n, ingles de produto e UX writing.
+- `@IAC` para Infrastructure as Code, state, plan/apply, drift, policy e teardown seguro.
 - `@IOS` para iOS nativo, Apple platforms, TestFlight e App Store approval.
 - `@M` para mobile, apps nativos/hibridos, lojas e release.
+- `@ML` para ML classico/MLOps; `@AI` continua dono de LLM, prompts, RAG e evals generativos.
 - `@MOD` para trust & safety, denuncias e moderacao.
 - `@P` para performance.
 - `@PAY` para pagamentos, marketplace e monetizacao.
+- `@PKG` para packages, bibliotecas, CLI e SDK, incluindo compatibilidade, packaging, publicacao e consumer tests.
 - `@PR` para transformar ideias em prompts cirurgicos.
 - `@Q` para testes.
 - `@REL` para release, versionamento, changelog e gate de release.

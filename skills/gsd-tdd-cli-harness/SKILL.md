@@ -66,6 +66,17 @@ Then perform a bug sweep:
 - Missing empty/error/loading states for UI.
 - Race/idempotency issue in critical flows.
 
+Materialize the evidence with `T_Templates/T_Template_CLI_AUDIT.md`, then run:
+
+```powershell
+python RUNTIME_Bridge/scripts/validate_cli_audit.py CLI_AUDIT.md --json
+```
+
+Do not close when command/CWD/objective/exit/status evidence is incomplete,
+when an `EVD-*` is not traceable, or when the global verdict masks a failure or
+gap. `APROVADO_COM_RESSALVAS` requires a concrete reservation, action, owner,
+and ISO deadline or verifiable completion criterion.
+
 ## Output Shape
 
 Return a compact Harness report:
