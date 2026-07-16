@@ -191,7 +191,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | ID | Risco/pergunta/hipotese | Impacto | Dono/decisor | Evidencia para fechar | Bloqueia? |
 |---|---|---|---|---|---|
 | RISK-001 | Results observados dos 24 casos de skills ainda nao foram produzidos em contexto isolado. | Nao impede manifest lint, mas impede alegar execucao comportamental. | mantenedor de skills | EVD-004 com results completos ou declaracao explicita `execution_proven=false`. | NAO para DoR; SIM para alegar forward-test no DoD. |
-| RISK-002 | CI remoto Ubuntu/Windows ainda nao e evidencia inicial desta spec. | Pode revelar diferenca de path, encoding ou Python. | integrador raiz / `@O` | EVD-007 e FIT-001 verdes em todos os jobs. | NAO para DoR; SIM para release. |
+| RISK-002 | CI remoto Ubuntu/Windows ainda nao e evidencia inicial desta spec. | Pode revelar diferenca de path, encoding ou Python. | integrador raiz / `@O` | EVD-011 e FIT-001 passam sem falha em todos os jobs. | NAO para DoR; SIM para release. |
 | RISK-003 | Semantica especifica de registry, warehouse, model serving e provider IaC depende do projeto. | Generalizacao indevida produziria falsa cobertura. | `@PICK` e especialista do perfil | PROJECT_PROFILE do consumidor com limitacao/fallback e evidence ledger. | NAO; fallback `@F` e obrigatorio quando cobertura medida ficar abaixo de 70%. |
 | RISK-004 | Quality gate local em worktree com alteracoes intencionais pode falhar apenas no generated-drift-check. | Nao deve ser mascarado como gate verde. | integrador raiz | EVD-007 produzido em checkout limpo ou falha registrada antes do merge. | NAO para escrever a spec; SIM para merge. |
 
@@ -209,7 +209,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | TASK-004 | Contratos das seis skills | p1_patterns_skills | TASK-003, REQ-004, AC-004, skills canonicas | cases, runner e skills alinhadas | `skills/agent-forge/SKILL.md`, `skills/codex-agent-kit/SKILL.md`, `skills/gsd-tdd-cli-harness/SKILL.md`, `skills/multi-agent-delivery/SKILL.md`, `A_Architecture/A_Method_PatternMap.md` | `RUNTIME_Bridge/evals/skills/cases.toml`, `RUNTIME_Bridge/scripts/run_skill_contract_evals.py`, `RUNTIME_Bridge/scripts/test_skill_contract_evals.py`, `skills/architecture-blueprint/SKILL.md`, `skills/spec-driven-breakdown/SKILL.md`, `C10_Maestro/C10_Skill_Strategy.md` | TASK-003 | SERIAL | TEST-004 e EVD-004 provam cobertura do manifesto sem falsificar execution proof. |
 | TASK-005 | Validador multiagente | p1_runtime_ci | REQ-005, AC-005, metodo multiagente | validator, templates e testes | `SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`, `C10_Maestro/C10_CAMISA10.md` | `SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`, `T_Templates/T_Template_MULTI_AGENT_PLAN.md`, `T_Templates/T_Template_AGENT_TASK.md`, `T_Templates/T_Template_AGENT_RESULT.md`, `RUNTIME_Bridge/scripts/validate_multi_agent.py`, `RUNTIME_Bridge/scripts/test_multi_agent_validator.py` | nenhuma | WORKTREE:p1-runtime-ci | TEST-005 e EVD-005 passam para fixtures validas e adversariais. |
 | TASK-006 | Validador Harness | p1_runtime_ci | TASK-005, REQ-006, AC-006, metodo Harness | validator, template, skill e testes | `SUP_Supervisor/SUP_Method_Harness.md`, `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md` | `T_Templates/T_Template_CLI_AUDIT.md`, `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`, `skills/gsd-tdd-cli-harness/SKILL.md`, `RUNTIME_Bridge/scripts/validate_cli_audit.py`, `RUNTIME_Bridge/scripts/test_cli_audit_validator.py` | TASK-005 | SERIAL | TEST-006 e EVD-006 rejeitam mascaramento e aceitam Harness coerente. |
-| TASK-007 | Quality gate e CI do arsenal | p1_runtime_ci | TASK-005, TASK-006, REQ-007, AC-007 | runner do gate, workflow e testes | `RUNTIME_Bridge/scripts/validate_arsenal.py`, `RUNTIME_Bridge/scripts/sync_claude_from_codex.py`, `RUNTIME_Bridge/scripts/test_*.py` | `RUNTIME_Bridge/scripts/run_quality_gate.py`, `RUNTIME_Bridge/scripts/test_quality_gate.py`, `.github/workflows/arsenal-ci.yml`, `.github/dependabot.yml` | TASK-005, TASK-006 | SERIAL | TEST-007, FIT-001 e EVD-007 passam em checkout limpo. |
+| TASK-007 | Quality gate e CI do arsenal | p1_runtime_ci | TASK-005, TASK-006, REQ-007, AC-007 | runner do gate, workflow e testes | `RUNTIME_Bridge/scripts/validate_arsenal.py`, `RUNTIME_Bridge/scripts/sync_claude_from_codex.py`, `RUNTIME_Bridge/scripts/test_*.py` | `RUNTIME_Bridge/scripts/run_quality_gate.py`, `RUNTIME_Bridge/scripts/test_quality_gate.py`, `.github/workflows/arsenal-ci.yml`, `.github/dependabot.yml` | TASK-005, TASK-006 | SERIAL | TEST-007/EVD-007 passam localmente; FIT-001/EVD-011 passam remotamente. |
 | TASK-009 | Generalizacao transversal por perfil | p1_dev_coverage | TASK-001, REQ-009, AC-009 | agentes e templates sem defaults web/provider universais | `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`, `C10_Maestro/C10_Method_ProjectProfiles.md` | `D_Design/D_Agent_Design.md`, `Q_Quality/Q_Agent_TestEngineer.md`, `O_Observability/O_Agent_DeployObservability.md`, `REL_Release/REL_Agent_ReleaseManager.md`, `SUP_Supervisor/SUP_PICK_AgentSelector.md`, `T_Templates/T_Template_PROJECT.md`, `T_Templates/T_Template_QUALITY_PIPELINE.md` | TASK-001 | PARALELO | TEST-009 e EVD-009 provam os quatro cenarios negativos. |
 | TASK-008 | Manifesto, instalador, documentacao e integracao | integrador raiz | TASK-002, TASK-004, TASK-007, TASK-009, REQ-008, AC-008 | runtime map unico, installer, wrappers Claude, catalogo publico e spec validada | `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`, `RUNTIME_Bridge/evals/skills/cases.toml`, `RUNTIME_Bridge/scripts/run_quality_gate.py`, fontes/wrappers dos quatro especialistas | `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml`, `RUNTIME_Bridge/scripts/install_project_runtime.py`, `RUNTIME_Bridge/RUNTIME.md`, `AGENTS.md`, `.claude/agents/package-cli-sdk.md`, `.claude/agents/data-pipeline.md`, `.claude/agents/ml-engineering.md`, `.claude/agents/infrastructure-as-code.md`, `.codex/specs/EXECUTAR-TODAS.md`, `.codex/specs/changes/001-p1-dev-coverage/spec.md`, `RUNTIME_Bridge/P1_ACCEPTANCE.md` | TASK-002, TASK-004, TASK-007, TASK-009 | SERIAL | TEST-008, TEST-010, EVD-008 e EVD-010 passam; integracao nao deixa fonte duplicada. |
 
@@ -217,16 +217,17 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 | Requisito | Modulo/contrato | Task | Teste/gate | Evidencia | Estado |
 |---|---|---|---|---|---|
-| REQ-001 / AC-001 / NFR-005 / NFR-006 | MOD-001 / CON-001 | TASK-001 | TEST-001 | EVD-001 | PLANEJADO |
-| REQ-002 / AC-002 | MOD-002 / CON-002 | TASK-002 | TEST-002 | EVD-002 | PLANEJADO |
-| REQ-003 / AC-003 | MOD-003 / CON-003 | TASK-003 | TEST-003 | EVD-003 | PLANEJADO |
-| REQ-004 / AC-004 / NFR-006 | MOD-004 / CON-004 | TASK-004 | TEST-004 | EVD-004 | PLANEJADO |
-| REQ-005 / AC-005 / NFR-006 | MOD-005 / CON-005 | TASK-005 | TEST-005 | EVD-005 | PLANEJADO |
-| REQ-006 / AC-006 / NFR-006 | MOD-006 / CON-006 | TASK-006 | TEST-006 | EVD-006 | PLANEJADO |
-| REQ-007 / AC-007 / NFR-001 / NFR-002 / NFR-003 | MOD-007 / CON-007 | TASK-007 | TEST-007 / FIT-001 | EVD-007 | PLANEJADO |
-| REQ-008 / AC-008 / NFR-002 / NFR-004 | MOD-008 / CON-008 | TASK-008 | TEST-008 | EVD-008 | PLANEJADO |
+| REQ-001 / AC-001 / NFR-005 / NFR-006 | MOD-001 / CON-001 | TASK-001 | TEST-001 | EVD-001 | PROVADO |
+| REQ-002 / AC-002 | MOD-002 / CON-002 | TASK-002 | TEST-002 | EVD-002 | PROVADO |
+| REQ-003 / AC-003 | MOD-003 / CON-003 | TASK-003 | TEST-003 | EVD-003 | PROVADO |
+| REQ-004 / AC-004 / NFR-006 | MOD-004 / CON-004 | TASK-004 | TEST-004 | EVD-004 | PROVADO |
+| REQ-005 / AC-005 / NFR-006 | MOD-005 / CON-005 | TASK-005 | TEST-005 | EVD-005 | PROVADO |
+| REQ-006 / AC-006 / NFR-006 | MOD-006 / CON-006 | TASK-006 | TEST-006 | EVD-006 | PROVADO |
+| REQ-007 / AC-007 / NFR-002 | MOD-007 / CON-007 | TASK-007 | TEST-007 | EVD-007 | PROVADO |
+| REQ-007 / AC-007 / NFR-001 / NFR-003 | MOD-007 / CON-007 | TASK-007 | FIT-001 | EVD-011 | PLANEJADO |
+| REQ-008 / AC-008 / NFR-002 / NFR-004 | MOD-008 / CON-008 | TASK-008 | TEST-008 | EVD-008 | PROVADO |
 | REQ-001 / REQ-002 / REQ-003 / REQ-004 / REQ-005 / REQ-006 / REQ-007 / REQ-008 / REQ-009 | MOD-001 / MOD-002 / MOD-003 / MOD-004 / MOD-005 / MOD-006 / MOD-007 / MOD-008 / MOD-009 | TASK-008 | TEST-010 | EVD-010 | PROVADO |
-| REQ-009 / AC-009 / NFR-005 | MOD-009 / CON-009 | TASK-009 | TEST-009 | EVD-009 | PLANEJADO |
+| REQ-009 / AC-009 / NFR-005 | MOD-009 / CON-009 | TASK-009 | TEST-009 | EVD-009 | PROVADO |
 
 ## 10. Rollout E Rollback
 
@@ -259,23 +260,24 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | TEST-005 | REQ-005 / AC-005 / NFR-006 | unit/adversarial | `python -B -m unittest RUNTIME_Bridge.scripts.test_multi_agent_validator -v` | Exit 0; todas as fixtures validas/adversariais passam. | EVD-005 |
 | TEST-006 | REQ-006 / AC-006 / NFR-006 | unit/adversarial | `python -B -m unittest RUNTIME_Bridge.scripts.test_cli_audit_validator -v` | Exit 0; falha/lacuna mascarada e veredito incoerente sao rejeitados. | EVD-006 |
 | TEST-007 | REQ-007 / AC-007 / NFR-002 | integration/quality-gate | `python -B RUNTIME_Bridge/scripts/run_quality_gate.py --json` | Exit 0 em checkout limpo; compile, sync, validators, tests, diff e drift passam. | EVD-007 |
-| FIT-001 | REQ-007 / AC-007 / NFR-001 / NFR-003 | CI/fitness | `.github/workflows/arsenal-ci.yml` na matriz Ubuntu/Windows e Python 3.11/3.14 | Todos os jobs terminam verdes em ate 20 minutos, com permissao minima e concurrency ativa. | EVD-007 |
+| FIT-001 | REQ-007 / AC-007 / NFR-001 / NFR-003 | CI/fitness | `.github/workflows/arsenal-ci.yml` na matriz Ubuntu/Windows e Python 3.11/3.14 | Todos os jobs terminam verdes em ate 20 minutos, com permissao minima e concurrency ativa. | EVD-011 |
 | TEST-008 | REQ-008 / AC-008 / NFR-002 / NFR-004 | integration/security | `python -B -m unittest RUNTIME_Bridge.scripts.test_project_runtime -v` | Exit 0; manifesto unico, instalacao/check, paths e preservacao de customizacao passam. | EVD-008 |
 | TEST-009 | REQ-009 / AC-009 / NFR-005 | unit/negative-routing | `python -B -m unittest RUNTIME_Bridge.scripts.test_project_coverage -v` | Exit 0; CLI, provider CI, ML e ETL nao herdam owners/gates incorretos. | EVD-009 |
 | TEST-010 | SPEC-001 / risco de contrato incompleto | spec/fitness | `python -B RUNTIME_Bridge/scripts/validate_specs.py . --json` | Exit 0; uma change valida, sem elo quebrado, ciclo ou colisao insegura. | EVD-010 |
 
 | ID | Prova produzida | Fonte/caminho | Retencao/owner | Estado |
 |---|---|---|---|---|
-| EVD-001 | JSON do coverage validator e transcript dos adversariais. | stdout do TEST-001 e log de `test_project_coverage`. | ate release 1.1.0 / p1_dev_coverage | PLANEJADO |
-| EVD-002 | Relatorio de coerencia de agentes/wrappers. | stdout do TEST-002. | ate release 1.1.0 / p1_dev_coverage | PLANEJADO |
-| EVD-003 | Transcript dos testes de arquitetura/patterns. | stdout do TEST-003. | ate release 1.1.0 / p1_patterns_skills | PLANEJADO |
-| EVD-004 | JSON do manifesto de casos e, quando executado, results observados separados. | stdout do TEST-004 e results TOML versionado quando houver. | ate proxima mudanca material das skills / mantenedor de skills | PLANEJADO |
-| EVD-005 | Transcript dos testes multiagente. | stdout do TEST-005. | ate release 1.1.0 / p1_runtime_ci | PLANEJADO |
-| EVD-006 | Transcript dos testes Harness. | stdout do TEST-006. | ate release 1.1.0 / p1_runtime_ci | PLANEJADO |
-| EVD-007 | JSON do quality gate e URLs/logs dos quatro jobs CI. | stdout do TEST-007 e GitHub Actions de FIT-001. | conforme retencao do CI e ate release 1.1.0 / `@O` | PLANEJADO |
-| EVD-008 | Transcript dos testes do runtime/installer. | stdout do TEST-008. | ate release 1.1.0 / integrador raiz | PLANEJADO |
-| EVD-009 | Transcript dos cenarios negativos por perfil. | stdout do TEST-009. | ate release 1.1.0 / p1_dev_coverage | PLANEJADO |
+| EVD-001 | JSON do coverage validator e transcript dos adversariais. | quality gate local no commit `af94406`; 13 perfis e 13 cenarios. | ate release 1.1.0 / p1_dev_coverage | PROVADO |
+| EVD-002 | Relatorio de coerencia de agentes/wrappers. | quality gate local no commit `af94406`; 46/46 wrappers. | ate release 1.1.0 / p1_dev_coverage | PROVADO |
+| EVD-003 | Transcript dos testes de arquitetura/patterns. | 64 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_patterns_skills | PROVADO |
+| EVD-004 | JSON do manifesto de casos; results observados permanecem evidencia separada. | 24 casos validos; `execution_proven=false` declarado no quality gate. | ate proxima mudanca material das skills / mantenedor de skills | PROVADO |
+| EVD-005 | Transcript dos testes multiagente. | 17 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
+| EVD-006 | Transcript dos testes Harness. | 15 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
+| EVD-007 | JSON do quality gate local em worktree limpo. | 8/8 gates e 198 testes no commit `af94406`. | ate release 1.1.0 / `@O` | PROVADO |
+| EVD-008 | Transcript dos testes do runtime/installer. | 23 testes por invocacao de modulo e suite integrada do commit `af94406`. | ate release 1.1.0 / integrador raiz | PROVADO |
+| EVD-009 | Transcript dos cenarios negativos por perfil. | 14 testes de coverage e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_dev_coverage | PROVADO |
 | EVD-010 | JSON do validador da spec canonica: uma change, zero erros e zero warnings. | stdout do TEST-010 executado em 2026-07-16 no handoff desta mudanca. | ate merge da spec / integrador raiz | PROVADO |
+| EVD-011 | URLs e logs dos quatro jobs remotos de FIT-001. | GitHub Actions da branch apos o push. | conforme retencao do CI e ate release 1.1.0 / `@O` | PLANEJADO |
 
 **Teste falhando primeiro:** fixtures adversariais de cada validator devem retornar exit 1 ou finding esperado antes da implementação correspondente; o mapa/spec canonicos devem retornar exit 0.
 
@@ -287,30 +289,30 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 ## 12. Definition Of Done - DoD
 
-- [ ] Todos os `REQ-*`, `AC-*` e `NFR-*` ativos estao `PROVADO` ou possuem ressalva aceita; atualmente EVD-001 a EVD-009 permanecem planejados.
+- [x] Todos os `REQ-*`, `AC-*` e `NFR-*` ativos estao provados localmente ou possuem a ressalva FIT-001 explicitamente aceita.
 - [x] A matriz `REQ/AC/NFR -> MOD/CON -> TASK -> TEST/FIT -> EVD` possui todos os elos planejados.
-- [ ] Contratos e adapters foram validados com seus consumidores por TEST-002 e TEST-008.
-- [ ] Harness integrado foi executado e recebeu veredito canonico.
+- [x] Contratos e adapters foram validados com seus consumidores por TEST-002 e TEST-008.
+- [x] Harness integrado foi executado e recebeu veredito canonico.
 - [ ] Rollout, smoke, FIT-001, rollback/forward-fix e observabilidade foram demonstrados.
-- [ ] Bug sweep completo foi executado sem mascarar falha conhecida ou lacuna critica.
+- [x] Bug sweep completo foi executado sem mascarar falha conhecida ou lacuna critica.
 - [x] `ARCHITECTURE.md` nao foi alterado por intencao futura; TO-BE/ADR permanece N/A justificado para esta mudanca de governanca.
-- [ ] LOG, STATUS geral/ambientes e changelog foram atualizados quando o ciclo de implementacao fechar.
+- [x] LOG, STATUS geral/ambientes e changelog foram atualizados para o snapshot local.
 
 **Veredito DoD:** APROVADO_COM_RESSALVAS
 
-**Justificativa/lacunas:** a spec esta completa como contrato, mas a entrega P1 continua aberta; nenhum TEST/FIT/EVD futuro e tratado como executado.
+**Justificativa/lacunas:** implementacao e gate local estao comprovados; a entrega permanece com uma unica ressalva operacional ate o primeiro push executar FIT-001 remotamente.
 
-**Lacuna nao bloqueante:** evidencias EVD-001 a EVD-009 e a matriz remota FIT-001 ainda nao foram anexadas; isso nao bloqueia usar esta spec no breakdown, mas impede fechar ou liberar P1.
+**Lacuna nao bloqueante:** a matriz remota Ubuntu/Windows de FIT-001 ainda nao foi executada; isso impede merge/release, nao invalida o gate local.
 
-**Acao:** executar o Harness planejado em checkout integrado e limpo, registrar resultados reais como PROVADO/FALHOU e reavaliar cada checkbox do DoD.
+**Acao:** fazer push da branch, observar os quatro jobs e rebaixar o veredito se qualquer combinacao de OS/Python falhar.
 
 **Dono:** integrador raiz com `@GSD`, `@Q`, `@O` e `@V`.
 
-**Prazo ISO/criterio verificavel:** EVD-001 a EVD-009 produzidos, EVD-010 registrado e FIT-001 passa sem falha; somente entao o DoD pode ser reavaliado como APROVADO.
+**Prazo ISO/criterio verificavel:** FIT-001 passa sem falha em Ubuntu/Windows e Python 3.11/3.14 antes de merge ou release.
 
 ## 13. Document
 
-**LOG:** nao - fora do write-set desta correcao; obrigatorio no fechamento da implementacao.
+**LOG:** sim - `LOG.md` registra o ciclo P1.
 
 **DECISIONS/ADRs:** N/A - nenhuma nova decisao arquitetural material nesta formalizacao.
 
@@ -318,8 +320,8 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **LEARNINGS:** sim - cobertura declarada, manifest lint e execucao observada sao evidencias diferentes.
 
-**STATUS geral e por ambiente:** nao - deve ser atualizado pelo integrador apos o Harness e CI reais.
+**STATUS geral e por ambiente:** sim - `STATUS.md` separa gate local aprovado de CI remota pendente.
 
 **Validacao da spec:** TEST-010 executado em 2026-07-16 com exit 0, uma change, zero erros e zero warnings.
 
-**Proximo passo obrigatorio:** `@GSD` executa TEST-001 a TEST-010, `@O` confirma FIT-001, `@Q/@V` revisam evidencias e somente depois o integrador reavalia o DoD e a release 1.1.0.
+**Proximo passo obrigatorio:** `@O` confirma FIT-001 apos o push; merge, tag e release 1.1.0 permanecem proibidos ate a matriz remota ficar verde.
