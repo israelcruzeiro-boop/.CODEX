@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@REG`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/REG_RegionalCompliance/REG_Agent_RegionalCompliance.md`
 - If running from inside the kit folder, use `REG_RegionalCompliance/REG_Agent_RegionalCompliance.md`
 

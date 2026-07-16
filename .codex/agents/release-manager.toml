@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@REL`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/REL_Release/REL_Agent_ReleaseManager.md`
 - If running from inside the kit folder, use `REL_Release/REL_Agent_ReleaseManager.md`
 

@@ -79,6 +79,8 @@ Sempre verificar:
 - `.codex/C10_Maestro/C10_DOCUMENTADOR.md`
 - `.codex/SPEC_Specs/SPEC_Agent_SpecArchitect.md`
 - `.codex/A_Architecture/A_Method_PlantaTecnica.md`
+- `.codex/A_Architecture/A_Method_ModularArchitecture.md`
+- `.codex/A_Architecture/A_Method_PatternMap.md`
 - `.codex/T_Templates/`
 
 Quando o documento nao existir, registrar como `AUSENTE` e decidir se deve ser
@@ -104,7 +106,10 @@ AGENTS.md               - regras operacionais para Codex no projeto
 CLAUDE.md               - regras operacionais para Claude Code
 DOCUMENTATION_INDEX.md  - mapa de todos os documentos e donos
 DESIGN.md               - UX, UI, design system, fluxos e estados
-ARCHITECTURE.md         - planta tecnica do repo/ambiente (A_Method_PlantaTecnica)
+ARCHITECTURE.md         - planta tecnica AS-IS do repo/ambiente (A_Method_PlantaTecnica)
+TARGET_ARCHITECTURE.md  - arquitetura TO-BE aprovada por spec + ADR
+PATTERN_MAP.md          - patterns observados/normativos, evidencias e gates
+docs/adr/               - ADRs individuais quando o projeto nao usa DECISIONS.md
 API_CONTRACTS.md        - endpoints, DTOs, erros e versionamento
 DATA_MODEL.md           - entidades, relacoes, constraints e indices
 SECURITY_PRIVACY.md     - auth, roles, PII, LGPD, secrets e abuso
@@ -172,13 +177,25 @@ soltas.
 
 ### 4. Conteudo Tecnico
 
-4a. Criar ou atualizar `ARCHITECTURE.md` como planta tecnica, seguindo
+4a. Criar ou atualizar `ARCHITECTURE.md` como planta tecnica AS-IS, seguindo
     `.codex/A_Architecture/A_Method_PlantaTecnica.md`: derivado do codigo real
     (cabecalho "Fonte: analise direta do codigo" + data), com as secoes minimas
     (stack real, fluxo de feature de referencia, modelo de dominio, estrutura
     real de pastas, contratos de API, regras de camada, gerenciamento de
     estado, requisitos minimos, gaps com severidade). Em monorepo/multi-ambiente,
-    uma planta por repo/ambiente. Nunca aspiracional: promessa vira Gap ou sai.  
+    uma planta por repo/ambiente. Nunca aspiracional: promessa vira Gap ou sai;
+    nao aceitar status de intencao neste arquivo.
+4a2. Criar ou atualizar `TARGET_ARCHITECTURE.md` quando houver arquitetura
+    desejada, seguindo `A_Method_ModularArchitecture.md`, com catalogo de
+    modulos, APIs publicas, ownership de dados/invariantes, dependencias
+    permitidas/proibidas, grafo/ciclos, transacoes/consistencia/eventos,
+    evolucao, fitness gates e delta AS-IS -> TO-BE. Toda mudanca aponta spec;
+    decisoes materiais com trade-off apontam ADR.
+4a3. Criar ou atualizar `PATTERN_MAP.md` seguindo `A_Method_PatternMap.md`.
+    Cada pattern separa presenca (`OBSERVADO`, `PARCIAL`, `NAO_OBSERVADO`) de
+    decisao (`SEM_DECISAO`, `PROPOSTO`, `APROVADO`, `DESCARTADO`,
+    `DEPRECIADO`, `PROIBIDO`), com evidencia, forcas, alternativas,
+    contraindicacoes, trade-offs, ADR e gate.
 4b. Criar ou atualizar `DESIGN.md`.  
 4c. Criar ou atualizar `API_CONTRACTS.md`.  
 4d. Criar ou atualizar `DATA_MODEL.md`.  
@@ -209,7 +226,13 @@ soltas.
 6f. Auditar drift codigo x planta tecnica: stack da planta bate com o manifest?
     Rotas documentadas batem com as reais? Ha camadas/pastas fantasma descritas
     como existentes? Drift encontrado rebaixa o veredito para no maximo
-    `DOC_COM_RESSALVAS` e gera acao imediata.  
+    `APROVADO_COM_RESSALVAS` e gera acao imediata.
+6g. Verificar separacao de horizontes: AS-IS em `ARCHITECTURE.md`; TO-BE apenas
+    em `TARGET_ARCHITECTURE.md` + ADR; patterns propostos nao descritos como
+    presentes. Mistura rebaixa o veredito para `QUESTIONAR` ou
+    `REPROVADO` quando contradiz o codigo.
+6h. Verificar links de rastreabilidade `REQ/AC/NFR -> MOD/CON/EVT -> TASK -> TEST
+    -> EVD` nos documentos aplicaveis.
 
 ### 7. Handoff
 
@@ -259,7 +282,7 @@ Documentos planejados:
 
 ## 6. Veredito
 
-DOC_OK | DOC_COM_RESSALVAS | DOC_QUESTIONAR | DOC_REPROVADO
+APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 
 ## 7. Proximo Passo Obrigatorio
 
@@ -273,10 +296,10 @@ Depois deste passo:
 
 ## Vereditos
 
-- `DOC_OK`: documentacao minima completa, consistente e com donos claros.
-- `DOC_COM_RESSALVAS`: documentacao usavel, com lacunas nao bloqueantes.
-- `DOC_QUESTIONAR`: falta decisao ou contexto para criar documento correto.
-- `DOC_REPROVADO`: documentos contraditorios, status falso, ausencia de fonte
+- `APROVADO`: documentacao minima completa, consistente e com donos claros.
+- `APROVADO_COM_RESSALVAS`: documentacao usavel, com lacunas nao bloqueantes.
+- `QUESTIONAR`: falta decisao ou contexto para criar documento correto.
+- `REPROVADO`: documentos contraditorios, status falso, ausencia de fonte
   de verdade ou risco de induzir agentes a erro.
 
 ---
@@ -308,10 +331,13 @@ Depois deste passo:
 6. Nunca criar `AGENTS.md` ou `CLAUDE.md` desalinhado com `.codex/`.
 7. Nunca deixar arquitetura, dados, API, seguranca e testes sem documento ou
    backlog explicito.
-8. Nunca fechar com `DOC_OK` se Codex e Claude receberiam instrucoes diferentes.
+8. Nunca fechar com `APROVADO` se Codex e Claude receberiam instrucoes diferentes.
 9. Nunca manter planta tecnica aspiracional: `ARCHITECTURE.md` so afirma o que
    o codigo confirma (`A_Method_PlantaTecnica.md`). Camada planejada e nao
    implementada e Gap declarado, nunca descricao no presente.
+10. Nunca misturar AS-IS e TO-BE: alvo exige `TARGET_ARCHITECTURE.md` e ADR.
+11. Nunca promover pattern observado para aprovado sem evidencia, alternativas,
+    trade-offs e decisao; proposta nao e regra vigente.
 
 ---
 

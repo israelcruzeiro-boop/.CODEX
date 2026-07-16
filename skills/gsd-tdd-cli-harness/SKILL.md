@@ -9,7 +9,17 @@ Use this skill to make implementation work provable.
 
 ## Locate The Kit
 
-Resolve `KIT_ROOT` as the nearest folder containing `AGENTS.md`, `GSD_DeliveryDiscipline`, `SUP_Supervisor`, and `T_Templates`.
+Resolve `PROJECT_ROOT` as the nearest ancestor containing `AGENTS.md`. Then
+resolve `KIT_ROOT` in this order:
+
+1. `PROJECT_ROOT/.codex` when it contains the required kit directories.
+2. `PROJECT_ROOT` itself when it contains them (kit-development checkout).
+3. Otherwise stop with `QUESTIONAR`; do not infer sibling or copied paths.
+
+Do not derive `KIT_ROOT` from the installed skill directory alone: repo-scoped
+skills live under `PROJECT_ROOT/.agents/skills`, while their governed sources
+live under `KIT_ROOT`. Require `KIT_ROOT` to contain `GSD_DeliveryDiscipline`,
+`SUP_Supervisor`, and `T_Templates`.
 
 Read these files as needed:
 
@@ -66,4 +76,4 @@ Return a compact Harness report:
 - Evidence summary.
 - Bugs or risks found.
 - Lacunas not verified.
-- Verdict: `APROVADO`, `APROVADO_COM_LACUNAS`, `QUESTIONAR`, or `BLOQUEADO`.
+- Verdict: `APROVADO`, `APROVADO_COM_RESSALVAS`, `QUESTIONAR`, or `REPROVADO`.

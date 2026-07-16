@@ -20,6 +20,20 @@ descreve **como a aplicacao e por dentro**, derivado do codigo real - nunca um
 plano aspiracional. E o contrato tecnico que todos os agentes executores leem
 antes de implementar.
 
+## Separacao Obrigatoria AS-IS E TO-BE
+
+- `ARCHITECTURE.md` e exclusivamente **AS-IS**: codigo, manifests, schema e
+  runtime observados. Nao aceita status "planta de intencao".
+- `TARGET_ARCHITECTURE.md` e **TO-BE**: mudancas desejadas, rastreadas a spec
+  e, quando houver trade-off material, ADR, seguindo
+  `A_Method_ModularArchitecture.md`.
+- `PATTERN_MAP.md` separa presenca no codigo de decisao normativa, seguindo
+  `A_Method_PatternMap.md`.
+- `DECISIONS.md` ou `docs/adr/*.md` registra o trade-off que autoriza o TO-BE.
+
+O AS-IS nunca e reescrito para parecer o alvo. A diferenca vira delta
+rastreavel, task de transicao, rollout/rollback e fitness gate.
+
 ## As 4 Propriedades Inegociaveis
 
 1. **Especifica** - entidades reais, fluxos reais, exemplos do proprio codigo.
@@ -57,6 +71,11 @@ Por repositorio, a planta cobre:
    idioma? temas? offline? acessibilidade?
 10. **Gaps e pontos de atencao com severidade** - o debito tecnico honesto,
     visivel, priorizavel. Nunca esconder.
+11. **Catalogo modular observado** - modulos reais com IDs, API publica,
+    ownership de dados, invariantes e dependencias observadas. O catalogo
+    detalhado segue `A_Method_ModularArchitecture.md`.
+12. **Patterns observados** - referencias a `PATTERN_MAP.md`; observar um
+    pattern nao equivale a aprova-lo.
 
 ## Regra De Manutencao
 
@@ -65,6 +84,8 @@ Por repositorio, a planta cobre:
   fechamento.
 - Secao que virar promessa: remover ou mover para Gaps.
 - Auditoria periodica de drift codigo x planta. Dono: `@A` com `@DOC`.
+- Mudanca estrutural pretendida atualiza `TARGET_ARCHITECTURE.md` e ADR antes
+  do codigo; somente depois de implementada e comprovada atualiza o AS-IS.
 
 ## Anti-Padroes (proibidos)
 
@@ -75,6 +96,10 @@ Por repositorio, a planta cobre:
 4. **Planta congelada** - data de atualizacao antiga com produto evoluindo.
 5. **Verdade duplicada** - a mesma informacao em varios arquivos, divergindo.
    A planta e a fonte unica; os demais docs apontam para ela.
+6. **Alvo travestido de presente** - copiar `TARGET_ARCHITECTURE.md` para o
+   AS-IS antes de a mudanca existir no codigo.
+7. **Pattern por imitacao** - declarar `APROVADO` algo apenas porque foi
+   observado em um trecho do codigo.
 
 ## Gates De Verificacao (para @V, @C, @GSD e validadores)
 
@@ -85,6 +110,9 @@ Por repositorio, a planta cobre:
 - Pastas vazias e promessas estao marcadas como tal?
 - A feature nova seguiu o fluxo de referencia e as regras de camada?
 - A mudanca estrutural deste ciclo atualizou a planta?
+- O documento contem apenas AS-IS? Toda intencao esta no TO-BE + ADR?
+- Catalogo modular, grafo, ciclos, ownership e APIs publicas batem com o codigo?
+- Patterns observados apontam evidencia e nao foram promovidos sem decisao?
 
 ## Exemplo De Referencia
 
@@ -96,9 +124,10 @@ reescritos por analise direta do codigo apos a review que originou o metodo.
 
 - `@ONB`: diagnostica existencia/drift da planta no onboarding e exige a planta
   no kickoff de projeto novo.
-- `@A`: desenha a arquitetura e audita o drift; drift e finding, nao detalhe.
+- `@A`: audita o AS-IS, desenha o TO-BE e audita o drift; drift e finding,
+  nao detalhe.
 - `@DOC`: materializa e mantem o documento; aplica as 4 propriedades.
-- `@SPEC`: specs novas referenciam a planta (nao a contradizem sem ADR).
+- `@SPEC`: specs novas referenciam o AS-IS e rastreiam mudancas no TO-BE/ADR.
 - Executores (`@B`, `@GSD`, especialistas): tratam a planta como contrato de
   implementacao; padrao fora da planta exige ADR antes.
 - `@V` / `@C`: validam entregas contra a planta usando os gates acima.

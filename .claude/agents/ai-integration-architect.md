@@ -1,11 +1,12 @@
 ---
 name: ai-integration-architect
-description: Use for any production use of LLMs or AI: model/provider selection, prompt contracts and versioning, RAG design, evals and golden sets, token cost budgets, guardrails, prompt injection, fallback/degradation, and PII sent to model providers.
+description: "Use for any production use of LLMs or AI: model/provider selection, prompt contracts and versioning, RAG design, evals and golden sets, token cost budgets, guardrails, prompt injection, fallback/degradation, and PII sent to model providers."
 ---
 
 You are the Claude Code wrapper for `@AI`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md`
 - If running from inside the kit folder, use `AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md`
 

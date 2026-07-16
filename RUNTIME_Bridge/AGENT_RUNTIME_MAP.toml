@@ -1,6 +1,6 @@
 [runtime]
 kit_name = "Codex Agent Kit"
-version = "2026-07-15"
+version = "2026-07-16"
 source_of_truth = "AGENTS.md"
 codex_wrappers = ".codex/agents"
 claude_wrappers = ".claude/agents"
@@ -11,6 +11,38 @@ keep_original_agents_as_source = true
 create_skill_per_agent = false
 validate_before_release = true
 codex_and_claude_required = true
+complete_source_read_required = true
+
+[verdicts]
+canonical = ["APROVADO", "APROVADO_COM_RESSALVAS", "QUESTIONAR", "REPROVADO"]
+forbidden = ["APROVADO_COM_LACUNAS", "BLOQUEADO", "PASS_COM_RESSALVAS", "PASS", "FAIL"]
+contract_files = [
+  "A_Architecture/A_Method_ModularArchitecture.md",
+  "A_Architecture/A_Method_PatternMap.md",
+  "C_Cetico/C_Agent_Cetico.md",
+  "C10_Maestro/C10_Method_SDD.md",
+  "DOC_Documentation/DOC_Agent_ProjectDocumentationArchitect.md",
+  "GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md",
+  "P_Performance/P_Agent_PerformanceValidator.toml",
+  "S_Seguranca/S_Agent_SecurityValidator.toml",
+  "SPEC_Specs/SPEC_Agent_SpecArchitect.md",
+  "SUP_Supervisor/SUP_Method_MultiAgentDelivery.md",
+  "T_Templates/T_Template_CLI_AUDIT.md",
+  "T_Templates/T_Template_SPEC.md",
+  "V_Validation/V_Agent_FinalValidator.toml",
+  "V_Validation/V_Agent_ImpactValidator.toml",
+  "skills/gsd-tdd-cli-harness/SKILL.md",
+]
+
+[[skills]]
+name = "agent-forge"
+path = "skills/agent-forge/SKILL.md"
+purpose = "Create, evolve, validate, and promote reusable agents."
+
+[[skills]]
+name = "architecture-blueprint"
+path = "skills/architecture-blueprint/SKILL.md"
+purpose = "Model AS-IS and TO-BE architecture, module boundaries, contracts, dependency rules, patterns, and fitness functions."
 
 [[skills]]
 name = "codex-agent-kit"
@@ -23,12 +55,270 @@ path = "skills/gsd-tdd-cli-harness/SKILL.md"
 purpose = "Turn implementation work into acceptance criteria and CLI evidence."
 
 [[skills]]
-name = "agent-forge"
-path = "skills/agent-forge/SKILL.md"
-purpose = "Create, evolve, validate, and promote agents."
+name = "multi-agent-delivery"
+path = "skills/multi-agent-delivery/SKILL.md"
+purpose = "Plan and execute bounded multi-agent DAGs with context envelopes, ownership, joins, reconciliation, and evidence."
+
+[[skills]]
+name = "spec-driven-breakdown"
+path = "skills/spec-driven-breakdown/SKILL.md"
+purpose = "Break product intent into traceable executable specs, tasks, tests, risks, and evidence."
+
+[[agents]]
+name = "access-gatekeeper"
+source = "SUP_Supervisor/SUP_CRED_AccessGatekeeper.md"
+alias = "@CRED"
+purpose = "Authorize and validate credentials before external or production access."
+
+[[agents]]
+name = "agent-forge-foreman"
+source = "F_AgentForge/F_Agent_Foreman.md"
+alias = "@F"
+purpose = "Govern creation and evolution of reusable specialist agents."
+
+[[agents]]
+name = "ai-integration-architect"
+source = "AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md"
+alias = "@AI"
+purpose = "Design safe, evaluated, cost-aware production AI integrations."
+
+[[agents]]
+name = "backend-domain"
+source = "B_BackendDomain/B_Agent_BackendDomain.md"
+alias = "@B"
+purpose = "Own backend APIs, domain rules, permissions, and server-side contracts."
+
+[[agents]]
+name = "bi-dashboard"
+source = "BI_Dashboards/BI_Agent_DashboardDesigner.md"
+alias = "@BI"
+purpose = "Design trustworthy metrics, dashboards, filters, and reporting."
+
+[[agents]]
+name = "camisa10-maestro"
+source = "C10_Maestro/C10_CAMISA10.md"
+alias = "@C10"
+purpose = "Orchestrate project phases, briefs, agents, memory, and handoffs."
+
+[[agents]]
+name = "cetico"
+source = "C_Cetico/C_Agent_Cetico.md"
+alias = "@C"
+purpose = "Challenge plans and architecture against real project evidence."
+
+[[agents]]
+name = "compliance-regulatory"
+source = "GOV_Compliance/GOV_Agent_ComplianceRegulatory.md"
+alias = "@GOV"
+purpose = "Assess privacy, data governance, regulatory, and legal-review needs."
+
+[[agents]]
+name = "cross-stack-architect"
+source = "A_Architecture/A_Agent_CrossStackArchitect.md"
+alias = "@A"
+purpose = "Define cross-stack boundaries, domains, ownership, and contracts."
+
+[[agents]]
+name = "cycle-documenter"
+source = "C10_Maestro/C10_DOCUMENTADOR.md"
+alias = "C10_DOCUMENTADOR"
+purpose = "Close validated cycles in logs, ADRs, learnings, and current status."
+
+[[agents]]
+name = "data-migrations"
+source = "DATA_Database/DATA_Agent_DataMigrations.md"
+alias = "@DATA"
+purpose = "Own persistent-state modeling, migrations, integrity, and rollback."
+
+[[agents]]
+name = "debugger"
+source = "BUG_Debugger/BUG_Agent_Debugger.md"
+alias = "@BUG"
+purpose = "Diagnose root causes and validate minimal regression-safe fixes."
+
+[[agents]]
+name = "delivery-inspector"
+source = "SUP_Supervisor/SUP_FLOW_DeliveryInspector.md"
+alias = "@FLOW"
+purpose = "Audit delivery order, skipped gates, cascades, and scope deviations."
+
+[[agents]]
+name = "dependency-steward"
+source = "DEP_Dependencies/DEP_Agent_DependencySteward.md"
+alias = "@DEP"
+purpose = "Govern dependencies, lockfiles, CVEs, licenses, and upgrades."
+
+[[agents]]
+name = "design-ux"
+source = "D_Design/D_Agent_Design.md"
+alias = "@D"
+purpose = "Design accessible, responsive, coherent user interfaces and UX."
+
+[[agents]]
+name = "digitalocean-environment"
+source = "E_Environment/E_Agent_DigitalOceanEnvironment.md"
+alias = "@E:DigitalOcean"
+purpose = "Audit and manage DigitalOcean configuration, capacity, and cost."
+
+[[agents]]
+name = "environment-manager"
+source = "E_Environment/E_Agent_Environment.md"
+alias = "@E"
+purpose = "Govern variables, secrets, deploy configuration, and environment drift."
+
+[[agents]]
+name = "environment-status-radar"
+source = "SUP_Supervisor/SUP_ENV_StatusRadar.md"
+alias = "@ENV"
+purpose = "Audit readiness and parity across local, development, staging, and production."
+
+[[agents]]
+name = "final-validator"
+source = "V_Validation/V_Agent_FinalValidator.toml"
+alias = "@V:final"
+purpose = "Review final diffs, evidence, regressions, and merge or deploy readiness."
+
+[[agents]]
+name = "gsd-tdd-cli-auditor"
+source = "GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md"
+alias = "@GSD"
+purpose = "Enforce acceptance criteria, proportional TDD, Harness evidence, and bug sweep."
+
+[[agents]]
+name = "impact-validator"
+source = "V_Validation/V_Agent_ImpactValidator.toml"
+alias = "@V:impact"
+purpose = "Validate plans, blast radius, consumers, and cross-stack impact before editing."
+
+[[agents]]
+name = "ios-appstore"
+source = "IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md"
+alias = "@IOS"
+purpose = "Own native iOS, TestFlight, signing, privacy, and App Review readiness."
+
+[[agents]]
+name = "layout-replicator"
+source = "D_Design/D_Agent_LayoutReplicator.md"
+alias = "@D:layout"
+purpose = "Replicate or adapt visual references while preserving product behavior."
+
+[[agents]]
+name = "localization-ux"
+source = "I18N_LocalizationUX/I18N_Agent_LocalizationUX.md"
+alias = "@I18N"
+purpose = "Own localization, product language, UX writing, and glossary consistency."
+
+[[agents]]
+name = "location"
+source = "GEO_Location/GEO_Agent_Location.md"
+alias = "@GEO"
+purpose = "Design address, maps, geocoding, proximity, and location privacy flows."
+
+[[agents]]
+name = "mobile-playstore"
+source = "M_MobilePlaystore/M_Agent_MobilePlaystore.md"
+alias = "@M"
+purpose = "Own mobile behavior, permissions, offline sync, stores, and releases."
+
+[[agents]]
+name = "observability-deploy"
+source = "O_Observability/O_Agent_DeployObservability.md"
+alias = "@O"
+purpose = "Build CI/CD and operational evidence through logs, metrics, alerts, and rollback."
+
+[[agents]]
+name = "payments-marketplace"
+source = "PAY_PaymentsMarketplace/PAY_Agent_PaymentsMarketplace.md"
+alias = "@PAY"
+purpose = "Protect payment, marketplace, ledger, webhook, payout, and refund flows."
+
+[[agents]]
+name = "performance-validator"
+source = "P_Performance/P_Agent_PerformanceValidator.toml"
+alias = "@P"
+purpose = "Validate performance, scale, concurrency, cache, payload, query, and cost risks."
+
+[[agents]]
+name = "pick-agent-selector"
+source = "SUP_Supervisor/SUP_PICK_AgentSelector.md"
+alias = "@PICK"
+purpose = "Select the minimal sufficient agent team, order, and gates."
+
+[[agents]]
+name = "process-guardian"
+source = "SUP_Supervisor/SUP_X_ProcessGuardian.md"
+alias = "@X"
+purpose = "Audit overall process health, progress, gates, and sustainability."
+
+[[agents]]
+name = "project-documentation-architect"
+source = "DOC_Documentation/DOC_Agent_ProjectDocumentationArchitect.md"
+alias = "@DOC"
+purpose = "Create and synchronize the project's structural documentation system."
+
+[[agents]]
+name = "project-onboarding-guide"
+source = "ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md"
+alias = "@ONB"
+purpose = "Position the user, diagnose project phase, and route the next step."
+
+[[agents]]
+name = "prompt-refiner"
+source = "PR_PromptOps/PR_Agent_PromptRefiner_v2.md"
+alias = "@PR"
+purpose = "Convert ambiguous requests into safe, scoped, verifiable prompts and briefs."
+
+[[agents]]
+name = "regional-platform-compliance"
+source = "REG_RegionalCompliance/REG_Agent_RegionalCompliance.md"
+alias = "@REG"
+purpose = "Assess country, region, App Store, and Play Store release requirements."
+
+[[agents]]
+name = "release-manager"
+source = "REL_Release/REL_Agent_ReleaseManager.md"
+alias = "@REL"
+purpose = "Coordinate versions, changelogs, release gates, migrations, tags, and rollback."
+
+[[agents]]
+name = "risk-marshal"
+source = "SUP_Supervisor/SUP_RiskMarshal.md"
+alias = "@R"
+purpose = "Score and prioritize cross-domain risks, recurrence, mitigation, and deadlines."
+
+[[agents]]
+name = "security-validator"
+source = "S_Seguranca/S_Agent_SecurityValidator.toml"
+alias = "@S"
+purpose = "Validate auth, authorization, secrets, PII, input, headers, and security controls."
+
+[[agents]]
+name = "spec-architect"
+source = "SPEC_Specs/SPEC_Agent_SpecArchitect.md"
+alias = "@SPEC"
+purpose = "Transform product intent and legacy behavior into executable SDD specifications."
+
+[[agents]]
+name = "standards-enforcer"
+source = "SUP_Supervisor/SUP_STD_StandardsEnforcer.md"
+alias = "@STD"
+purpose = "Discover and enforce declared, inferred, and universal project standards."
+
+[[agents]]
+name = "test-engineer"
+source = "Q_Quality/Q_Agent_TestEngineer.md"
+alias = "@Q"
+purpose = "Implement risk-driven unit, API, contract, coverage, and critical happy-path tests."
+
+[[agents]]
+name = "trust-safety"
+source = "MOD_TrustSafety/MOD_Agent_TrustSafety.md"
+alias = "@MOD"
+purpose = "Design moderation, abuse, reports, blocking, evidence, and admin review flows."
 
 [bridge]
 codex_structured_source = ".codex/agents/*.toml"
 claude_generated_shape = ".claude/agents/*.md"
-source_reference_rule = "Every wrapper must mention at least one existing source file."
+source_reference_rule = "Every wrapper must reference both installed-kit and kit-root paths for its manifest source."
+full_source_rule = "Every wrapper must require reading its selected source file completely before acting."
 skill_reference_rule = "Skills must reference source files instead of duplicating agent bodies."

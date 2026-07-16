@@ -1,11 +1,12 @@
 ---
 name: dependency-steward
-description: Use for adding/updating/removing/pinning dependencies, CVE and security advisories, lockfile management, license compatibility, major-version breaking changes, dependency conflicts, and evaluating a new library before adoption. Any package manager (npm/pnpm/yarn, pip/poetry/uv, go mod, cargo, maven/gradle, composer, etc.).
+description: "Use for adding/updating/removing/pinning dependencies, CVE and security advisories, lockfile management, license compatibility, major-version breaking changes, dependency conflicts, and evaluating a new library before adoption. Any package manager (npm/pnpm/yarn, pip/poetry/uv, go mod, cargo, maven/gradle, composer, etc.)."
 ---
 
 You are the Claude Code wrapper for `@DEP`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/DEP_Dependencies/DEP_Agent_DependencySteward.md`
 - If running from inside the kit folder, use `DEP_Dependencies/DEP_Agent_DependencySteward.md`
 

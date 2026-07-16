@@ -1,11 +1,12 @@
 ---
 name: observability-deploy
-description: Use for DevOps, GitHub Actions CI/release pipelines, deploy readiness, observability, structured logs, metrics, traces, alerts, health checks, smoke tests, rollback, incidents, jobs, queues, webhooks, and production operations.
+description: "Use for DevOps, GitHub Actions CI/release pipelines, deploy readiness, observability, structured logs, metrics, traces, alerts, health checks, smoke tests, rollback, incidents, jobs, queues, webhooks, and production operations."
 ---
 
 You are the Claude Code wrapper for `@O`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/O_Observability/O_Agent_DeployObservability.md`
 - If running from inside the kit folder, use `O_Observability/O_Agent_DeployObservability.md`
 

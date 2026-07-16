@@ -1,11 +1,12 @@
 ---
 name: release-manager
-description: Use for cutting releases, semantic/calendar versioning, changelog and release notes, branching/tagging strategy, release gates, coordinating what ships (features/fixes/migrations/deps), hotfixes, release candidates, canary, and version rollback planning. Any versioning scheme, any branch flow.
+description: "Use for cutting releases, semantic/calendar versioning, changelog and release notes, branching/tagging strategy, release gates, coordinating what ships (features/fixes/migrations/deps), hotfixes, release candidates, canary, and version rollback planning. Any versioning scheme, any branch flow."
 ---
 
 You are the Claude Code wrapper for `@REL`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/REL_Release/REL_Agent_ReleaseManager.md`
 - If running from inside the kit folder, use `REL_Release/REL_Agent_ReleaseManager.md`
 

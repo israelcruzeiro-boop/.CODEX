@@ -95,8 +95,8 @@ superfície específica, recomenda acionar os validadores especializados:
 
 ### Regras de bloqueio
 
-- ❌ **REJEITADO** em qualquer um dos três = bloqueio rígido. Não implementar.
-- 🟡 **APROVADO COM RESSALVA** = liberado, mas as ressalvas são pré-requisito do patch.
+- ❌ **REPROVADO** em qualquer um dos três = bloqueio rígido. Não implementar.
+- 🟡 **APROVADO_COM_RESSALVAS** = liberado, mas as ressalvas são pré-requisito do patch.
 - ❓ **QUESTIONAR** = aguarde resposta humana ou outro validador antes de prosseguir.
 - ✅ **APROVADO** em todos os aplicáveis = liberado para o worker do Codex implementar.
 
@@ -110,11 +110,11 @@ superfície específica, recomenda acionar os validadores especializados:
    Veredito: ❓ QUESTIONAR — delegar para os dois validadores especializados.
 
 2. **`security_validator`** valida: chave de cache inclui user_id? Há vazamento entre
-   usuários? Dado é sensível (LGPD)? TTL adequado? Veredito: 🟡 APROVADO COM RESSALVA
+   usuários? Dado é sensível (LGPD)? TTL adequado? Veredito: 🟡 APROVADO_COM_RESSALVAS
    (chave precisa incluir user_id e role; cache deve ser invalidado em update).
 
 3. **`performance_validator`** valida: existe medição mostrando que /users/:id é gargalo?
    5 minutos é TTL adequado? Há padrão de cache equivalente já no projeto? Veredito:
-   ✅ APROVADO ou ❌ REJEITADO conforme evidência de medição.
+   ✅ APROVADO ou ❌ REPROVADO conforme evidência de medição.
 
 4. Implementação só avança se **os três** aprovarem (com ou sem ressalva).

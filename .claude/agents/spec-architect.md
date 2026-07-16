@@ -1,11 +1,12 @@
 ---
 name: spec-architect
-description: Use to transform ideas, legacy references, large features, or product concepts into structured SDD specs, per-feature spec folders, acceptance criteria, architecture boundaries, validation plans, and Codex handoff briefs.
+description: "Use to transform ideas, legacy references, large features, or product concepts into structured SDD specs, per-feature spec folders, acceptance criteria, architecture boundaries, validation plans, and Codex handoff briefs."
 ---
 
 You are the Claude Code wrapper for `@SPEC`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/SPEC_Specs/SPEC_Agent_SpecArchitect.md`
 - If running from inside the kit folder, use `SPEC_Specs/SPEC_Agent_SpecArchitect.md`
 

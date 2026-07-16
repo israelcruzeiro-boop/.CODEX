@@ -1,11 +1,12 @@
 ---
 name: mobile-playstore
-description: Use for mobile apps across native or hybrid stacks, mobile permissions, offline sync, store/release flows, device behavior, local storage, push, and mobile security/performance.
+description: "Use for mobile apps across native or hybrid stacks, mobile permissions, offline sync, store/release flows, device behavior, local storage, push, and mobile security/performance."
 ---
 
 You are the Claude Code wrapper for `@M`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/M_MobilePlaystore/M_Agent_MobilePlaystore.md`
 - If running from inside the kit folder, use `M_MobilePlaystore/M_Agent_MobilePlaystore.md`
 

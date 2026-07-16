@@ -150,11 +150,14 @@ Feature de risco ALTO ou CRITICO nao deve chegar a `@V` sem evidencias de `@A`,
 - `AGENTS.md`: catalogo mestre, governanca de raiz geral, pipeline, prefixos,
   gates e regras globais.
 - `CLAUDE.md`: adaptador para Claude Code usar o arsenal.
-- `.claude/agents/*.md`: wrappers de subagentes Claude apontando para os agentes
-  originais.
-- `.codex/agents/*.toml`: wrappers estruturados para Codex.
-- `skills/`: skills locais para workflows recorrentes (`codex-agent-kit`,
-  `gsd-tdd-cli-harness`, `agent-forge`).
+- `.claude/agents/*.md`: fontes canonicas de wrappers Claude; o instalador as
+  projeta em `PROJECT_ROOT/.claude/agents`.
+- `.codex/agents/*.toml`: fontes canonicas de wrappers Codex; o instalador as
+  projeta em `PROJECT_ROOT/.codex/agents`.
+- `skills/`: fontes canonicas das skills para workflows recorrentes (`codex-agent-kit`,
+  `gsd-tdd-cli-harness`, `agent-forge`, `architecture-blueprint`,
+  `spec-driven-breakdown`, `multi-agent-delivery`); o instalador as projeta em
+  `PROJECT_ROOT/.agents/skills` para descoberta pelo Codex.
 - `RUNTIME_Bridge/`: manifesto, validadores e ponte Codex/Claude/Hermes-style.
 - `AUDIT_AGENTES.md`: auditoria atual do arsenal, com foco em manter agentes
   genericos e stack-agnostic.
@@ -494,6 +497,9 @@ segredos, dados sensiveis ou dinheiro.
 - `T_Template_LEARNINGS.md`: aprendizados.
 - `T_Template_SPEC.md`: especificacao SDD.
 - `T_Template_CLI_AUDIT.md`: auditoria Harness CLI.
+- `T_Template_MULTI_AGENT_PLAN.md`: DAG, ownership e joins de subagentes.
+- `T_Template_AGENT_TASK.md`: pacote minimo de contexto por subagente.
+- `T_Template_AGENT_RESULT.md`: envelope de evidencia para fan-in.
 - `T_Template_CLAUDE.md`: template de `CLAUDE.md`.
 
 Use templates no onboarding, specs, handoff, memoria e entregas que precisam
@@ -569,6 +575,7 @@ substituem o arsenal; apenas adaptam o roteamento.
 
 Wrappers existentes hoje:
 
+- `access-gatekeeper`
 - `agent-forge-foreman`
 - `ai-integration-architect`
 - `backend-domain`
@@ -577,15 +584,20 @@ Wrappers existentes hoje:
 - `cetico`
 - `compliance-regulatory`
 - `cross-stack-architect`
+- `cycle-documenter`
 - `data-migrations`
 - `debugger`
 - `dependency-steward`
+- `delivery-inspector`
 - `design-ux`
+- `digitalocean-environment`
 - `environment-manager`
+- `environment-status-radar`
 - `final-validator`
 - `gsd-tdd-cli-auditor`
 - `impact-validator`
 - `ios-appstore`
+- `layout-replicator`
 - `localization-ux`
 - `location`
 - `mobile-playstore`
@@ -596,23 +608,36 @@ Wrappers existentes hoje:
 - `process-guardian`
 - `project-documentation-architect`
 - `project-onboarding-guide`
+- `prompt-refiner`
 - `regional-platform-compliance`
 - `release-manager`
+- `risk-marshal`
 - `security-validator`
 - `spec-architect`
+- `standards-enforcer`
 - `test-engineer`
 - `trust-safety`
 
 Para aplicar em um projeto real:
 
 1. Defina `PROJECT_ROOT` como a raiz geral do produto.
-2. Coloque `.codex/` nessa raiz.
-3. Copie/adapte `C10_Maestro/C10_Agent_ProjectRules.md` para
-   `PROJECT_ROOT/AGENTS.md`.
-4. Coloque `CLAUDE.md` na raiz geral quando usar Claude Code.
-5. Coloque `.claude/agents/` na raiz geral quando usar Claude Code.
+2. Mantenha este repositorio como checkout em `PROJECT_ROOT/.codex`.
+3. A partir de `PROJECT_ROOT`, execute:
+
+```powershell
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root . --check
+```
+
+4. O instalador projeta `PROJECT_ROOT/.codex/agents`,
+   `PROJECT_ROOT/.claude/agents` e `PROJECT_ROOT/.agents/skills`, e cria
+   `AGENTS.md`/`CLAUDE.md` quando ausentes.
+5. Customize arquivos de raiz depois da primeira instalacao; execucoes futuras
+   preservam conteudo modificado e reportam conflito em vez de sobrescrever.
 6. Trate `.codex/` como governanca transversal de todos os ambientes.
-7. Em pedidos complexos ao Claude, comece por:
+7. Nunca copie wrappers ou skills manualmente; depois de `git pull`, rode o instalador e
+   o `--check` novamente.
+8. Em pedidos complexos ao Claude, comece por:
 
 ```text
 Use the pick-agent-selector subagent to select the right team for this task.
@@ -731,8 +756,23 @@ automatica do Codex:
 1. `codex-agent-kit`: usa `AGENTS.md`, `C10_Maestro` e `SUP_Supervisor`.
 2. `gsd-tdd-cli-harness`: aciona `@GSD`, SDD e Harness em implementacoes.
 3. `agent-forge`: usa `F_AgentForge` para criar e evoluir agentes sob demanda.
+4. `architecture-blueprint`: separa AS-IS/TO-BE, define modulos, dependencias,
+   pattern map, ADRs e fitness gates.
+5. `spec-driven-breakdown`: gera specs granulares com IDs e matriz requisito ->
+   modulo/contrato -> task -> teste -> evidencia.
+6. `multi-agent-delivery`: cria DAG, pacotes de contexto, ownership, fan-out,
+   fan-in e validacao pos-integracao.
 
 A decisao esta documentada em `C10_Maestro/C10_Skill_Strategy.md`.
+
+## Metodo Multiagente
+
+Quando houver duas ou mais frentes independentes, usar
+`SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`. O agente raiz define a DAG,
+reserva ownership exclusivo de leitura/escrita por fingerprint, envia contexto minimo, aguarda todos os
+joins, reconcilia claims pela evidencia primaria e revalida a integracao.
+O write-set de um subagente nao pode sobrepor read-set ou write-set concorrente;
+quando isso for necessario, serialize ou forneca snapshot/worktree imutavel.
 
 ## Comandos De Auditoria Do Arsenal
 
@@ -742,6 +782,10 @@ Para verificar se o guia e o arsenal continuam alinhados:
 rg --files
 rg -n -i "nome do projeto|stack especifica|provider especifico|pais especifico|fase fixa|default obrigatorio"
 Get-ChildItem -Recurse -File .claude\agents | Select-Object -ExpandProperty FullName
+python RUNTIME_Bridge/scripts/validate_arsenal.py
+python RUNTIME_Bridge/scripts/validate_specs.py PROJECT_ROOT
+python RUNTIME_Bridge/scripts/validate_architecture.py PROJECT_ROOT
+python -m unittest discover -s RUNTIME_Bridge/scripts -p "test_*.py" -v
 ```
 
 Classifique achados conforme `AUDIT_AGENTES.md`:

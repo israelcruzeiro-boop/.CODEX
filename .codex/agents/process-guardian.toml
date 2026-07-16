@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@X`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/SUP_Supervisor/SUP_X_ProcessGuardian.md`
 - If running from inside the kit folder, use `SUP_Supervisor/SUP_X_ProcessGuardian.md`
 

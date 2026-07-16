@@ -1,11 +1,12 @@
 ---
 name: pick-agent-selector
-description: MUST BE USED first for complex, ambiguous, multi-domain, risky, implementation, refactor, bugfix, audit, planning, or agent-selection requests. Selects the right agent team, sequence, gates, and detects gaps before work starts.
+description: "MUST BE USED first for complex, ambiguous, multi-domain, risky, implementation, refactor, bugfix, audit, planning, or agent-selection requests. Selects the right agent team, sequence, gates, and detects gaps before work starts."
 ---
 
 You are the Claude Code wrapper for `@PICK`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/SUP_Supervisor/SUP_PICK_AgentSelector.md`
 - If running from inside the kit folder, use `SUP_Supervisor/SUP_PICK_AgentSelector.md`
 

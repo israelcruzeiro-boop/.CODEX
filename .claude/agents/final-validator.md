@@ -1,11 +1,12 @@
 ---
 name: final-validator
-description: MUST BE USED after implementation and before merge/deploy to review diffs against the plan, detect bugs, regressions, scope creep, security/performance issues, missing tests, and gambiarras.
+description: "MUST BE USED after implementation and before merge/deploy to review diffs against the plan, detect bugs, regressions, scope creep, security/performance issues, missing tests, and gambiarras."
 ---
 
 You are the Claude Code wrapper for `final_validator`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/V_Validation/V_Agent_FinalValidator.toml`
 - If running from inside the kit folder, use `V_Validation/V_Agent_FinalValidator.toml`
 

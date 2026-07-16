@@ -2,16 +2,19 @@
 
 > Planta tecnica deste repo/ambiente. Segue `A_Architecture/A_Method_PlantaTecnica.md`:
 > especifica, derivada do codigo, verificavel e enxuta. Uma planta por repo/ambiente.
+> Este documento e exclusivamente AS-IS. Toda intencao fica em
+> `TARGET_ARCHITECTURE.md` + ADR.
 
 **Fonte:** analise direta do codigo
 **Data da analise:** YYYY-MM-DD
-**Status:** planta de intencao (pre-codigo) | derivada do codigo
+**Horizonte:** AS-IS
+**Status:** DERIVADA_DO_CODIGO | DRIFT_PARCIAL | DESATUALIZADA
 **Decisoes relacionadas:** ADR-
 **Specs relacionadas:**
 
 Regra de manutencao: mudanca estrutural (rota, tabela, integracao, camada, lib,
 modulo novo) atualiza esta planta no mesmo PR/ciclo. Secao que virar promessa vai
-para Gaps ou sai.
+para `TARGET_ARCHITECTURE.md` ou sai; promessa nunca permanece no AS-IS.
 
 ## 1. Stack Real
 
@@ -128,3 +131,39 @@ Estrategia de cache conforme `P_Performance/P_Method_CacheStrategy.md`.
 
 Debito tecnico honesto e visivel. Camada planejada e nao implementada e Gap
 declarado, nunca descricao no presente.
+
+## 12. Catalogo Modular Observado
+
+Segue `A_Architecture/A_Method_ModularArchitecture.md`.
+
+| ID | Modulo real | Responsabilidade | API publica | Dados/owner | Invariantes | Dono |
+|---|---|---|---|---|---|---|
+| MOD-001 |  |  | CON-001 |  | INV-001 |  |
+
+### Dependencias Observadas
+
+| Origem | Destino | Tipo | Evidencia | Estado |
+|---|---|---|---|---|
+| MOD- | MOD- | build/sync/async | arquivo:simbolo | PERMITIDA/PROIBIDA/GAP |
+
+```mermaid
+flowchart LR
+  M1["MOD-001"] --> M2["MOD-002"]
+```
+
+**Ciclos observados:** nenhum | [ciclo + evidencia + gap]
+
+## 13. Transacoes, Consistencia E Eventos Observados
+
+| Fluxo | Limite transacional | Consistencia | Evento/efeito | Idempotencia/retry | Evidencia |
+|---|---|---|---|---|---|
+|  | MOD- | forte/eventual | EVT- |  | arquivo:simbolo |
+
+## 14. Patterns Observados
+
+Referencia normativa: `PATTERN_MAP.md`, conforme
+`A_Architecture/A_Method_PatternMap.md`.
+
+| Pattern | Presenca | Decisao normativa | Evidencia | ADR/gate |
+|---|---|---|---|---|
+| PAT-001 | OBSERVADO/PARCIAL | SEM_DECISAO/APROVADO/DEPRECIADO/PROIBIDO | arquivo:simbolo | ADR-/gate |

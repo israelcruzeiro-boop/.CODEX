@@ -29,6 +29,17 @@ Este `AGENTS.md` deve ficar em `PROJECT_ROOT`, a raiz geral do projeto. A pasta
 `.codex/` tambem deve ficar nessa raiz e governa todos os ambientes, apps,
 servicos e pacotes abaixo dela.
 
+Depois de checkout ou `git pull` do kit, executar a partir de `PROJECT_ROOT`:
+
+```powershell
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root . --check
+```
+
+Nao copiar wrappers ou skills manualmente. O instalador projeta as skills em
+`.agents/skills`, preserva customizacoes e reporta
+drift/conflito sem sobrescrever arquivo de raiz alterado pelo projeto.
+
 Modelo esperado:
 
 ```text
@@ -219,6 +230,15 @@ Agentes comuns:
 - `@GOV`: compliance geral, privacidade e regulacao.
 - `@V`: validacao final.
 - `@DOC`: documentacao.
+
+Para duas ou mais frentes independentes, usar
+`.codex/SUP_Supervisor/SUP_Method_MultiAgentDelivery.md` e a skill
+`multi-agent-delivery`. Antes do primeiro spawn, definir task IDs, dependencias,
+grupos paralelos, read-set, write-set, fingerprint, join e integrador. O
+write-set de um subagente nao pode sobrepor read-set ou write-set concorrente
+sem snapshot/worktree imutavel. O agente raiz aguarda todos os joins
+obrigatorios, reconcilia contradicoes pela evidencia primaria e revalida o
+resultado integrado.
 
 ---
 

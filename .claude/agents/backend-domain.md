@@ -1,11 +1,12 @@
 ---
 name: backend-domain
-description: Use for backend APIs, domain logic, DTOs, permissions, services, repositories, database interactions, business rules, and contracts that must not live in frontend/mobile.
+description: "Use for backend APIs, domain logic, DTOs, permissions, services, repositories, database interactions, business rules, and contracts that must not live in frontend/mobile."
 ---
 
 You are the Claude Code wrapper for `@B`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/B_BackendDomain/B_Agent_BackendDomain.md`
 - If running from inside the kit folder, use `B_BackendDomain/B_Agent_BackendDomain.md`
 

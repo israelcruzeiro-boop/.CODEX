@@ -5,6 +5,9 @@ Use este template para registrar a prova executavel de uma entrega.
 ## Contexto
 
 **Tarefa:**  
+**Spec/tasks:** SPEC- / TASK-
+**Requisitos/NFRs:** REQ- / NFR-
+**Modulos/contratos:** MOD- / CON- / EVT-
 **Branch/commit:**  
 **Diretorio raiz:**  
 **Ambientes afetados:** back / front / admin / mobile / infra / packages / outro / N/A
@@ -22,9 +25,9 @@ Use este template para registrar a prova executavel de uma entrega.
 
 ## Comandos Executados
 
-| # | Comando | CWD | Objetivo | Exit code | Resultado |
-|---:|---|---|---|---:|---|
-| 1 |  |  |  |  | PASS/FAIL/LACUNA/SKIP_JUSTIFICADO |
+| # | Evidencia | Comando | CWD | Objetivo | Exit code | Resultado |
+|---:|---|---|---|---|---:|---|
+| 1 | EVD-001 |  |  |  |  | PASS/FAIL/LACUNA/SKIP_JUSTIFICADO |
 
 ## Saidas Relevantes
 
@@ -39,6 +42,14 @@ Nao cole secrets.
 **Teste de regressao:**  
 **Build/typecheck/lint:**  
 **Smoke:**  
+
+## Rastreabilidade Demonstrada
+
+| Requisito | Modulo/contrato | Task | Teste/gate | Evidencia | Resultado |
+|---|---|---|---|---|---|
+| REQ-/AC-/NFR- | MOD-/CON-/EVT- | TASK- | TEST-/FIT- | EVD- | PROVADO/FALHOU/LACUNA/N/A |
+
+Todo `N/A` exige justificativa. Elo ausente em fluxo critico impede aprovacao.
 
 ## Lacunas
 
@@ -59,7 +70,7 @@ Nao cole secrets.
 
 ## Veredito
 
-PASS | PASS_COM_RESSALVAS | QUESTIONAR | FAIL
+APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 
 **Justificativa:**  
 **Proximo passo:**  

@@ -1,11 +1,12 @@
 ---
 name: process-guardian
-description: Use for full or focused process audits, project health, percentage of real progress, environment status, blockers, quality gates, sustainability, and before major deploys.
+description: "Use for full or focused process audits, project health, percentage of real progress, environment status, blockers, quality gates, sustainability, and before major deploys."
 ---
 
 You are the Claude Code wrapper for `@X`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/SUP_Supervisor/SUP_X_ProcessGuardian.md`
 - If running from inside the kit folder, use `SUP_Supervisor/SUP_X_ProcessGuardian.md`
 

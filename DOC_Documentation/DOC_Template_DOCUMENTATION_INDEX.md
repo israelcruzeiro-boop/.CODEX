@@ -16,7 +16,10 @@ Este arquivo e o mapa oficial da documentacao do projeto.
 | LEARNINGS.md | Aprendizados reutilizaveis | C10_DOCUMENTADOR | Erro, padrao ou descoberta | AUSENTE/PARCIAL/OK |
 | AGENTS.md | Regras para Codex | @DOC / @C10 | Agentes ou fluxo mudarem | AUSENTE/PARCIAL/OK |
 | CLAUDE.md | Regras para Claude Code | @DOC / @C10 | Wrappers ou fluxo mudarem | AUSENTE/PARCIAL/OK |
-| ARCHITECTURE.md | Fronteiras, modulos e contratos | @A / @DOC | Arquitetura mudar | AUSENTE/PARCIAL/OK |
+| ARCHITECTURE.md | AS-IS derivado do codigo: fronteiras, modulos e contratos reais | @A / @DOC | Codigo estrutural mudar | AUSENTE/PARCIAL/OK |
+| TARGET_ARCHITECTURE.md | TO-BE aprovado, delta, evolucao e fitness gates | @A / @DOC | Spec/ADR arquitetural mudar | AUSENTE/PARCIAL/OK/N/A |
+| PATTERN_MAP.md | Patterns observados e normativos, evidencia e gates | @A / @DOC | Pattern surgir ou mudar de estado | AUSENTE/PARCIAL/OK/N/A |
+| docs/adr/*.md | Decisoes arquiteturais e trade-offs individuais | @A / C10_DOCUMENTADOR | Decisao relevante mudar | AUSENTE/PARCIAL/OK/N/A |
 | DESIGN.md | UX, UI, design system e estados | @D / @DOC | Design ou fluxo mudar | AUSENTE/PARCIAL/OK |
 | API_CONTRACTS.md | Endpoints, DTOs, erros e versionamento | @B / @A | API mudar | AUSENTE/PARCIAL/OK |
 | DATA_MODEL.md | Entidades, relacoes e constraints | @B / @A | Schema mudar | AUSENTE/PARCIAL/OK |
@@ -40,4 +43,4 @@ Este arquivo e o mapa oficial da documentacao do projeto.
 
 **Data:**  
 **Agente:** @DOC  
-**Veredito:** DOC_OK | DOC_COM_RESSALVAS | DOC_QUESTIONAR | DOC_REPROVADO
+**Veredito:** APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO

@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@E`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/E_Environment/E_Agent_Environment.md`; use provider-specific references only when the project uses that provider.
 - If running from inside the kit folder, use `E_Environment/E_Agent_Environment.md`
 

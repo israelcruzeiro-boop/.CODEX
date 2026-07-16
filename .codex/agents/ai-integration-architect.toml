@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@AI`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md`
 - If running from inside the kit folder, use `AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md`
 

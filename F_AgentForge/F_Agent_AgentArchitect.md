@@ -144,11 +144,11 @@ O agente precisa saber o que entregar. Formatos possiveis:
 - Codigo: arquivos criados/modificados com diff
 - Testes: cobertura dos caminhos feliz e de erro
 - Documentacao: comentarios em codigo e atualizacao de docs
-- Veredito: DONE | PARTIAL | BLOCKED (com motivo)
+- Status de execucao: COMPLETE | PARTIAL | BLOCKED (com motivo)
 
 ### Para agentes que VALIDAM:
 - Relatorio: lista de verificacoes com status
-- Veredito: APROVADO | APROVADO COM RESSALVA | REPROVADO | QUESTIONAR
+- Veredito: APROVADO | APROVADO_COM_RESSALVAS | REPROVADO | QUESTIONAR
 - Detalhamento: para cada item reprovado, evidencia + sugestao
 
 ### Para agentes que PLANEJAM:

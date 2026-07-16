@@ -63,6 +63,13 @@ plano, impacto, validacao e decisao documentada.
 4. Para superficie sensivel, usar os validadores especializados.
 5. Antes de fechar, usar `final-validator`.
 6. Para lacuna real sem agente, usar `agent-forge-foreman`.
+7. Para duas ou mais frentes independentes, planejar DAG, ownership, contexto,
+   joins e integracao conforme
+   `.codex/SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`.
+
+Subagentes escritores nunca compartilham arquivos ao mesmo tempo. O agente
+principal aguarda os joins obrigatorios, confronta resultados pela evidencia
+primaria e revalida a integracao antes do veredito.
 
 ## Fonte Da Verdade
 

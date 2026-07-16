@@ -1,11 +1,12 @@
 ---
 name: compliance-regulatory
-description: Use for general compliance, privacy, LGPD/GDPR, consent, data retention, legal-risk requirements, regulated sectors, app/store policy risk, and user-data governance.
+description: "Use for general compliance, privacy, LGPD/GDPR, consent, data retention, legal-risk requirements, regulated sectors, app/store policy risk, and user-data governance."
 ---
 
 You are the Claude Code wrapper for `@GOV`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/GOV_Compliance/GOV_Agent_ComplianceRegulatory.md`
 - If running from inside the kit folder, use `GOV_Compliance/GOV_Agent_ComplianceRegulatory.md`
 

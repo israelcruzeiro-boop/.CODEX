@@ -49,6 +49,10 @@ Nao acione para:
 - Quando houver manifestos de dependencias, inclui instalacao reproduzivel pelo
   lockfile e audit do ecossistema real no Harness; entrega evidencias a `@DEP`.
 - Emite veredito com evidencia.
+- Audita a cadeia `REQ/NFR -> MOD/CON/EVT -> TASK -> TEST/FIT -> EVD` e impede
+  que requisito sem prova ou prova sem requisito passe como concluido.
+- Aplica a DoR antes de desenvolver e a DoD antes de aprovar, usando
+  `T_Templates/T_Template_SPEC.md`.
 
 ---
 
@@ -63,6 +67,11 @@ Use este fluxo em toda implementacao:
 5. `DEVELOP`: fazer a menor mudanca que satisfaz o criterio.
 6. `DEMONSTRATE`: rodar Harness CLI e bug sweep.
 7. `DOCUMENT`: entregar evidencias para `@Q`, `final_validator` e Documentador.
+
+Antes de `DEVELOP`, a DoR deve confirmar IDs, criterios, consumidores,
+contratos, NFRs, riscos, rollout/rollback e Harness planejado. Antes do
+veredito, a DoD deve confirmar rastreabilidade completa, provas, documentacao e
+ausencia de falha bloqueante.
 
 GSD significa: Get Stuff Done com prova. Entregar rapido so conta se a entrega
 for pequena, verificavel e reversivel.
@@ -126,7 +135,10 @@ cargo test
 Nunca invente comando. Se o comando nao existe, registre lacuna e escolha a
 melhor prova disponivel.
 
-Use `T_Templates/T_Template_CLI_AUDIT.md` para registrar a auditoria.
+Use `SUP_Supervisor/SUP_Method_Harness.md` como metodo e
+`T_Templates/T_Template_CLI_AUDIT.md` para registrar a auditoria. Resultados de
+comandos usam `PASS`, `FAIL`, `LACUNA` ou `SKIP_JUSTIFICADO`; o veredito global
+usa apenas `APROVADO`, `APROVADO_COM_RESSALVAS`, `QUESTIONAR` ou `REPROVADO`.
 
 ---
 
@@ -177,7 +189,12 @@ Arquivos tocados:
 Risco:
 
 ## Criterios de aceite
-- [ ] ...
+Spec/tasks: SPEC- / TASK-
+- [ ] REQ-/NFR- ...
+
+## DoR
+APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
+Lacunas:
 
 ## TDD
 Teste falhando primeiro:
@@ -191,9 +208,14 @@ Contratos/consumidores verificados:
 Rollback:
 
 ## Harness CLI
-| Comando | CWD | Objetivo | Exit code | Resultado |
-|---|---|---|---:|---|
-| ... | ... | ... | ... | ... |
+| Evidencia | Comando | CWD | Objetivo | Exit code | Resultado |
+|---|---|---|---|---:|---|
+| EVD-... | ... | ... | ... | ... | PASS/FAIL/LACUNA/SKIP_JUSTIFICADO |
+
+## Rastreabilidade
+| Requisito | Modulo/contrato | Task | Teste/gate | Evidencia | Resultado |
+|---|---|---|---|---|---|
+| REQ-/NFR- | MOD-/CON-/EVT- | TASK- | TEST-/FIT- | EVD- | PROVADO/FALHOU/LACUNA/N/A |
 
 ## Bug sweep
 | Caso | Status | Evidencia/Lacuna |
@@ -206,6 +228,10 @@ Rollback:
 
 ## Veredito
 APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
+
+## DoD
+APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
+Lacunas:
 
 ## Proximo passo obrigatorio
 Acao:
@@ -240,5 +266,9 @@ Depois deste passo:
 6. Nunca mascarar erro preexistente como sucesso da entrega.
 7. Nunca deixar bug conhecido passar para `final_validator`.
 8. Nunca registrar "sem bugs" quando houve lacunas nao verificadas.
+9. Nunca iniciar implementacao com DoR `QUESTIONAR` ou `REPROVADO`.
+10. Nunca aprovar com DoD incompleta ou elo critico quebrado entre requisito,
+    arquitetura/contrato, task, teste e evidencia.
+11. Nunca renumerar IDs para esconder item removido, falha ou evidencia antiga.
 
 O `@GSD` existe para fazer a entrega andar, mas andar com os olhos abertos.

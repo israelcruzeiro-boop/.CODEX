@@ -28,8 +28,8 @@ Use sempre esta sequencia:
 | Etapa | Evidencia minima | Agentes naturais |
 |---|---|---|
 | STATE | `PROJECT.md`, `STATUS.md`, `LOG.md`, codigo afetado | `@C10`, `@PICK` |
-| SPEC | criterio de aceite, escopo, fora de escopo | `@C10`, `@PR`, especialista |
-| DESIGN | arquivos, contratos, consumidores, rollback | `@A`, especialista |
+| SPEC | IDs estaveis, criterio de aceite, escopo, fora de escopo e rastreabilidade | `@SPEC`, `@C10`, especialista |
+| DESIGN | AS-IS/TO-BE, modulos, contratos, consumidores, rollback e DAG quando paralelizavel | `@A`, especialista |
 | DOUBT | riscos, lacunas, veredito proporcional | `@C`, `impact_validator` |
 | DEVELOP | diff pequeno, TDD proporcional | executor, `@GSD` |
 | DEMONSTRATE | Harness CLI, testes, smoke, bug sweep | `@GSD`, `@Q`, `final_validator` |
@@ -60,11 +60,15 @@ SPEC
 - [ ] Comportamento esperado escrito.
 - [ ] Criterios de aceite testaveis.
 - [ ] Fora de escopo declarado.
+- [ ] Requisitos (`REQ-*`), criterios (`AC-*`), tasks, testes e evidencias possuem IDs rastreaveis.
+- [ ] Definition of Ready atendida ou lacunas bloqueantes registradas.
 
 DESIGN
 - [ ] Plano minimo.
 - [ ] Riscos e rollback.
 - [ ] Dependencias e validadores necessarios.
+- [ ] AS-IS e TO-BE separados quando houver mudanca arquitetural.
+- [ ] Workstreams paralelos possuem DAG, write-set e join definidos.
 
 DOUBT
 - [ ] Cético ou validador de impacto revisou.
@@ -86,16 +90,17 @@ DOCUMENT
 - [ ] Status/progresso de cada ambiente afetado atualizado.
 - [ ] Migrations registradas no diretorio canonico, quando houver.
 - [ ] ADR ou LEARNING registrado quando houver decisao ou erro reutilizavel.
+- [ ] Matriz `REQ/AC/NFR -> MOD/CON/EVT -> TASK -> TEST/FIT -> EVD` atualizada.
 ```
 
 ---
 
 ## Veredito SDD
 
-- `SDD_OK`: todas as etapas aplicaveis tem evidencia.
-- `SDD_COM_RESSALVAS`: lacunas nao criticas foram registradas.
-- `SDD_QUESTIONAR`: falta decisao ou contexto que impede seguir.
-- `SDD_REPROVADO`: etapa obrigatoria foi pulada ou evidencia contradiz a entrega.
+- `APROVADO`: todas as etapas aplicaveis tem evidencia.
+- `APROVADO_COM_RESSALVAS`: lacunas nao criticas foram registradas.
+- `QUESTIONAR`: falta decisao ou contexto que impede seguir.
+- `REPROVADO`: etapa obrigatoria foi pulada ou evidencia contradiz a entrega.
 
 O metodo SDD e o contrato de qualidade do kit. Agentes especializados podem ter
 protocolos proprios, mas nenhum pode violar esta cadeia.

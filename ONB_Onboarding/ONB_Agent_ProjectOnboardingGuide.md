@@ -61,7 +61,11 @@ Separe sempre: fato observado, inferencia e lacuna.
 2. Identificar tipo (web, mobile, API, CLI, lib, data, IA, automacao, etc.), publico e restricoes conhecidas.
 3. Encaminhar para `@SPEC` para virar um Pacote de Specs SDD.
 4. Encaminhar para `@DOC` para criar a base documental completa ou minima, conforme escopo.
-5. Antes da primeira implementacao, exigir a planta tecnica: `@A` desenha (dominios, camadas, contratos, estado, requisitos minimos) e `@DOC` materializa o `ARCHITECTURE.md` conforme `A_Method_PlantaTecnica.md`. Nenhum executor comeca sem ela.
+5. Antes da primeira implementacao, exigir uma arquitetura alvo: `@A` desenha
+   dominios, modulos, contratos, ownership, dependencias e requisitos em
+   `TARGET_ARCHITECTURE.md`, sustentado por spec e ADRs. `ARCHITECTURE.md`
+   permanece reservado ao AS-IS derivado do codigo e nasce no primeiro ciclo
+   em que houver codigo observavel. Nenhum executor comeca sem o TO-BE aprovado.
 6. Sugerir `@E` para ambientes/secrets quando comecar a implementar.
 7. Entregar para `@C10` orquestrar a primeira fase.
 
@@ -94,7 +98,11 @@ Inclua:
 
 - Documentos base a criar agora: `PROJECT.md`, `STATUS.md`, `ROADMAP.md`, `LOG.md`, `DECISIONS.md`, `LEARNINGS.md`, `DOCUMENTATION_INDEX.md`, `AGENTS.md`, `CLAUDE.md`.
 - Documentos tecnicos a criar agora ou registrar no roadmap: `ARCHITECTURE.md`, `DESIGN.md`, `API_CONTRACTS.md`, `DATA_MODEL.md`, `SECURITY_PRIVACY.md`, `TEST_PLAN.md`, `OPERATIONS.md`.
-- `ARCHITECTURE.md` nunca e item de lista generico: e a planta tecnica do repo e segue `A_Architecture/A_Method_PlantaTecnica.md` (4 propriedades: especifica, derivada do codigo, verificavel, enxuta; secoes minimas; regra de manutencao no mesmo PR). Antes de existir codigo, nasce como planta de intencao e vira "derivada do codigo" no primeiro ciclo de implementacao.
+- `ARCHITECTURE.md` nunca e item de lista generico: e a planta AS-IS do repo e
+  segue `A_Architecture/A_Method_PlantaTecnica.md` (especifica, derivada do
+  codigo, verificavel e enxuta). Antes de existir codigo, use
+  `TARGET_ARCHITECTURE.md` conforme `A_Method_ModularArchitecture.md`, com spec
+  e ADRs; nao publique intencao como se fosse estado observado.
 - Estrutura inicial de raiz sugerida: `.codex/`, `.claude/`, `docs/`, e pastas de ambiente somente quando fizerem sentido (`back`, `front`, `admin`, `mobile`, `infra`, `packages`, `database/migrations`).
 - Donos de atualizacao: `@DOC`, `@C10`, `C10_DOCUMENTADOR`, `@A`, `@GSD`, `@Q`, `@V` ou humano.
 - Lacunas que impedem documento definitivo.
@@ -203,7 +211,11 @@ Acionar `@DOC` com o briefing acima.
 6. Use o Modo Kickoff Completo quando o pedido for iniciar a fundacao inteira do projeto.
 7. Mantenha o onboarding curto: poucas perguntas, alto valor. No Kickoff Completo, perguntas tambem devem ser poucas, mas a saida pode ser mais estruturada.
 8. Nao acione `@F` para criar agente novo durante onboarding, a menos que exista lacuna recorrente real e nenhum agente atual cubra pelo menos 70% do dominio necessario.
-9. Nunca deixe implementacao comecar sem planta tecnica minima (`A_Method_PlantaTecnica.md`). Doc aspiracional e pior que doc nenhuma: se a planta mente, trate como gargalo prioritario e encaminhe `@A` + `@DOC` antes dos executores.
+9. Nunca deixe implementacao comecar sem arquitetura alvo minima
+   (`A_Method_ModularArchitecture.md`) e rastreavel a spec/ADRs. Quando ja
+   houver codigo, exija tambem a planta AS-IS (`A_Method_PlantaTecnica.md`). Doc
+   aspiracional misturada ao AS-IS e pior que doc nenhuma: se a planta mente,
+   trate como gargalo prioritario e encaminhe `@A` + `@DOC` antes dos executores.
 
 ## Delegacao
 

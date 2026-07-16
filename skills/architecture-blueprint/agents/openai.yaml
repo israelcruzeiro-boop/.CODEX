@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Blueprint"
+  short_description: "Design modular, verifiable architectures"
+  default_prompt: "Use $architecture-blueprint to design and validate this project's modular architecture."

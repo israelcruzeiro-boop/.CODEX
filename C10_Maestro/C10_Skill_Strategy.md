@@ -39,6 +39,24 @@ Criar skills apenas quando houver:
    - Usa `F_AgentForge`.
    - Implementada em `skills/agent-forge/SKILL.md`.
 
+4. `architecture-blueprint`
+   - Aciona em arquitetura AS-IS, TO-BE, modularidade, dependencias, ADRs e
+     mapeamento de padroes.
+   - Usa `A_Architecture` e os templates de arquitetura/pattern map.
+   - Implementada em `skills/architecture-blueprint/SKILL.md`.
+
+5. `spec-driven-breakdown`
+   - Aciona quando requisitos precisam virar specs granulares, IDs estaveis,
+     tasks, testes e rastreabilidade executavel.
+   - Usa `SPEC_Specs`, SDD e Harness.
+   - Implementada em `skills/spec-driven-breakdown/SKILL.md`.
+
+6. `multi-agent-delivery`
+   - Aciona quando dois ou mais workstreams independentes justificam fan-out,
+     isolamento de contexto e fan-in controlado.
+   - Usa `SUP_Method_MultiAgentDelivery` e templates de task/result.
+   - Implementada em `skills/multi-agent-delivery/SKILL.md`.
+
 ---
 
 ## Quando Promover Uma Pasta Para Skill
@@ -56,8 +74,10 @@ Se a pasta e apenas um agente especializado, mantenha como agente.
 
 ## Skills Reais Criadas
 
-As tres skills recomendadas existem dentro deste kit em `skills/`.
-Elas referenciam os agentes originais em vez de duplicar conteudo.
+As seis skills recomendadas tem fonte canonica dentro deste kit em `skills/`.
+O instalador as projeta em `PROJECT_ROOT/.agents/skills`, caminho repo-scoped
+descoberto pelo Codex. Elas referenciam os agentes originais em vez de duplicar
+conteudo.
 
 Valide com:
 
@@ -65,6 +85,9 @@ Valide com:
 python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\codex-agent-kit
 python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\gsd-tdd-cli-harness
 python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\agent-forge
+python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\architecture-blueprint
+python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\spec-driven-breakdown
+python C:\Users\israe\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\multi-agent-delivery
 python RUNTIME_Bridge\scripts\validate_arsenal.py
 ```
 

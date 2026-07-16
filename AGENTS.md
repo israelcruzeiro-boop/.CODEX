@@ -38,6 +38,13 @@ com mudancas no arsenal - `validate_arsenal.py` falha nessa condicao. Agentes
 especificos de um projeto (fora do template) vivem no proprio repositorio do
 projeto ou em branch dedicada, nunca soltos e nao rastreados.
 
+Depois do checkout ou `git pull`, materialize e confira os adapters de runtime
+com `python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .`
+e o respectivo `--check`, executados a partir de `PROJECT_ROOT`. O instalador e a unica ponte suportada
+para projetar wrappers em `PROJECT_ROOT/.codex/agents`, wrappers Claude em
+`PROJECT_ROOT/.claude/agents` e skills descobertas pelo Codex em
+`PROJECT_ROOT/.agents/skills`; nao copie esses arquivos manualmente.
+
 Antes de qualquer mudanca, o agente deve identificar:
 
 - qual e a raiz geral (`PROJECT_ROOT`);
@@ -114,6 +121,8 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 
 0. `ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md`: porta de entrada da pessoa. Descobre se o projeto e novo ou em andamento, posiciona fase/gargalos/alinhamento e encaminha ao agente certo. Quando o usuario pedir fundacao completa, usar o **Modo Kickoff Completo** para gerar briefings iniciais para `@DOC`, `@SPEC` e `@C10`. Opcional quando o pedido ja e uma tarefa clara.
 1. `SUP_Supervisor/SUP_PICK_AgentSelector.md`: seleciona o time certo de agentes e detecta lacunas.
+1b. `skills/multi-agent-delivery`: quando houver dois ou mais workstreams
+independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 2. `SUP_Supervisor/SUP_CRED_AccessGatekeeper.md`: entra antes de qualquer acesso externo, API, banco, navegador, deploy ou producao.
 3. `C10_Maestro`: entende o projeto, define fase, monta brief e coordena.
 4. `SPEC_Specs/SPEC_Agent_SpecArchitect.md`: transforma ideia/legado em Pacote de Specs SDD antes de arquitetura e execucao.
@@ -139,8 +148,17 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 
 - SDD oficial do kit: `C10_Maestro/C10_Method_SDD.md`.
 - Harness oficial do kit: `SUP_Supervisor/SUP_Method_Harness.md`.
-- Planta tecnica oficial do kit: `A_Architecture/A_Method_PlantaTecnica.md` (ARCHITECTURE.md por repo, derivado do codigo; nenhum executor implementa sem planta).
+- Planta AS-IS oficial do kit: `A_Architecture/A_Method_PlantaTecnica.md`
+  (`ARCHITECTURE.md` por repo, sempre derivado do codigo). Para sistemas novos
+  ou mudancas futuras, nenhum executor implementa sem `TARGET_ARCHITECTURE.md`
+  rastreavel conforme `A_Method_ModularArchitecture.md`.
+- Arquitetura modular oficial: `A_Architecture/A_Method_ModularArchitecture.md`
+  (catalogo de modulos, dependencias, contratos, consistencia e fitness gates).
+- Mapa de padroes oficial: `A_Architecture/A_Method_PatternMap.md` (padroes
+  observados/propostos/aprovados/depreciados/proibidos, sempre com evidencia e gate).
 - Estrategia de cache oficial do kit: `P_Performance/P_Method_CacheStrategy.md` (camadas, chaves, TTL, invalidacao, stampede; executor desenha, `@P`/`@S` validam).
+- Entrega multiagente oficial: `SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`
+  (DAG, contexto minimo, write-set, join, evidence ledger e integracao).
 - Template de especificacao: `T_Templates/T_Template_SPEC.md`.
 - Template de auditoria CLI: `T_Templates/T_Template_CLI_AUDIT.md`.
 - Template Claude Code: `T_Templates/T_Template_CLAUDE.md`.
@@ -148,6 +166,9 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 - Runtime bridge Codex/Claude/Hermes-style: `RUNTIME_Bridge/RUNTIME.md`.
 - Manifesto de compatibilidade runtime: `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml`.
 - Validador local do arsenal: `RUNTIME_Bridge/scripts/validate_arsenal.py`.
+- Validador semantico de specs: `RUNTIME_Bridge/scripts/validate_specs.py`.
+- Validador semantico de arquitetura e patterns:
+  `RUNTIME_Bridge/scripts/validate_architecture.py`.
 - Agente de specs SDD: `SPEC_Specs/SPEC_Agent_SpecArchitect.md`.
 - Agente de documentacao estrutural: `DOC_Documentation/DOC_Agent_ProjectDocumentationArchitect.md`.
 - Templates de documentacao estrutural: `DOC_Documentation/DOC_Template_*.md`.
@@ -157,9 +178,13 @@ Regra: nomes de pasta e arquivo devem evitar acentos e espacos para funcionar be
 Este kit agora possui uma camada de runtime dentro de `RUNTIME_Bridge/`.
 Ela nao substitui agentes originais; apenas valida e conecta:
 
-- `.codex/agents/*.toml`: wrappers estruturados para Codex.
-- `.claude/agents/*.md`: wrappers de subagentes Claude.
-- `skills/*/SKILL.md`: workflows compactos para Codex/Hermes-style runtimes.
+- `.codex/agents/*.toml`: fontes canonicas dos wrappers Codex dentro do kit;
+  o instalador as projeta em `PROJECT_ROOT/.codex/agents`.
+- `.claude/agents/*.md`: fontes canonicas dos wrappers Claude; o instalador as
+  projeta em `PROJECT_ROOT/.claude/agents`.
+- `skills/*/SKILL.md`: fontes canonicas dos workflows compactos; o instalador
+  as projeta em `PROJECT_ROOT/.agents/skills`, local de descoberta repo-scoped
+  do Codex.
 - `RUNTIME_Bridge/scripts/validate_arsenal.py`: checagem de coerencia.
 
 Skills oficiais locais:
@@ -167,6 +192,9 @@ Skills oficiais locais:
 - `skills/codex-agent-kit`: selecao, governanca e coordenacao do arsenal.
 - `skills/gsd-tdd-cli-harness`: TDD proporcional, Harness CLI e prova.
 - `skills/agent-forge`: criacao, evolucao e promocao de agentes.
+- `skills/architecture-blueprint`: arquitetura AS-IS/TO-BE, modularidade e pattern map.
+- `skills/spec-driven-breakdown`: specs granulares com IDs e rastreabilidade.
+- `skills/multi-agent-delivery`: execucao paralela controlada e protecao de contexto.
 
 Regra: nao criar uma skill por agente. Promova para skill apenas workflows
 recorrentes, enxutos e acionaveis. Os agentes `.md` continuam sendo a fonte
@@ -177,6 +205,7 @@ agentes promovidos:
 
 ```powershell
 python RUNTIME_Bridge/scripts/validate_arsenal.py
+python -m unittest discover -s RUNTIME_Bridge/scripts -p "test_*.py" -v
 ```
 
 ## Compatibilidade Claude Code
@@ -188,6 +217,8 @@ python RUNTIME_Bridge/scripts/validate_arsenal.py
   em projetos reais.
 - `RUNTIME_Bridge/scripts/sync_claude_from_codex.py`: regenera wrappers Claude
   a partir dos wrappers Codex quando a metadata estruturada mudar.
+- `RUNTIME_Bridge/scripts/install_project_runtime.py`: projeta wrappers, skills
+  e adapters no `PROJECT_ROOT` sem sobrescrever customizacoes.
 
 Regra: mantenha `.codex/` como fonte principal. Atualize wrappers Claude apenas
 quando mudar o nome, descricao ou roteamento de acionamento.
@@ -219,6 +250,9 @@ Todo agente desta pasta deve proteger a base oculta do iceberg, nao apenas a pon
 - Erros relevantes devem gerar logs estruturados, correlacionaveis e seguros; logs nunca podem vazar secrets ou PII indevida.
 - A arquitetura deve declarar dominios de problema, ownership e contratos entre dominios antes de expandir modulos relevantes.
 - Aplicar Harness CLI em toda implementacao, bugfix ou refatoracao com risco comportamental.
+- Em entrega multiagente, definir DAG, dependencias, read-set/write-set,
+  fingerprint, join e integrador antes do primeiro spawn; write-set paralelo
+  nunca sobrepoe read-set ou write-set concorrente sem snapshot/worktree imutavel.
 - Ao final de cada ciclo relevante, atualizar `STATUS.md` geral e o status/progresso
   de cada ambiente afetado (`back`, `front`, `admin`, `mobile`, `infra`,
   `packages` ou equivalentes), alem de registrar LOG, decisoes e lacunas.
@@ -235,7 +269,7 @@ acionar o agente responsavel antes do selo final.
 
 | Eixo | Pergunta minima | Agente natural |
 |---|---|---|
-| Arquitetura | Fronteiras, dominios de problema, ownership, contratos e responsabilidades estao claros? | `@A` |
+| Arquitetura | AS-IS/TO-BE, fronteiras, modulos, ownership, dependencias, contratos, pattern map e gates estao claros? | `@A` |
 | Backend/dominio | Regra critica esta no backend/servico certo, nao so na UI? | `@B` |
 | Dados | Schema, migration, constraint, indice, integridade e rollback estao definidos? | `@DATA` / `@B` / `@A` |
 | Seguranca | Auth, roles, PII, secrets, uploads, webhooks e logs estao protegidos? | `@S` |

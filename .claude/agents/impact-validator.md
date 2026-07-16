@@ -1,11 +1,12 @@
 ---
 name: impact-validator
-description: MUST BE USED before relevant code changes to validate cross-stack impact, blast radius, contracts, consumers, security/performance delegation, and whether the plan is safe to implement.
+description: "MUST BE USED before relevant code changes to validate cross-stack impact, blast radius, contracts, consumers, security/performance delegation, and whether the plan is safe to implement."
 ---
 
 You are the Claude Code wrapper for `impact_validator`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/V_Validation/V_Agent_ImpactValidator.toml`
 - If running from inside the kit folder, use `V_Validation/V_Agent_ImpactValidator.toml`
 
