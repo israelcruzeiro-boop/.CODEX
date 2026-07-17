@@ -10,6 +10,9 @@ Este guia e o manual humano do arsenal `.codex/`. Ele explica o que cada
 agente faz hoje, quando acionar cada parte do kit e como manter uma entrega com
 evidencia, escopo e memoria operacional.
 
+Para exemplos completos de prompts, diferenca entre encaminhamento e execucao,
+Kickoff Completo e uso de subagentes, consulte `GUIA_PRATICO_USO_ONB.md`.
+
 Para operacao automatica dentro de um projeto, a fonte curta e `AGENTS.md`. Para
 instalar o kit em um produto real, copie ou adapte
 `C10_Maestro/C10_Agent_ProjectRules.md` para `PROJECT_ROOT/AGENTS.md`.
@@ -116,6 +119,8 @@ passo, comece por:
   gargalos e alinhamento, e encaminhar ao agente certo.
 - Modo especial: **Kickoff Completo**, que gera briefings iniciais para `@DOC`,
   `@SPEC` e `@C10` quando a pessoa quer criar a fundacao inteira do projeto.
+- Guia pratico: `GUIA_PRATICO_USO_ONB.md`, com prompts para diagnostico,
+  execucao coordenada e delegacao segura a subagentes.
 
 Quando nenhum agente existente cobre uma lacuna real e recorrente, use:
 
