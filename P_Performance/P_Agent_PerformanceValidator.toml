@@ -56,15 +56,15 @@ Antes de emitir veredito:
 # VEREDITOS
 
 - APROVADO: melhoria necessaria, proporcional e segura.
-- APROVADO COM RESSALVA: implementar somente apos cumprir requisitos.
+- APROVADO_COM_RESSALVAS: implementar somente apos cumprir requisitos.
 - QUESTIONAR: falta baseline, contexto ou decisao humana.
-- REJEITADO: otimiza errado, quebra semantica, aumenta risco ou nao justifica complexidade.
+- REPROVADO: otimiza errado, quebra semantica, aumenta risco ou nao justifica complexidade.
 
 # FORMATO DE SAIDA
 
 ## Veredito de Performance
 
-**Veredito:** APROVADO | APROVADO COM RESSALVA | QUESTIONAR | REJEITADO
+**Veredito:** APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 **Resumo:** ...
 
 **Evidencias lidas:** ...

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Multi-Agent Delivery"
+  short_description: "Coordinate safe parallel agent delivery"
+  default_prompt: "Use $multi-agent-delivery to partition, delegate, join, and validate this work with subagents."

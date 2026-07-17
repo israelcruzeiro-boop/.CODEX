@@ -1,6 +1,9 @@
 # Guia Completo do Codex Agent Kit
 
-Atualizado em: 2026-05-30  
+Atualizado em: 2026-07-16
+
+Versao do runtime: `1.1.0` (P1)
+
 Base: `C:\Users\israe\Downloads\.codex`
 
 Este guia e o manual humano do arsenal `.codex/`. Ele explica o que cada
@@ -11,6 +14,40 @@ Para operacao automatica dentro de um projeto, a fonte curta e `AGENTS.md`. Para
 instalar o kit em um produto real, copie ou adapte
 `C10_Maestro/C10_Agent_ProjectRules.md` para `PROJECT_ROOT/AGENTS.md`.
 
+## Estado Verificado Do Arsenal
+
+Este e o baseline tecnico comprovado do runtime `1.1.0` depois do P0/P1:
+
+| Capacidade | Estado atual | Evidencia canonica |
+|---|---:|---|
+| Agentes no manifesto | 46 | `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml` |
+| Wrappers Codex | 46 em paridade | `.codex/agents/*.toml` |
+| Wrappers Claude | 46 em paridade | `.claude/agents/*.md` |
+| Skills oficiais | 6/6 validas | `skills/*/SKILL.md` |
+| Perfis DEV | 13 | `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml` |
+| Distribuicao dos perfis | 9 `OBSERVADO`, 2 `PARCIAL`, 2 `AUSENTE` | `validate_project_coverage.py` |
+| Especialistas promovidos no P1 | 4 | `@PKG`, `@DE`, `@ML`, `@IAC` |
+| Patterns e anti-patterns | 30 | `A_Architecture/A_Reference_PatternCatalog.md` |
+| Contratos de skills | 24 | `RUNTIME_Bridge/evals/skills/cases.toml` |
+| Suíte local integrada | 200 testes verdes | `run_quality_gate.py` |
+| Matriz remota | 4/4 jobs verdes | Ubuntu/Windows com Python 3.11/3.14 |
+
+A matriz remota do snapshot P1 foi comprovada no GitHub Actions run
+`29544107944`. O runtime declara Python `>=3.11`, Linux e Windows como ambiente
+suportado. No host Windows local, quatro testes que exigem privilegio nativo de
+symlink podem usar skip justificado; a CI continua sendo a prova portavel.
+
+O veredito precisa ser lido em duas camadas:
+
+- os contratos, wrappers, validadores, testes e a CI do P1 estao aprovados;
+- cobertura universal de qualquer projeto DEV nao e alegada: `DESKTOP` e
+  `MONOREPO` sao parciais, `EMBEDDED` e `GAME` estao ausentes, e os 24 casos de
+  skills ainda nao possuem um conjunto completo de resultados forward-test
+  observados (`execution_proven=false`).
+
+Esses limites sao intencionais e acionam `@F` ou uma nova rodada de evidencia;
+nao podem ser convertidos silenciosamente em cobertura total.
+
 ## Ideia Central
 
 O Codex Agent Kit nao e uma colecao solta de prompts. Ele e uma camada de
@@ -18,8 +55,9 @@ governanca para projetos de software, com:
 
 - roteamento inteligente de agentes;
 - SDD, specs e documentacao estrutural;
-- arquitetura cross-stack e revisao cetica;
-- backend, banco, frontend, mobile, iOS, ambientes, observabilidade e release;
+- arquitetura cross-stack, modularidade, catalogo de patterns e revisao cetica;
+- backend, banco, data pipelines, frontend, mobile, iOS, ML/MLOps, packages,
+  CLI/SDK, IaC, ambientes, observabilidade e release;
 - seguranca, performance, QA, dependencias e compliance;
 - pagamentos, BI, geolocalizacao, i18n, trust & safety e debug;
 - fabrica de agentes sob demanda;
@@ -95,7 +133,8 @@ cobrir pelo menos 70% do dominio.
 0. `@ONB` orienta a entrada quando o projeto, fase ou proximo passo ainda nao
    esta claro. Se o pedido for fundacao completa, usar o Modo Kickoff Completo
    para gerar briefings para `@DOC`, `@SPEC` e `@C10`.
-1. `@PICK` seleciona o time certo e detecta lacunas.
+1. `@PICK` identifica o perfil em `PROJECT_COVERAGE_MAP.toml`, seleciona o time
+   certo e detecta lacunas. Perfil parcial ou ausente exige limitacao e fallback.
 2. `@CRED` valida credenciais antes de acesso externo, API, banco, navegador,
    deploy ou producao.
 3. `@C10` entende fase, memoria, brief e coordenacao.
@@ -105,8 +144,9 @@ cobrir pelo menos 70% do dominio.
 7. `@C` revisa o plano contra codigo real, consumidores e evidencias.
 8. `impact_validator` mapeia impacto cross-stack antes de codar.
 9. `@GSD` converte plano em criterio de aceite, TDD proporcional e Harness CLI.
-10. Especialistas executam por dominio: `@B`, `@DATA`, `@D`, `@E`, `@GEO`,
-    `@I18N`, `@IOS`, `@M`, `@MOD`, `@PAY`, `@BI`, `@BUG`, `@DEP`, etc.
+10. Especialistas executam por dominio: `@B`, `@DATA`, `@DE`, `@D`, `@E`,
+    `@IAC`, `@ML`, `@PKG`, `@GEO`, `@I18N`, `@IOS`, `@M`, `@MOD`, `@PAY`,
+    `@BI`, `@BUG`, `@DEP`, etc.
 11. Validadores especializados entram quando aplicavel: `@S`, `@P`, `@O`,
     `@Q`, `@GOV`, `@REG`, `@REL`.
 12. `@GSD` volta depois da implementacao para auditar CLI, bug sweep e lacunas.
@@ -130,6 +170,10 @@ agente responsavel antes do selo final.
 | Arquitetura | Fronteiras, contratos e responsabilidades estao claros? | `@A` |
 | Backend/dominio | Regra critica mora no backend/servico certo? | `@B` |
 | Dados | Schema, migration, constraint, indice e rollback estao definidos? | `@DATA` |
+| Engenharia de dados | Contratos, qualidade, lineage, replay e backfill estao definidos? | `@DE` |
+| Packages/CLI/SDK | CLI, API publica, compatibilidade de consumidor e publicacao estao cobertas? | `@PKG` |
+| Infraestrutura | State, plan/apply, drift, policy, recovery e separacao de ambientes estao seguros? | `@IAC` |
+| ML/MLOps | Reprodutibilidade, evals, registry, serving, drift e rollback estao governados? | `@ML` |
 | Seguranca | Auth, roles, PII, secrets, uploads, webhooks e logs estao protegidos? | `@S` |
 | Performance | Hot paths, listas, queries, cache, concorrencia e custo foram avaliados? | `@P` |
 | Observabilidade | Logs, metricas, traces, alertas e health checks existem? | `@O` |
@@ -150,12 +194,20 @@ Feature de risco ALTO ou CRITICO nao deve chegar a `@V` sem evidencias de `@A`,
 - `AGENTS.md`: catalogo mestre, governanca de raiz geral, pipeline, prefixos,
   gates e regras globais.
 - `CLAUDE.md`: adaptador para Claude Code usar o arsenal.
-- `.claude/agents/*.md`: wrappers de subagentes Claude apontando para os agentes
-  originais.
-- `.codex/agents/*.toml`: wrappers estruturados para Codex.
-- `skills/`: skills locais para workflows recorrentes (`codex-agent-kit`,
-  `gsd-tdd-cli-harness`, `agent-forge`).
+- `.claude/agents/*.md`: fontes canonicas de wrappers Claude; o instalador as
+  projeta em `PROJECT_ROOT/.claude/agents`.
+- `.codex/agents/*.toml`: fontes canonicas de wrappers Codex; o instalador as
+  projeta em `PROJECT_ROOT/.codex/agents`.
+- `skills/`: fontes canonicas das skills para workflows recorrentes (`codex-agent-kit`,
+  `gsd-tdd-cli-harness`, `agent-forge`, `architecture-blueprint`,
+  `spec-driven-breakdown`, `multi-agent-delivery`); o instalador as projeta em
+  `PROJECT_ROOT/.agents/skills` para descoberta pelo Codex.
 - `RUNTIME_Bridge/`: manifesto, validadores e ponte Codex/Claude/Hermes-style.
+- `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`: 13 perfis DEV verificaveis, com
+  owner, fonte, wrapper, cenario de rota, gates, testes, limitacoes e fallback.
+- `RUNTIME_Bridge/evals/skills/cases.toml`: 24 contratos de trigger, boundary e
+  non-trigger das seis skills; o runner prova a estrutura, nao a decisao de um
+  modelo em producao.
 - `AUDIT_AGENTES.md`: auditoria atual do arsenal, com foco em manter agentes
   genericos e stack-agnostic.
 - `GUIA_COMPLETO_CODEX_AGENT_KIT.md`: este guia.
@@ -169,6 +221,8 @@ Feature de risco ALTO ou CRITICO nao deve chegar a `@V` sem evidencias de `@A`,
 - `C10_Agent_ClaudeProjectRules.md`: regras para gerar `CLAUDE.md` e wrappers
   em projetos reais.
 - `C10_Method_SDD.md`: metodo SDD canonico.
+- `C10_Method_ProjectProfiles.md`: classificacao de artefatos e selecao
+  proporcional de QA, operacao e release.
 - `C10_Skill_Strategy.md`: estrategia para promover partes do kit a skills.
 - `C10_STATUS.md`, `C10_LOG.md`, `C10_DECISIONS.md`, `C10_LEARNINGS.md`:
   memoria operacional e templates vivos.
@@ -243,6 +297,14 @@ que a entrega tenha prova.
 
 - `A_Agent_CrossStackArchitect.md`: define fronteiras, contratos, camadas,
   responsabilidades, idempotencia, concorrencia e riscos cross-stack.
+- `A_Method_PlantaTecnica.md`: contrato para `ARCHITECTURE.md` AS-IS derivado do
+  codigo e `TARGET_ARCHITECTURE.md` TO-BE separado.
+- `A_Method_ModularArchitecture.md`: dominios, modulos, ownership, dependencias e
+  fitness gates.
+- `A_Method_PatternMap.md`: decisao contextual, rastreavel e verificavel por
+  pattern; nao prescreve pattern por preferencia.
+- `A_Reference_PatternCatalog.md`: 30 patterns e anti-patterns organizados em
+  design, arquitetura, integracao, dados e resiliencia, com contraindicacoes.
 
 Use `@A` antes de APIs, schemas, auth, jobs, webhooks, integracoes, workers,
 pagamentos ou qualquer mudanca que atravesse ambientes.
@@ -275,6 +337,15 @@ backend com autorizacao, validacao e contrato claro.
 Use `@DATA` sempre que a entrega tocar estado persistente. Toda migration deve
 ficar em diretorio canonico, versionado e rastreavel, com estrategia de rollback
 e replicacao.
+
+### DE_DataEngineering - Pipelines De Dados
+
+- `DE_Agent_DataPipeline.md`: ETL/ELT, batch/stream, contratos de schema,
+  qualidade, lineage, replay, backfill e reconciliacao.
+
+Use `@DE` quando o artefato principal for um pipeline de dados. Migrations do
+banco da aplicacao continuam com `@DATA`; treinamento e serving de modelos ficam
+com `@ML`.
 
 ### BI_Dashboards - Metricas E Dashboards
 
@@ -377,6 +448,15 @@ dado sensivel ou politica de retencao/consentimento.
 Use `@I18N` para copy de UI, erros, notificacoes, textos de loja, traducao,
 tom de voz e consistencia terminologica.
 
+### IAC_PlatformEngineering - Infrastructure As Code
+
+- `IAC_Agent_InfrastructureAsCode.md`: Terraform/OpenTofu, Pulumi,
+  CloudFormation ou equivalente, com state, plan/apply, drift, policy e recovery
+  descobertos no repositorio.
+
+Use `@IAC` quando houver codigo declarativo de infraestrutura. `@E` governa
+valores e paridade dos ambientes; `@O` governa operacao observavel.
+
 ### IOS_AppleAppstore - iOS Nativo E App Store
 
 - `IOS_Agent_AppleNativeAppstore.md`: iOS nativo, Swift/SwiftUI, signing,
@@ -408,6 +488,14 @@ data safety e release em loja/canal aplicavel.
 Use `@MOD` para chat, reviews, conteudo de usuario, denuncia, suporte,
 moderacao, abuso e escalonamento operacional.
 
+### ML_MLEngineering - ML Classico E MLOps
+
+- `ML_Agent_MLEngineering.md`: datasets e features versionados, baseline
+  reproduzivel, avaliacoes segmentadas, registry, serving, drift e rollback.
+
+Use `@ML` para ML classico/MLOps. Prompts, RAG e integracao de LLM permanecem
+com `@AI`; pipelines genericos de dados permanecem com `@DE`.
+
 ### O_Observability - Observabilidade E Operacao
 
 - `O_Agent_DeployObservability.md`: logs, metricas, traces, alertas,
@@ -424,6 +512,15 @@ fluxos que precisam ser monitorados.
 
 Use `@PAY` para Stripe ou outro PSP, split, payout, refund, fee, wallet, ledger,
 escrow prometido, booking financeiro e monetizacao.
+
+### PKG_PackageSDK - Packages, CLI E SDK
+
+- `PKG_Agent_PackageCLISDK.md`: API publica, comportamento CLI, compatibilidade,
+  empacotamento, instalacao limpa, consumidores e publicacao em registry/canal.
+
+Use `@PKG` para bibliotecas reutilizaveis, SDKs, comandos e binarios. Regra de
+dominio HTTP continua com `@B`; ciclo de vida de app desktop requer perfil
+`DESKTOP` e pode acionar `@F`.
 
 ### PR_PromptOps - Prompt Engineering
 
@@ -494,6 +591,9 @@ segredos, dados sensiveis ou dinheiro.
 - `T_Template_LEARNINGS.md`: aprendizados.
 - `T_Template_SPEC.md`: especificacao SDD.
 - `T_Template_CLI_AUDIT.md`: auditoria Harness CLI.
+- `T_Template_MULTI_AGENT_PLAN.md`: DAG, ownership e joins de subagentes.
+- `T_Template_AGENT_TASK.md`: pacote minimo de contexto por subagente.
+- `T_Template_AGENT_RESULT.md`: envelope de evidencia para fan-in.
 - `T_Template_CLAUDE.md`: template de `CLAUDE.md`.
 
 Use templates no onboarding, specs, handoff, memoria e entregas que precisam
@@ -523,13 +623,31 @@ aprova por simpatia; aprova por evidencia.
 - Documentacao estrutural: `@DOC`.
 - Evidencia e anti-alucinacao: `@C`, `impact_validator`, `final_validator`.
 - GSD/TDD/Harness: `@GSD`.
-- Arquitetura, backend, banco, frontend, mobile, iOS, ambiente e observabilidade.
+- Arquitetura modular e catalogo contextual de patterns.
+- Backend, banco, workers, frontend, mobile, iOS, data engineering, ML/MLOps,
+  packages/CLI/SDK, IaC, ambiente e observabilidade.
 - Seguranca, performance, QA, dependencias, release, compliance geral e regional.
 - Pagamentos, marketplace, trust & safety, BI, localizacao, i18n, debug e prompt
   ops.
 - Integracao de IA/LLM em producao: `@AI` (prompts, RAG, evals, custo,
   guardrails e dados a provedores).
 - Compatibilidade Claude Code por wrappers em `.claude/agents/`.
+
+O contrato completo vive em `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`: sao 13
+perfis, dos quais 9 `OBSERVADO`, 2 `PARCIAL` e 2 `AUSENTE`. “Observado” significa
+que cada owner resolve para fonte e wrapper canonicos e possui cenario de rota,
+gates e evidencias no kit; nao substitui a leitura da stack, do provider, dos
+comandos e dos contratos reais do projeto.
+
+### Limites Declarados
+
+- `DESKTOP` e `MONOREPO` permanecem `PARCIAL`; Windows/Linux nativo, IPC,
+  auto-update, grafo afetado, cache remoto e versionamento coordenado podem
+  exigir `@F`.
+- `EMBEDDED` e `GAME` permanecem `AUSENTE` e sempre usam `@F` para criar um
+  especialista contextual antes de alegar cobertura.
+- Acessibilidade formal, SEO e contratos juridicos continuam candidatos sob
+  demanda quando a recorrencia justificar promocao.
 
 ### Especializacoes Que Podem Virar Agentes Sob Demanda
 
@@ -569,6 +687,7 @@ substituem o arsenal; apenas adaptam o roteamento.
 
 Wrappers existentes hoje:
 
+- `access-gatekeeper`
 - `agent-forge-foreman`
 - `ai-integration-architect`
 - `backend-domain`
@@ -577,42 +696,64 @@ Wrappers existentes hoje:
 - `cetico`
 - `compliance-regulatory`
 - `cross-stack-architect`
+- `cycle-documenter`
+- `data-pipeline`
 - `data-migrations`
 - `debugger`
 - `dependency-steward`
+- `delivery-inspector`
 - `design-ux`
+- `digitalocean-environment`
 - `environment-manager`
+- `environment-status-radar`
 - `final-validator`
 - `gsd-tdd-cli-auditor`
 - `impact-validator`
+- `infrastructure-as-code`
 - `ios-appstore`
+- `layout-replicator`
 - `localization-ux`
 - `location`
 - `mobile-playstore`
+- `ml-engineering`
 - `observability-deploy`
 - `payments-marketplace`
+- `package-cli-sdk`
 - `performance-validator`
 - `pick-agent-selector`
 - `process-guardian`
 - `project-documentation-architect`
 - `project-onboarding-guide`
+- `prompt-refiner`
 - `regional-platform-compliance`
 - `release-manager`
+- `risk-marshal`
 - `security-validator`
 - `spec-architect`
+- `standards-enforcer`
 - `test-engineer`
 - `trust-safety`
 
 Para aplicar em um projeto real:
 
 1. Defina `PROJECT_ROOT` como a raiz geral do produto.
-2. Coloque `.codex/` nessa raiz.
-3. Copie/adapte `C10_Maestro/C10_Agent_ProjectRules.md` para
-   `PROJECT_ROOT/AGENTS.md`.
-4. Coloque `CLAUDE.md` na raiz geral quando usar Claude Code.
-5. Coloque `.claude/agents/` na raiz geral quando usar Claude Code.
+2. Mantenha este repositorio como checkout em `PROJECT_ROOT/.codex`.
+3. A partir de `PROJECT_ROOT`, execute:
+
+```powershell
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .
+python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root . --check
+```
+
+4. O instalador projeta `PROJECT_ROOT/.codex/agents`,
+   `PROJECT_ROOT/.claude/agents` e `PROJECT_ROOT/.agents/skills`, e cria
+   `AGENTS.md`/`CLAUDE.md` quando ausentes.
+5. Customize arquivos de raiz depois da primeira instalacao; execucoes futuras
+   preservam conteudo modificado e reportam conflito em vez de sobrescrever.
 6. Trate `.codex/` como governanca transversal de todos os ambientes.
-7. Em pedidos complexos ao Claude, comece por:
+7. Nunca copie wrappers ou skills manualmente; depois de `git pull`, rode o instalador e
+   o `--check` novamente.
+8. Em pedidos complexos ao Claude, comece por:
 
 ```text
 Use the pick-agent-selector subagent to select the right team for this task.
@@ -694,6 +835,30 @@ O kit empilha gates em vez de depender de um unico revisor:
 - `final_validator` revisa o diff final.
 - `@X` audita o processo.
 
+### Quality Gate Continuo Do Arsenal
+
+`RUNTIME_Bridge/scripts/run_quality_gate.py` e o ponto unico de verificacao
+local e da CI. Ele executa todas as etapas, mesmo quando uma falha, e retorna
+evidencia estruturada:
+
+1. `compileall` dos scripts do Runtime Bridge;
+2. paridade exata entre wrappers Codex e Claude;
+3. coerencia do manifesto, agentes, links, skills e contratos de veredito;
+4. integridade dos 13 perfis, owners, fontes, wrappers, cenarios e fallbacks;
+5. contratos deterministicos das seis skills;
+6. suíte unitaria e adversarial completa;
+7. `git diff --check`;
+8. deteccao de worktree ou artefato gerado divergente.
+
+O workflow `.github/workflows/arsenal-ci.yml` roda esse mesmo gate em Ubuntu e
+Windows, com Python 3.11 e 3.14, permissoes `contents: read`, actions fixadas por
+commit, timeout de 20 minutos e cancelamento de execucao obsoleta da mesma ref.
+
+Importante: o gate valida os 24 contratos de skills, mas nao transforma ausencia
+de resultados observados em sucesso de execucao. Enquanto nenhum arquivo de
+results completo for fornecido ao runner, ele deve continuar informando
+`execution_proven=false`.
+
 ### Memoria Operacional
 
 O ciclo so fecha quando a memoria fica atualizada:
@@ -731,8 +896,30 @@ automatica do Codex:
 1. `codex-agent-kit`: usa `AGENTS.md`, `C10_Maestro` e `SUP_Supervisor`.
 2. `gsd-tdd-cli-harness`: aciona `@GSD`, SDD e Harness em implementacoes.
 3. `agent-forge`: usa `F_AgentForge` para criar e evoluir agentes sob demanda.
+4. `architecture-blueprint`: separa AS-IS/TO-BE, define modulos, dependencias,
+   pattern map, ADRs e fitness gates.
+5. `spec-driven-breakdown`: gera specs granulares com IDs e matriz requisito ->
+   modulo/contrato -> task -> teste -> evidencia.
+6. `multi-agent-delivery`: cria DAG, pacotes de contexto, ownership, fan-out,
+   fan-in e validacao pos-integracao.
 
 A decisao esta documentada em `C10_Maestro/C10_Skill_Strategy.md`.
+
+Cada skill possui quatro cenarios versionados: dois triggers, um boundary e um
+non-trigger. `run_skill_contract_evals.py` valida catalogo, estrutura, oraculo e
+validator deterministico. A prova de que um modelo escolhe a skill correta e
+segue o workflow continua exigindo forward-tests representativos.
+
+## Metodo Multiagente
+
+Quando houver duas ou mais frentes independentes, usar
+`SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`. O agente raiz define a DAG,
+reserva ownership exclusivo de leitura/escrita por fingerprint, envia contexto minimo, aguarda todos os
+joins, reconcilia claims pela evidencia primaria e revalida a integracao.
+O write-set de um subagente nao pode sobrepor read-set ou write-set concorrente;
+quando isso for necessario, serialize ou forneca snapshot/worktree imutavel.
+O contrato pode ser validado nas fases `plan`, `fan-in` e `complete` por
+`RUNTIME_Bridge/scripts/validate_multi_agent.py`.
 
 ## Comandos De Auditoria Do Arsenal
 
@@ -742,6 +929,15 @@ Para verificar se o guia e o arsenal continuam alinhados:
 rg --files
 rg -n -i "nome do projeto|stack especifica|provider especifico|pais especifico|fase fixa|default obrigatorio"
 Get-ChildItem -Recurse -File .claude\agents | Select-Object -ExpandProperty FullName
+python RUNTIME_Bridge/scripts/validate_arsenal.py
+python RUNTIME_Bridge/scripts/validate_specs.py PROJECT_ROOT
+python RUNTIME_Bridge/scripts/validate_architecture.py PROJECT_ROOT
+python RUNTIME_Bridge/scripts/validate_project_coverage.py --json
+python RUNTIME_Bridge/scripts/run_skill_contract_evals.py --json
+python RUNTIME_Bridge/scripts/validate_multi_agent.py MULTI_AGENT_PLAN.md --phase complete --tasks-dir agent-tasks --results-dir agent-results
+python RUNTIME_Bridge/scripts/validate_cli_audit.py CLI_AUDIT.md
+python -m unittest discover -s RUNTIME_Bridge/scripts -p "test_*.py" -v
+python RUNTIME_Bridge/scripts/run_quality_gate.py
 ```
 
 Classifique achados conforme `AUDIT_AGENTES.md`:
@@ -789,6 +985,35 @@ Para fechar ciclo:
 C10_DOCUMENTADOR, atualize LOG, STATUS, DECISIONS e LEARNINGS conforme o que foi
 comprovado neste ciclo.
 ```
+
+## Proximo Passo Recomendado
+
+### Imediato - Integrar O P1
+
+1. Abrir PR de `codex/p1-dev-coverage` para `main`.
+2. Exigir o workflow `Arsenal continuous gate` verde e executar
+   `final_validator` sobre o diff completo.
+3. Revisar a trilha em `STATUS.md`, `LOG.md`, na spec P1 e no Harness antes do
+   merge.
+4. Depois do merge, aplicar o gate de `@REL` para tag/release `1.1.0` e atualizar
+   projetos consumidores por `git pull` + `install_project_runtime.py --check`.
+
+### P2 - Provar Comportamento E Cobrir Demanda Real
+
+O P2 recomendado nao e criar mais agentes por quantidade. A prioridade e:
+
+1. executar forward-tests representativos dos 24 casos de skills e versionar o
+   arquivo de results esperado por `run_skill_contract_evals.py`;
+2. testar selecao, boundary e non-trigger com mais de um tipo de pedido e
+   registrar divergencias de roteamento;
+3. promover cobertura `DESKTOP` ou `MONOREPO` somente quando projetos reais
+   demonstrarem recorrencia e ownership estavel;
+4. manter `EMBEDDED` e `GAME` em `@F` ate existir contexto suficiente para um
+   especialista bem construido;
+5. avaliar branch protection exigindo a matriz do arsenal antes de merge.
+
+O criterio de saida do P2 e evidencia observada de comportamento, nao apenas
+mais arquivos no catalogo.
 
 ## Regra Final
 

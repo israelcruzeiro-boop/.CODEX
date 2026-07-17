@@ -34,7 +34,7 @@
 ## Estrutura
 
 ```
-.codex/F_Promoted/
+.codex/F_AgentForge/F_Promoted/
 ├── README.md                          ← este arquivo
 ├── COLLECTIVE_MEMORY.md               ← aprendizados de todos os agentes
 ├── REGISTRY.md                        ← catalogo dos agentes promovidos
@@ -59,7 +59,7 @@
 4. Foreman pergunta: "Promover?"
 5. Usuario diz SIM
 6. AgentComposer aplica refinamentos finais
-7. Arquivo salvo em .codex/F_Promoted/
+7. Arquivo salvo em .codex/F_AgentForge/F_Promoted/
 8. Diario criado: [nome]_DIARY.md (entrada #1: criacao)
 9. REGISTRY.md atualizado
 10. COLLECTIVE_MEMORY.md atualizado (se houve aprendizado na primeira execucao)

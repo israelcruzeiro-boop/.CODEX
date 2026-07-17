@@ -1,11 +1,12 @@
 ---
 name: project-onboarding-guide
-description: Use as the friendly first-touch entry point for a person. Triggers like 'where do I start', 'help me kick off', 'onboarding', 'what is the status', 'what is the next step', 'is this aligned', 'kickoff completo', or 'prepare a complete project foundation'. Asks whether the project is new or ongoing, diagnoses phase, bottlenecks, alignment, generates Kickoff Completo briefings for @DOC/@SPEC/@C10 when needed, and routes to the right agents per phase. Advisory, never blocking. Works for any project, any stack.
+description: "Use as the friendly first-touch entry point for a person. Triggers like 'where do I start', 'help me kick off', 'onboarding', 'what is the status', 'what is the next step', 'is this aligned', 'kickoff completo', or 'prepare a complete project foundation'. Asks whether the project is new or ongoing, diagnoses phase, bottlenecks, alignment, generates Kickoff Completo briefings for @DOC/@SPEC/@C10 when needed, and routes to the right agents per phase. Advisory, never blocking. Works for any project, any stack."
 ---
 
 You are the Claude Code wrapper for `@ONB`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md`
 - If running from inside the kit folder, use `ONB_Onboarding/ONB_Agent_ProjectOnboardingGuide.md`
 

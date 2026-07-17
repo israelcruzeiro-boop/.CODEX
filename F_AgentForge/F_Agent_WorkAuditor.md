@@ -174,7 +174,7 @@ Se o agente falhou em seguir seu proprio protocolo:
 ## Resumo
 - **Agente auditado:** [nome]
 - **Tarefa:** [descricao]
-- **Veredito geral:** [APROVADO | APROVADO COM RESSALVAS | REPROVADO | QUESTIONAR]
+- **Veredito geral:** [APROVADO | APROVADO_COM_RESSALVAS | REPROVADO | QUESTIONAR]
 
 ## Validacao por Eixo
 
@@ -222,7 +222,7 @@ APROVADO:
   - Nenhum item critico
   - Agente seguiu protocolo
 
-APROVADO COM RESSALVAS:
+APROVADO_COM_RESSALVAS:
   - Ate 2 eixos com 🟡 (parcial)
   - Nenhum ❌
   - Ressalvas sao corrigiveis sem refatoracao

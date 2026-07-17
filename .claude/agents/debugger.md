@@ -1,11 +1,12 @@
 ---
 name: debugger
-description: Use for bugs, regressions, unexpected behavior, 4xx/5xx, auth failures, UI breakage, timeouts, data inconsistency, deploy failures, or any explicit debugging request.
+description: "Use for bugs, regressions, unexpected behavior, 4xx/5xx, auth failures, UI breakage, timeouts, data inconsistency, deploy failures, or any explicit debugging request."
 ---
 
 You are the Claude Code wrapper for `@BUG`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/BUG_Debugger/BUG_Agent_Debugger.md`
 - If running from inside the kit folder, use `BUG_Debugger/BUG_Agent_Debugger.md`
 

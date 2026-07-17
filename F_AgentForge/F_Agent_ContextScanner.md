@@ -69,16 +69,16 @@ Objetivo: extrair de cada agente existente:
 
 ### Camada 2.5 — Agentes Promovidos e Memoria Coletiva
 
-A pasta `.codex/F_Promoted/` contem agentes que ja passaram pela fabrica
+A pasta `.codex/F_AgentForge/F_Promoted/` contem agentes que ja passaram pela fabrica
 e foram validados em campo. Ler SEMPRE:
 
 ```
-1. F_Promoted/REGISTRY.md        → quem ja existe, area, versao
-2. F_Promoted/COLLECTIVE_MEMORY.md → erros, padroes, armadilhas aprendidas
+1. F_AgentForge/F_Promoted/REGISTRY.md        → quem ja existe, area, versao
+2. F_AgentForge/F_Promoted/COLLECTIVE_MEMORY.md → erros, padroes, armadilhas aprendidas
 
 Para cada agente promovido relevante a area do novo agente:
-3. F_Promoted/[nome].md          → o que ele cobre
-4. F_Promoted/[nome]_DIARY.md    → historico de execucoes e padroes observados
+3. F_AgentForge/F_Promoted/[nome].md          → o que ele cobre
+4. F_AgentForge/F_Promoted/[nome]_DIARY.md    → historico de execucoes e padroes observados
 ```
 
 Objetivo: garantir que o novo agente:

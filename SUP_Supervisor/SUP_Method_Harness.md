@@ -23,6 +23,16 @@ registradas, com:
 
 Use `T_Templates/T_Template_CLI_AUDIT.md` para registrar.
 
+O Harness e a ultima linha da matriz operacional:
+
+```text
+REQ/NFR -> MOD/CON/EVT -> TASK -> TEST/FIT -> EVD
+```
+
+Cada evidencia recebe ID `EVD-*` e aponta a exigencia, task e teste/gate que
+prova. Saida de comando sem vinculo rastreavel e diagnostico, nao prova de
+aceite.
+
 ---
 
 ## Ordem Recomendada
@@ -36,6 +46,10 @@ Use `T_Templates/T_Template_CLI_AUDIT.md` para registrar.
 6. Registrar falhas, lacunas e comandos nao encontrados.
 7. Antes do fechamento, confirmar que `STATUS.md` sera atualizado com status
    geral, status por ambiente e migrations do ciclo quando houver.
+8. Conferir DoR antes da implementacao e DoD antes do fechamento, conforme
+   `T_Templates/T_Template_SPEC.md`.
+9. Verificar que todos os `REQ-*` e `NFR-*` ativos possuem `TEST-*`/`FIT-*` e
+   `EVD-*`, ou `N/A` justificado.
 
 ---
 
@@ -50,6 +64,9 @@ Use `T_Templates/T_Template_CLI_AUDIT.md` para registrar.
 - Nunca fechar ciclo relevante sem registrar qual ambiente foi validado, qual
   ficou sem validacao e qual status por ambiente/progresso precisa entrar no
   `STATUS.md`.
+- Nunca aprovar com elo quebrado na rastreabilidade de requisito critico.
+- Nunca usar `PASS`/`FAIL` como veredito global; esses termos classificam
+  somente resultados individuais de comandos.
 
 ---
 
@@ -68,6 +85,17 @@ Use `T_Templates/T_Template_CLI_AUDIT.md` para registrar.
   bloqueia fechamento.
 - `LACUNA` em fluxo critico gera `QUESTIONAR` ou `REPROVADO`, conforme risco.
 - `SKIP_JUSTIFICADO` e aceitavel apenas quando existe prova substituta.
+
+O veredito global do Harness usa exclusivamente:
+
+- `APROVADO`: DoD atendida, elos rastreaveis e nenhuma falha/lacuna bloqueante.
+- `APROVADO_COM_RESSALVAS`: lacuna nao critica, explicita, com dono e follow-up.
+- `QUESTIONAR`: falta contexto, acesso, comando ou evidencia para concluir.
+- `REPROVADO`: falha comprovada, requisito nao atendido, regressao, risco
+  critico ou lacuna bloqueante.
+
+Se falta evidencia, use `QUESTIONAR`; se existe evidencia de falha, use
+`REPROVADO`.
 
 Harness bom nao e lista grande de comandos. E a menor prova forte o suficiente
 para sustentar a entrega.

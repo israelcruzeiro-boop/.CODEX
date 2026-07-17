@@ -1,0 +1,312 @@
+schema_version = 1
+required_skills = [
+  "agent-forge",
+  "architecture-blueprint",
+  "codex-agent-kit",
+  "gsd-tdd-cli-harness",
+  "multi-agent-delivery",
+  "spec-driven-breakdown",
+]
+
+[coverage]
+minimum_total_per_skill = 4
+minimum_trigger_per_skill = 2
+minimum_boundary_per_skill = 1
+minimum_negative_per_skill = 1
+
+# `evidence_required` is an exact contract for an observed forward-test result.
+# Validating this manifest proves coverage and case integrity; passing a results
+# TOML to the runner proves the recorded invocation and output evidence.
+# Results use run-level `run_id`, `executor`, `executed_at` and one
+# `[[results]]` per case with: `case_id`, `invoked_skills`, `decision`
+# (`INVOKED`/`SKIPPED`), concrete `reason`, `outcome = "PASS"`,
+# `output_contract`, `evidence`, and `validator_results` inline tables
+# (`path`, `exit_code`). Use `--require-results` when execution proof is a gate.
+
+[[cases]]
+id = "AF-TRG-001"
+skill = "agent-forge"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "A recurring data-quality gap has appeared in five projects and no current agent covers more than half of it. Create and integrate a focused agent."
+fixture = "Agent catalog plus five anonymized recurrence records and a measured coverage matrix."
+expected_contract = "AGENT_CHANGE"
+expected_outputs = ["creation-gate decision", "agent source", "Codex and Claude wrappers", "validation result"]
+evidence_required = ["decision:creation-gate", "artifact:agent-source", "command:validate-arsenal"]
+validators = ["RUNTIME_Bridge/scripts/validate_arsenal.py"]
+
+[[cases]]
+id = "AF-TRG-002"
+skill = "agent-forge"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Audit and repair an existing promoted agent whose triggers no longer match its wrappers, then validate runtime parity."
+fixture = "Existing source agent, divergent wrappers, manifest entry, and prior work-audit evidence."
+expected_contract = "AGENT_CHANGE"
+expected_outputs = ["audit findings", "minimal source or wrapper repair", "runtime parity evidence"]
+evidence_required = ["artifact:agent-source", "artifact:runtime-wrappers", "command:validate-arsenal"]
+validators = ["RUNTIME_Bridge/scripts/validate_arsenal.py"]
+
+[[cases]]
+id = "AF-BND-001"
+skill = "agent-forge"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "A specialist gap may recur, but only one incident is documented. Decide whether to create an agent or route the work to the closest existing role."
+fixture = "One incident report and the current agent capability catalog."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["70 percent coverage assessment", "create-or-route decision", "missing evidence"]
+evidence_required = ["decision:creation-gate", "route:existing-agent-or-forge"]
+validators = ["N/A - decision-only boundary case has no generated runtime artifact"]
+
+[[cases]]
+id = "AF-NEG-001"
+skill = "agent-forge"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Fix a one-off typo in a README and run the repository Markdown check."
+fixture = "Single Markdown file with one misspelled word."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["direct minimal-task route without agent creation"]
+evidence_required = ["route:direct-task", "decision:no-new-agent"]
+validators = ["N/A - negative routing case generates no agent artifact"]
+
+[[cases]]
+id = "ARCH-TRG-001"
+skill = "architecture-blueprint"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Design a greenfield marketplace architecture with explicit modules, contracts, data ownership, consistency, patterns, ADRs, and fitness gates."
+fixture = "Product requirements, actors, NFR targets, compliance constraints, and no existing code."
+expected_contract = "ARCHITECTURE_PACKAGE"
+expected_outputs = ["TARGET_ARCHITECTURE.md", "PATTERN_MAP.md", "material ADRs", "validator evidence"]
+evidence_required = ["artifact:target-architecture", "artifact:pattern-map", "command:validate-architecture"]
+validators = ["RUNTIME_Bridge/scripts/validate_architecture.py"]
+
+[[cases]]
+id = "ARCH-TRG-002"
+skill = "architecture-blueprint"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Map the AS-IS boundaries of a brownfield monolith, identify cross-writes and cycles, and propose a rollback-safe modular transition."
+fixture = "Repository tree, manifests, schemas, imports, routes, deploy config, and representative tests."
+expected_contract = "ARCHITECTURE_PACKAGE"
+expected_outputs = ["evidence-derived ARCHITECTURE.md", "separate target architecture", "dependency graph", "transition gates"]
+evidence_required = ["artifact:asis-architecture", "artifact:target-architecture", "command:validate-architecture"]
+validators = ["RUNTIME_Bridge/scripts/validate_architecture.py"]
+
+[[cases]]
+id = "ARCH-BND-001"
+skill = "architecture-blueprint"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "Rename an internal helper used by one module; first decide whether this changes a public boundary or architecture artifact."
+fixture = "Helper definition, all consumers, module public API, and current architecture docs."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["boundary-impact decision", "minimal artifact update decision", "evidence paths"]
+evidence_required = ["decision:architecture-impact", "evidence:consumer-scan"]
+validators = ["N/A - validator runs only if the boundary decision changes architecture artifacts"]
+
+[[cases]]
+id = "ARCH-NEG-001"
+skill = "architecture-blueprint"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Change a button label and its translation key without changing routes, state, contracts, or module boundaries."
+fixture = "One component, locale entries, and focused UI tests."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["direct design or localization route"]
+evidence_required = ["route:design-localization", "decision:no-architecture-change"]
+validators = ["N/A - negative case has no architecture artifact"]
+
+[[cases]]
+id = "KIT-TRG-001"
+skill = "codex-agent-kit"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Validate whether this Codex Agent Kit checkout is coherent across agents, wrappers, skills, runtime installation, and verdict contracts."
+fixture = "Complete kit checkout with Git metadata and runtime manifest."
+expected_contract = "KIT_OPERATION"
+expected_outputs = ["Codex status", "Claude status", "skills status", "runtime bridge status", "blocking issues"]
+evidence_required = ["command:validate-arsenal", "command:runtime-install-check", "artifact:kit-status"]
+validators = ["RUNTIME_Bridge/scripts/validate_arsenal.py"]
+
+[[cases]]
+id = "KIT-TRG-002"
+skill = "codex-agent-kit"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Select the minimal agent team and governance order for a high-risk cross-stack payment feature, including mandatory gates."
+fixture = "Feature brief, affected environments, risk axes, agent catalog, and current project phase."
+expected_contract = "KIT_OPERATION"
+expected_outputs = ["selected team", "ordered pipeline", "intentionally skipped agents", "next mandatory step"]
+evidence_required = ["decision:agent-selection", "artifact:governance-route"]
+validators = ["N/A - routing output is reviewed against the governed agent catalog"]
+
+[[cases]]
+id = "KIT-BND-001"
+skill = "codex-agent-kit"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "A repository contains the kit, but the requested change is a one-line safe refactor. Decide whether kit orchestration adds value or a minimal specialist route is enough."
+fixture = "One affected symbol, consumers, clean tests, and project AGENTS.md."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["minimal-route decision", "skipped ceremonial gates", "proportional validation"]
+evidence_required = ["decision:minimal-governance", "route:specialist-or-direct"]
+validators = ["N/A - boundary case validates proportional routing, not kit mutation"]
+
+[[cases]]
+id = "KIT-NEG-001"
+skill = "codex-agent-kit"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Explain why JavaScript promises schedule callbacks as microtasks."
+fixture = "Standalone conceptual programming question with no local kit operation."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["direct technical explanation"]
+evidence_required = ["route:direct-answer", "decision:no-kit-operation"]
+validators = ["N/A - conceptual negative case has no kit artifact"]
+
+[[cases]]
+id = "GSD-TRG-001"
+skill = "gsd-tdd-cli-harness"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Implement a bugfix for duplicate webhook processing with acceptance criteria, a regression test, CLI evidence, and a final bug sweep."
+fixture = "Webhook handler, failing reproduction, idempotency store, and project test commands."
+expected_contract = "HARNESS_REPORT"
+expected_outputs = ["acceptance criteria", "test-first evidence", "commands with exit codes", "canonical verdict"]
+evidence_required = ["artifact:regression-test", "command:project-validation", "artifact:harness-report"]
+validators = ["RUNTIME_Bridge/scripts/validate_cli_audit.py"]
+
+[[cases]]
+id = "GSD-TRG-002"
+skill = "gsd-tdd-cli-harness"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Validate a release candidate with configured lint, typecheck, tests, smoke checks, pre-existing failure separation, and delivery proof."
+fixture = "Release diff, package scripts, CI config, test suite, and known-issues ledger."
+expected_contract = "HARNESS_REPORT"
+expected_outputs = ["command ledger", "evidence summary", "unverified gaps", "release verdict"]
+evidence_required = ["command:lint-or-na", "command:test-or-na", "artifact:harness-report"]
+validators = ["RUNTIME_Bridge/scripts/validate_cli_audit.py"]
+
+[[cases]]
+id = "GSD-BND-001"
+skill = "gsd-tdd-cli-harness"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "Correct documentation-only command examples and decide the proportional CLI validation needed when runtime behavior is unchanged."
+fixture = "Markdown command examples and the referenced CLI help output."
+expected_contract = "HARNESS_REPORT"
+expected_outputs = ["risk classification", "focused command verification", "documented limitations"]
+evidence_required = ["decision:proportional-validation", "command:focused-doc-check"]
+validators = ["RUNTIME_Bridge/scripts/validate_cli_audit.py"]
+
+[[cases]]
+id = "GSD-NEG-001"
+skill = "gsd-tdd-cli-harness"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Compare modular monolith and microservices conceptually without planning or changing a repository."
+fixture = "Architecture discussion with no implementation, release, or validation request."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["architecture explanation route"]
+evidence_required = ["route:architecture-discussion", "decision:no-delivery-harness"]
+validators = ["N/A - negative case has no implementation evidence"]
+
+[[cases]]
+id = "MAD-TRG-001"
+skill = "multi-agent-delivery"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Coordinate three independent read-only audits of architecture, security, and test coverage, then reconcile findings and produce one verdict."
+fixture = "Immutable commit fingerprint, three disjoint read-sets, reviewer roles, and join criteria."
+expected_contract = "MULTI_AGENT_PLAN"
+expected_outputs = ["task DAG", "context envelopes", "evidence ledger", "fan-in reconciliation"]
+evidence_required = ["artifact:task-dag", "artifact:result-envelopes", "artifact:integration-verdict"]
+validators = ["RUNTIME_Bridge/scripts/validate_multi_agent.py"]
+
+[[cases]]
+id = "MAD-TRG-002"
+skill = "multi-agent-delivery"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Partition four implementation workstreams with disjoint write-sets, dependencies, integration ownership, and post-merge validation."
+fixture = "Approved spec tasks, file-level read/write sets, runtime thread cap, and shared contract fingerprint."
+expected_contract = "MULTI_AGENT_PLAN"
+expected_outputs = ["acyclic DAG", "isolation policy", "spawn schedule", "integration validation"]
+evidence_required = ["artifact:task-dag", "decision:write-set-isolation", "command:integration-validation"]
+validators = ["RUNTIME_Bridge/scripts/validate_multi_agent.py"]
+
+[[cases]]
+id = "MAD-BND-001"
+skill = "multi-agent-delivery"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "Two candidate tasks touch the same contract file and depend on an unresolved decision. Decide whether to serialize, snapshot, or avoid delegation."
+fixture = "Overlapping read/write sets, unresolved contract, and two available subagent slots."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["delegation gate decision", "serialization or isolation rationale", "blocking dependency"]
+evidence_required = ["decision:delegation-gate", "decision:isolate-or-serialize"]
+validators = ["N/A - boundary case may correctly produce no multi-agent DAG"]
+
+[[cases]]
+id = "MAD-NEG-001"
+skill = "multi-agent-delivery"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Rename one local variable and run its single focused unit test."
+fixture = "One function, no shared contract, and one deterministic test."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["single-thread direct route"]
+evidence_required = ["route:single-thread", "decision:no-subagents"]
+validators = ["N/A - negative case intentionally has no DAG"]
+
+[[cases]]
+id = "SPEC-TRG-001"
+skill = "spec-driven-breakdown"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Turn a marketplace payout idea into granular SDD specs with actors, errors, permissions, stable IDs, tasks, tests, evidence, rollout, and rollback."
+fixture = "Product brief, payout actors, compliance constraints, NFR targets, and architecture module IDs."
+expected_contract = "SPEC_PACKAGE"
+expected_outputs = ["change spec package", "bidirectional traceability", "DoR verdict", "validator evidence"]
+evidence_required = ["artifact:spec-package", "artifact:traceability", "command:validate-specs"]
+validators = ["RUNTIME_Bridge/scripts/validate_specs.py"]
+
+[[cases]]
+id = "SPEC-TRG-002"
+skill = "spec-driven-breakdown"
+kind = "trigger"
+expected_invocation = "REQUIRED"
+prompt = "Reconstruct a legacy account-deletion flow from code and consumers, then specify its current behavior and a safe executable change."
+fixture = "Routes, domain services, schemas, jobs, UI consumers, tests, and current architecture IDs."
+expected_contract = "SPEC_PACKAGE"
+expected_outputs = ["evidence-separated state", "requirements and acceptance criteria", "isolated task graph", "validator evidence"]
+evidence_required = ["artifact:spec-package", "evidence:brownfield-read-set", "command:validate-specs"]
+validators = ["RUNTIME_Bridge/scripts/validate_specs.py"]
+
+[[cases]]
+id = "SPEC-BND-001"
+skill = "spec-driven-breakdown"
+kind = "boundary"
+expected_invocation = "CONDITIONAL"
+prompt = "A one-line environment default may alter deployment behavior. Decide whether a full change spec is required or a small acceptance contract is sufficient."
+fixture = "Environment definition, all consumers, deployment stages, and rollback mechanism."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["risk and blast-radius decision", "spec-or-direct route", "minimum acceptance evidence"]
+evidence_required = ["decision:spec-depth", "evidence:consumer-scan"]
+validators = ["N/A - validate_specs runs only when the boundary decision creates a spec package"]
+
+[[cases]]
+id = "SPEC-NEG-001"
+skill = "spec-driven-breakdown"
+kind = "negative"
+expected_invocation = "FORBIDDEN"
+prompt = "Diagnose why an already failing unit test expects 2 but receives 3; do not plan or implement a feature."
+fixture = "One failing test, its function, and recent focused diff."
+expected_contract = "ROUTE_DECISION"
+expected_outputs = ["debug diagnosis route"]
+evidence_required = ["route:debugger", "decision:no-spec-package"]
+validators = ["N/A - negative diagnostic case has no spec artifact"]

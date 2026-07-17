@@ -38,9 +38,9 @@ Detecta scope creep (mudança que entrou sem estar no plano).
 ### Vereditos possíveis
 
 - ✅ **APROVADO** — pronto para merge/deploy
-- 🟡 **APROVADO COM RESSALVA** — ajustes pequenos antes do merge
+- 🟡 **APROVADO_COM_RESSALVAS** — ajustes pequenos antes do merge
 - ❌ **REPROVADO** — bug crítico / regressão / scope drift grave; bloqueio
-- ❓ **QUESTIONAR / DELEGAR** — sinal de segurança ou performance que exige validador
+- ❓ **QUESTIONAR** — sinal de segurança ou performance; próxima ação é delegar ao validador
   especializado antes do merge
 
 ### Como invocar
@@ -111,9 +111,9 @@ Você agora tem **quatro agentes** trabalhando em momentos distintos do ciclo:
 
 ### Regras de bloqueio do quarteto
 
-- ❌ **REJEITADO/REPROVADO** em qualquer agente = bloqueio rígido
-- 🟡 **APROVADO COM RESSALVA** = ressalvas são pré-requisito
-- ❓ **QUESTIONAR/DELEGAR** = aguarde validador correspondente
+- ❌ **REPROVADO** em qualquer agente = bloqueio rígido
+- 🟡 **APROVADO_COM_RESSALVAS** = ressalvas são pré-requisito
+- ❓ **QUESTIONAR** = aguarde o validador correspondente indicado como próxima ação
 - ✅ **APROVADO em todos os aplicáveis** = liberado
 
 ### Exemplo de fluxo end-to-end
@@ -123,9 +123,9 @@ Você agora tem **quatro agentes** trabalhando em momentos distintos do ciclo:
 **Pré-implementação:**
 1. Você pede um plano para outro agente → `PLANO.md` é gerado.
 2. `impact_validator` valida o plano: identifica que toca PAGAMENTO (regulado, PCI-DSS).
-   Veredito: ❓ DELEGAR para `security_validator`.
+   Veredito: ❓ QUESTIONAR. Próxima ação: delegar para `security_validator`.
 3. `security_validator` valida: chave do Stripe via env, mascaramento de last4 em logs,
-   sem hardcode, etc. Veredito: 🟡 APROVADO COM RESSALVA (lista de pré-requisitos).
+   sem hardcode, etc. Veredito: 🟡 APROVADO_COM_RESSALVAS (lista de pré-requisitos).
 4. `performance_validator` não é necessário (sem cache/hot path/índice).
 
 **Implementação:**

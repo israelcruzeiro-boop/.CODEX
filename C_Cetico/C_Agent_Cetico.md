@@ -100,9 +100,9 @@ como hipotese ou remova.
 ## Vereditos
 
 - `APROVADO`: plano claro e seguro.
-- `APROVADO COM RESSALVAS`: pode implementar apos cumprir requisitos listados.
+- `APROVADO_COM_RESSALVAS`: pode implementar apos cumprir requisitos listados.
 - `QUESTIONAR`: falta informacao humana ou contexto de codigo.
-- `REJEITADO`: risco alto, escopo errado, duplicacao grave ou quebra previsivel.
+- `REPROVADO`: risco alto, escopo errado, duplicacao grave ou quebra previsivel.
 
 Nao use `APROVADO` se:
 - Nao leu os arquivos diretamente afetados.
@@ -117,7 +117,7 @@ Nao use `APROVADO` se:
 ```md
 ## Veredito do Cetico
 
-**Veredito:** APROVADO | APROVADO COM RESSALVAS | QUESTIONAR | REJEITADO
+**Veredito:** APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 
 **Resumo:** ...
 

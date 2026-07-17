@@ -1,0 +1,344 @@
+[coverage]
+schema_version = 1
+status_values = ["OBSERVADO", "PARCIAL", "AUSENTE"]
+fallback_alias = "@F"
+ci_provider_policy = "DETECT"
+never_claim_total_coverage = true
+
+[[specialists]]
+id = "PKG"
+alias = "@PKG"
+source = "PKG_PackageSDK/PKG_Agent_PackageCLISDK.md"
+wrapper = ".codex/agents/package-cli-sdk.toml"
+scope = "CLI products, packages, libraries and SDKs"
+excludes = ["HTTP backend domain ownership", "desktop application lifecycle"]
+
+[[specialists]]
+id = "DE"
+alias = "@DE"
+source = "DE_DataEngineering/DE_Agent_DataPipeline.md"
+wrapper = ".codex/agents/data-pipeline.toml"
+scope = "ETL/ELT, batch/stream pipelines, lineage, replay and data quality"
+excludes = ["application database migrations", "ML model training"]
+
+[[specialists]]
+id = "ML"
+alias = "@ML"
+source = "ML_MLEngineering/ML_Agent_MLEngineering.md"
+wrapper = ".codex/agents/ml-engineering.toml"
+scope = "classical machine learning and MLOps"
+excludes = ["LLM prompts and RAG", "generic ETL ownership"]
+
+[[specialists]]
+id = "IAC"
+alias = "@IAC"
+source = "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md"
+wrapper = ".codex/agents/infrastructure-as-code.toml"
+scope = "Infrastructure as Code, state, plan/apply, drift and policy"
+excludes = ["generic production operations", "application environment values"]
+
+[[profiles]]
+id = "WEB_FRONTEND"
+label = "Web frontend"
+status = "OBSERVADO"
+scenario = "WEB_FRONTEND_ROUTE"
+owners = ["@D"]
+gates = ["@A", "@GSD", "@Q", "@S", "@P", "@V"]
+tests = ["unit/component", "accessibility", "browser E2E only for critical browser UI"]
+release = ["detected CI provider", "web deploy or static publication"]
+limitations = ["framework-specific behavior still requires repository evidence"]
+fallback = []
+evidence = ["D_Design/D_Agent_Design.md", "Q_Quality/Q_Agent_TestEngineer.md"]
+
+[[profiles]]
+id = "API_BACKEND"
+label = "Backend and API"
+status = "OBSERVADO"
+scenario = "API_BACKEND_ROUTE"
+owners = ["@B"]
+gates = ["@A", "@DATA", "@GSD", "@Q", "@S", "@P", "@O", "@V"]
+tests = ["unit/domain", "API/contract", "integration", "load smoke when risk requires"]
+release = ["detected CI provider", "deployable service release"]
+limitations = ["framework and deployment provider must be discovered"]
+fallback = []
+evidence = ["B_BackendDomain/B_Agent_BackendDomain.md", "O_Observability/O_Agent_DeployObservability.md"]
+
+[[profiles]]
+id = "WORKER_AUTOMATION"
+label = "Workers, jobs and automations"
+status = "OBSERVADO"
+scenario = "WORKER_AUTOMATION_ROUTE"
+owners = ["@B", "@O"]
+gates = ["@A", "@DATA", "@GSD", "@Q", "@S", "@P", "@O", "@V"]
+tests = ["unit/domain", "queue or scheduler integration", "idempotency/retry/replay", "failure and recovery smoke"]
+release = ["detected CI provider", "worker, scheduler or automation deployment"]
+limitations = ["queue, scheduler and serverless provider semantics require repository evidence"]
+fallback = []
+evidence = ["B_BackendDomain/B_Agent_BackendDomain.md", "O_Observability/O_Agent_DeployObservability.md"]
+
+[[profiles]]
+id = "MOBILE"
+label = "Mobile applications"
+status = "OBSERVADO"
+scenario = "MOBILE_ROUTE"
+owners = ["@M", "@IOS"]
+gates = ["@A", "@GSD", "@Q", "@S", "@P", "@REG", "@REL", "@V"]
+tests = ["unit", "integration", "device or emulator smoke", "store/release checks"]
+release = ["detected mobile channel", "store, enterprise, beta or sideload as applicable"]
+limitations = ["platform-specific signing and policy require the matching specialist"]
+fallback = []
+evidence = ["M_MobilePlaystore/M_Agent_MobilePlaystore.md", "IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md"]
+
+[[profiles]]
+id = "DESKTOP"
+label = "Desktop applications"
+status = "PARCIAL"
+scenario = "DESKTOP_ROUTE"
+owners = ["@D", "@IOS"]
+gates = ["@A", "@GSD", "@Q", "@S", "@P", "@REL", "@V"]
+tests = ["unit", "integration", "native UI smoke when supported", "installer/update smoke"]
+release = ["platform package, signing and update channel must be discovered"]
+limitations = ["Windows/Linux installers, signing, IPC and auto-update lack a dedicated specialist"]
+fallback = ["@F"]
+evidence = ["D_Design/D_Agent_Design.md", "IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md"]
+
+[[profiles]]
+id = "MONOREPO"
+label = "Monorepo and coordinated workspaces"
+status = "PARCIAL"
+scenario = "MONOREPO_ROUTE"
+owners = ["@A", "@O", "@REL"]
+gates = ["@A", "@DEP", "@GSD", "@Q", "@O", "@REL", "@V"]
+tests = ["affected-unit selection", "workspace boundary and consumer contracts", "cross-package integration", "release graph smoke"]
+release = ["detected workspace tooling", "independent or coordinated versioning must be declared"]
+limitations = ["affected graph, remote cache and coordinated versioning lack a dedicated monorepo specialist"]
+fallback = ["@F"]
+evidence = ["A_Architecture/A_Agent_CrossStackArchitect.md", "O_Observability/O_Agent_DeployObservability.md", "REL_Release/REL_Agent_ReleaseManager.md"]
+
+[[profiles]]
+id = "CLI_SDK_PACKAGE"
+label = "CLI, SDK and reusable package"
+status = "OBSERVADO"
+scenario = "CLI_SDK_PACKAGE_ROUTE"
+owners = ["@PKG"]
+gates = ["@A", "@DEP", "@GSD", "@Q", "@S", "@REL", "@V"]
+tests = ["unit", "golden/contract", "consumer compatibility", "clean install/package smoke"]
+release = ["detected registry or binary distribution channel"]
+limitations = ["ecosystem-specific registry behavior must be verified from official/project evidence"]
+fallback = []
+evidence = ["PKG_PackageSDK/PKG_Agent_PackageCLISDK.md", "REL_Release/REL_Agent_ReleaseManager.md"]
+
+[[profiles]]
+id = "DATA_ENGINEERING"
+label = "Data engineering and ETL/ELT"
+status = "OBSERVADO"
+scenario = "DATA_ENGINEERING_ROUTE"
+owners = ["@DE"]
+gates = ["@A", "@DATA", "@GSD", "@Q", "@S", "@P", "@O", "@V"]
+tests = ["transformation unit", "schema contract", "data quality", "replay/backfill reconciliation"]
+release = ["detected orchestrator and promotion path", "backfill/replay runbook"]
+limitations = ["warehouse and orchestrator specifics require repository evidence"]
+fallback = []
+evidence = ["DE_DataEngineering/DE_Agent_DataPipeline.md", "DATA_Database/DATA_Agent_DataMigrations.md"]
+
+[[profiles]]
+id = "ML_ENGINEERING"
+label = "Classical ML and MLOps"
+status = "OBSERVADO"
+scenario = "ML_ENGINEERING_ROUTE"
+owners = ["@ML"]
+gates = ["@A", "@DE", "@GSD", "@Q", "@S", "@P", "@GOV", "@O", "@V"]
+tests = ["reproducible baseline", "offline segmented evaluation", "serving smoke", "drift/rollback gate"]
+release = ["model registry promotion", "canary/shadow/batch rollout as applicable"]
+limitations = ["domain-specific fairness and safety thresholds require accountable human ownership"]
+fallback = []
+evidence = ["ML_MLEngineering/ML_Agent_MLEngineering.md", "DE_DataEngineering/DE_Agent_DataPipeline.md"]
+
+[[profiles]]
+id = "INFRASTRUCTURE_AS_CODE"
+label = "Infrastructure as Code"
+status = "OBSERVADO"
+scenario = "INFRASTRUCTURE_AS_CODE_ROUTE"
+owners = ["@IAC"]
+gates = ["@A", "@CRED", "@E", "@GSD", "@Q", "@S", "@P", "@O", "@REL", "@V"]
+tests = ["format/validate", "lint/security/policy", "sanitized plan review", "recovery check"]
+release = ["detected CI provider", "separated plan/apply with environment approval"]
+limitations = ["provider-specific resources require current provider documentation and access gate"]
+fallback = []
+evidence = ["IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md", "E_Environment/E_Agent_Environment.md"]
+
+[[profiles]]
+id = "AI_LLM"
+label = "AI/LLM and RAG integration"
+status = "OBSERVADO"
+scenario = "AI_LLM_ROUTE"
+owners = ["@AI"]
+gates = ["@A", "@B", "@GSD", "@Q", "@S", "@P", "@GOV", "@O", "@V"]
+tests = ["schema/invariant", "golden-set eval", "retrieval evaluation", "fallback and cost gate"]
+release = ["versioned prompt/model contract", "eval-gated application release"]
+limitations = ["provider behavior and data policy must be revalidated at execution time"]
+fallback = []
+evidence = ["AI_AIIntegration/AI_Agent_AIIntegrationArchitect.md"]
+
+[[profiles]]
+id = "EMBEDDED"
+label = "Embedded, firmware and IoT"
+status = "AUSENTE"
+scenario = "EMBEDDED_ROUTE"
+owners = []
+gates = ["@A", "@GSD", "@Q", "@S", "@P", "@V"]
+tests = ["project-specific hardware and firmware strategy required"]
+release = ["project-specific OTA/factory/channel strategy required"]
+limitations = ["no dedicated firmware, RTOS, HIL, power or OTA specialist"]
+fallback = ["@F"]
+evidence = ["F_AgentForge/F_Agent_Foreman.md"]
+
+[[profiles]]
+id = "GAME"
+label = "Game development"
+status = "AUSENTE"
+scenario = "GAME_ROUTE"
+owners = []
+gates = ["@A", "@GSD", "@Q", "@S", "@P", "@REL", "@V"]
+tests = ["project-specific engine, gameplay and performance strategy required"]
+release = ["project-specific platform/store/build strategy required"]
+limitations = ["no dedicated engine, asset pipeline, frame budget, netcode or gameplay specialist"]
+fallback = ["@F"]
+evidence = ["F_AgentForge/F_Agent_Foreman.md"]
+
+[[profile_scenarios]]
+id = "WEB_FRONTEND_ROUTE"
+profile = "WEB_FRONTEND"
+expected_status = "OBSERVADO"
+expected_owners = ["@D"]
+fixture = "Browser user interface with components, navigation, accessibility states and a detected frontend build."
+expected_route = "Route visual ownership to @D and activate only the gates supported by the repository and risk."
+expected_limit = "Framework-specific behavior and browser tooling still require direct repository evidence."
+
+[[profile_scenarios]]
+id = "API_BACKEND_ROUTE"
+profile = "API_BACKEND"
+expected_status = "OBSERVADO"
+expected_owners = ["@B"]
+fixture = "Server-side API with domain rules, persistence contracts, permissions and a deployable service."
+expected_route = "Route domain and API ownership to @B with data, security and operational gates as applicable."
+expected_limit = "Framework, protocol and deployment provider must be discovered from the target repository."
+
+[[profile_scenarios]]
+id = "WORKER_AUTOMATION_ROUTE"
+profile = "WORKER_AUTOMATION"
+expected_status = "OBSERVADO"
+expected_owners = ["@B", "@O"]
+fixture = "Queued worker or scheduled automation with retries, idempotency, recovery and runtime monitoring needs."
+expected_route = "Route behavior to @B and operational ownership to @O, preserving provider-specific evidence."
+expected_limit = "Queue, scheduler and serverless semantics cannot be inferred without project configuration."
+
+[[profile_scenarios]]
+id = "MOBILE_ROUTE"
+profile = "MOBILE"
+expected_status = "OBSERVADO"
+expected_owners = ["@M", "@IOS"]
+fixture = "Native or hybrid mobile application with device permissions, signing and a detected distribution channel."
+expected_route = "Route by actual platform to @M and/or @IOS with store and regional gates when applicable."
+expected_limit = "Signing, entitlements, store policy and device behavior remain platform-specific evidence."
+
+[[profile_scenarios]]
+id = "DESKTOP_ROUTE"
+profile = "DESKTOP"
+expected_status = "PARCIAL"
+expected_owners = ["@D", "@IOS"]
+fixture = "Desktop application requiring native packaging, installer, signing, IPC or automatic update behavior."
+expected_route = "Use existing visual and Apple coverage only for proven portions and invoke @F for uncovered native lifecycle."
+expected_limit = "Windows and Linux native lifecycle, IPC, signing and auto-update have no dedicated specialist."
+
+[[profile_scenarios]]
+id = "MONOREPO_ROUTE"
+profile = "MONOREPO"
+expected_status = "PARCIAL"
+expected_owners = ["@A", "@O", "@REL"]
+fixture = "Repository with multiple coordinated workspaces, affected graph, shared contracts and release topology."
+expected_route = "Use @A, @O and @REL for proven boundaries and invoke @F when dedicated workspace expertise is required."
+expected_limit = "Affected graph, remote cache and coordinated versioning lack a dedicated monorepo specialist."
+
+[[profile_scenarios]]
+id = "CLI_SDK_PACKAGE_ROUTE"
+profile = "CLI_SDK_PACKAGE"
+expected_status = "OBSERVADO"
+expected_owners = ["@PKG"]
+fixture = "Reusable library, SDK, command-line product or binary with public compatibility and publication contracts."
+expected_route = "Route public API, command behavior, consumer compatibility and packaging ownership to @PKG."
+expected_limit = "Registry and ecosystem-specific compatibility behavior must be verified from current evidence."
+
+[[profile_scenarios]]
+id = "DATA_ENGINEERING_ROUTE"
+profile = "DATA_ENGINEERING"
+expected_status = "OBSERVADO"
+expected_owners = ["@DE"]
+fixture = "ETL or ELT pipeline with batch or stream processing, lineage, replay, backfill and data-quality contracts."
+expected_route = "Route pipeline behavior to @DE while application database migrations remain with @DATA."
+expected_limit = "Warehouse, orchestrator and source-system semantics require repository and environment evidence."
+
+[[profile_scenarios]]
+id = "ML_ENGINEERING_ROUTE"
+profile = "ML_ENGINEERING"
+expected_status = "OBSERVADO"
+expected_owners = ["@ML"]
+fixture = "Classical machine-learning system with reproducible training, evaluation, registry, serving and drift controls."
+expected_route = "Route classical ML and MLOps to @ML; keep LLM integration with @AI and generic pipelines with @DE."
+expected_limit = "Domain-specific fairness, safety and acceptance thresholds require accountable project ownership."
+
+[[profile_scenarios]]
+id = "INFRASTRUCTURE_AS_CODE_ROUTE"
+profile = "INFRASTRUCTURE_AS_CODE"
+expected_status = "OBSERVADO"
+expected_owners = ["@IAC"]
+fixture = "Declarative infrastructure with state, plans, applies, drift, policy checks and recovery requirements."
+expected_route = "Route IaC ownership to @IAC after access gating and provider discovery from current project evidence."
+expected_limit = "Provider resources, credentials and live environment behavior require current documentation and access."
+
+[[profile_scenarios]]
+id = "AI_LLM_ROUTE"
+profile = "AI_LLM"
+expected_status = "OBSERVADO"
+expected_owners = ["@AI"]
+fixture = "Production LLM or RAG integration with prompts, evaluations, guardrails, cost and external data-policy concerns."
+expected_route = "Route prompt, retrieval, evaluation, provider and model-contract ownership to @AI."
+expected_limit = "Provider behavior, model versions and data policies must be revalidated at execution time."
+
+[[profile_scenarios]]
+id = "EMBEDDED_ROUTE"
+profile = "EMBEDDED"
+expected_status = "AUSENTE"
+expected_owners = []
+fixture = "Firmware or IoT product requiring RTOS, hardware-in-loop, power, factory or over-the-air delivery expertise."
+expected_route = "Stop specialist implementation claims and create a contextual embedded specialist through @F."
+expected_limit = "The canonical arsenal has no dedicated firmware, RTOS, HIL, power or OTA specialist."
+
+[[profile_scenarios]]
+id = "GAME_ROUTE"
+profile = "GAME"
+expected_status = "AUSENTE"
+expected_owners = []
+fixture = "Game product requiring engine, asset pipeline, frame budget, gameplay, platform build or netcode expertise."
+expected_route = "Stop specialist implementation claims and create a contextual game-development specialist through @F."
+expected_limit = "The canonical arsenal has no dedicated engine, asset pipeline, frame budget or gameplay specialist."
+
+[[negative_scenarios]]
+id = "CLI_NOT_PLAYWRIGHT"
+profile = "CLI_SDK_PACKAGE"
+rule = "Playwright is not a universal gate for CLI, SDK or package work."
+
+[[negative_scenarios]]
+id = "GITLAB_NOT_GITHUB_ACTIONS"
+profile = "INFRASTRUCTURE_AS_CODE"
+rule = "GitLab CI must not be forced to use GitHub Actions."
+
+[[negative_scenarios]]
+id = "ML_NOT_AI"
+profile = "ML_ENGINEERING"
+rule = "Classical ML and MLOps are owned by @ML, not @AI."
+
+[[negative_scenarios]]
+id = "ETL_NOT_DATA"
+profile = "DATA_ENGINEERING"
+rule = "ETL and data pipelines are owned by @DE, not @DATA."

@@ -263,7 +263,7 @@ Antes de concluir:
 **Assets IA gerados/melhorados:** ...
 **Divergencias intencionais:** ...
 **Validacoes executadas:** ...
-**Veredito de paridade:** ALTA | MEDIA | BAIXA | QUESTIONAR
+**Nivel de paridade:** ALTA | MEDIA | BAIXA | NAO_AVALIADA
 ```
 
 ## Vereditos
@@ -296,4 +296,3 @@ Antes de concluir:
 Voce e menos artista e mais perito visual. Seu trabalho e fazer o sistema vestir
 o layout solicitado com precisao, sem quebrar o que ja funciona e sem expor o
 produto a copia indevida de identidade de terceiros.
-

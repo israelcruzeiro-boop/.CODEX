@@ -20,9 +20,14 @@ Garantir que o projeto tenha fronteiras claras:
 - Banco protege integridade com constraints, indices e transacoes.
 - Contratos de API sao versionados, validados e testaveis.
 - Infra, observabilidade e deploy entram no desenho desde cedo.
-- Toda arquitetura desenhada vira ou atualiza a planta tecnica do repo
-  (`ARCHITECTURE.md`, metodo `A_Method_PlantaTecnica.md`). Arquitetura que so
-  existe na conversa nao protege nada.
+- Estado atual vira `ARCHITECTURE.md` AS-IS, derivado do codigo, pelo metodo
+  `A_Method_PlantaTecnica.md`. Estado desejado vira
+  `TARGET_ARCHITECTURE.md` e, para trade-offs materiais, ADR pelo metodo
+  `A_Method_ModularArchitecture.md`. Arquitetura que so existe na conversa
+  nao protege nada.
+- Patterns sao governados por `PATTERN_MAP.md` e
+  `A_Method_PatternMap.md`; presenca observada e decisao normativa sao dimensoes
+  separadas.
 
 ## Protocolo de Evidencia
 
@@ -32,6 +37,8 @@ Antes de recomendar arquitetura em projeto existente:
 1b. Ler a planta tecnica (`ARCHITECTURE.md`) e compara-la com o codigo real:
     stack x manifest, rotas documentadas x rotas reais, camadas descritas x
     pastas existentes. Drift e finding de primeira classe e entra na saida.
+1c. Ler `TARGET_ARCHITECTURE.md`, ADRs e `PATTERN_MAP.md`, quando existirem,
+    separando delta desejado de comportamento implementado.
 2. Mapear estrutura real de pastas.
 3. Ler arquivos que definem fronteiras: rotas, services, schemas, models, clients de API,
    env examples, middlewares e configuracoes de build/deploy.
@@ -57,8 +64,20 @@ Antes de recomendar arquitetura em projeto existente:
    (camada, chave, TTL, invalidacao) e registrar na planta tecnica.
 10. Prever logs, metricas e alertas para os fluxos mais caros ou arriscados.
 11. Materializar a decisao na planta tecnica: atualizar (ou briefar `@DOC` para
-    atualizar) o `ARCHITECTURE.md` do repo afetado no mesmo ciclo, seguindo
-    `A_Method_PlantaTecnica.md`. Definir qual gate cobra cada regra nova.
+    atualizar) o `ARCHITECTURE.md` apenas com AS-IS comprovado. Mudanca ainda
+    nao implementada entra em `TARGET_ARCHITECTURE.md`; trade-off material
+    aponta ADR, e `N/A` exige justificativa. Definir qual fitness gate cobra
+    cada regra nova.
+12. Manter catalogo de modulos com IDs, API publica, ownership de dados,
+    invariantes, dependencias permitidas/proibidas e donos.
+13. Gerar grafo de dependencias, detectar ciclos e bloquear ciclo novo;
+    ciclo legado vira gap rastreavel.
+14. Declarar limites transacionais, consistencia, eventos, idempotencia,
+    retries, compensacao e reconciliacao dos fluxos multi-modulo.
+15. Registrar patterns em `PATTERN_MAP.md` com evidencia, forcas, alternativas,
+    contraindicacoes, trade-offs, ADR e gate.
+16. Rastrear requisitos e NFRs ate `MOD-*`/`CON-*`/`EVT-*`, tasks, testes e
+    evidencias.
 
 ## Saida Esperada
 
@@ -72,7 +91,11 @@ Sempre responda com:
 **Fronteiras:** frontend / backend / banco / workers / terceiros
 **Dominios de problema e ownership:** ...
 **Contratos:** ...
-**Planta tecnica:** atualizada em ... | drift encontrado: ... | criar via @DOC
+**AS-IS:** `ARCHITECTURE.md` atualizado em ... | drift encontrado: ...
+**TO-BE/ADRs:** `TARGET_ARCHITECTURE.md` ... | ADR-...
+**Catalogo/grafo:** MOD-... | ciclos: ...
+**Pattern map:** PAT-... | estado: ... | gate: ...
+**Evolucao:** rollout, rollback/forward-fix e compatibilidade
 **Riscos:** ...
 **Validacoes obrigatorias:** ...
 **Trade-offs:** ...

@@ -9,11 +9,17 @@ Use this skill to operate the local agent arsenal as a runtime-aware governance 
 
 ## Locate The Kit
 
-Resolve the kit root in this order:
+Resolve `PROJECT_ROOT` as the nearest ancestor containing `AGENTS.md`. Then
+resolve `KIT_ROOT` in this order:
 
-1. If this skill is inside the kit, use the directory two levels above this file.
-2. Otherwise search upward for a folder containing `AGENTS.md`, `.codex/agents`, `.claude/agents`, and `C10_Maestro`.
-3. Treat the found folder as `KIT_ROOT`.
+1. `PROJECT_ROOT/.codex` when it contains `.codex/agents`, `.claude/agents`,
+   and `C10_Maestro`.
+2. `PROJECT_ROOT` itself when it contains those paths (kit-development checkout).
+3. Otherwise stop with `QUESTIONAR`; do not infer sibling or copied paths.
+
+Do not derive `KIT_ROOT` from the installed skill directory alone: repo-scoped
+skills live under `PROJECT_ROOT/.agents/skills`, while their governed sources
+live under `KIT_ROOT`.
 
 Never duplicate agent content into this skill. The source of truth remains the original agent files under `KIT_ROOT`.
 
@@ -30,9 +36,12 @@ For agent selection or governance work, read only what is needed:
 ## Operating Rules
 
 - Keep `.codex/` as the source of truth for original agents and templates.
-- Keep `.codex/agents/*.toml` as Codex wrappers.
-- Keep `.claude/agents/*.md` as Claude wrappers.
-- Keep `skills/` for compact reusable workflows, not one skill per agent.
+- Keep `.codex/agents/*.toml` inside the kit as canonical Codex wrapper sources.
+- Materialize project runtime wrappers and repo-scoped Codex skills with `python RUNTIME_Bridge/scripts/install_project_runtime.py`; never copy them manually.
+- Keep `.claude/agents/*.md` inside the kit as canonical Claude wrapper sources and project them to `PROJECT_ROOT/.claude/agents` through the installer.
+- Keep `skills/` as the canonical source for compact reusable workflows, not
+  one skill per agent; the installer projects them to
+  `PROJECT_ROOT/.agents/skills` for Codex discovery.
 - Use `RUNTIME_Bridge/scripts/validate_arsenal.py` before declaring the arsenal functional.
 - Prefer evidence from files and commands over generic confidence.
 
@@ -43,8 +52,10 @@ For complex, risky, ambiguous, multi-domain, implementation, refactor, bugfix, a
 1. Use `@PICK` to choose the team and order.
 2. Use `@CRED` before external access, browser, APIs, database, deploy, or production.
 3. Use `@C10`, `@SPEC`, `@DOC`, `@A`, `@C`, `@GSD`, and validators as required by `AGENTS.md`.
-4. Load specialist agents only when their domain is actually involved.
-5. Finish with real validation evidence and a clear list of gaps.
+4. Use `multi-agent-delivery` when two or more independent workstreams justify subagents.
+5. Use `spec-driven-breakdown` for granular traceable specs and `architecture-blueprint` for modular architecture or pattern decisions.
+6. Load specialist agents only when their domain is actually involved.
+7. Finish with real validation evidence and a clear list of gaps.
 
 For small tasks, use the minimal relevant agent and skip ceremonial steps.
 
@@ -56,7 +67,8 @@ When asked whether the kit works in Codex and Claude:
 2. Confirm every Codex wrapper has `name`, `description`, and `developer_instructions`.
 3. Confirm every Claude wrapper has frontmatter `name` and `description`.
 4. Confirm each wrapper points to an existing source file.
-5. Confirm the three runtime skills validate with the Codex skill validator.
+5. Confirm every skill declared in `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml` validates with the Codex skill validator.
+6. Run the project-runtime installation test before declaring the kit portable.
 
 ## Output Shape
 

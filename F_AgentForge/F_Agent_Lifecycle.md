@@ -63,7 +63,7 @@ Quando um agente merece virar permanente.
 
 ```
 1. WorkAuditor entrega relatorio final
-   → Se APROVADO ou APROVADO COM RESSALVAS:
+   → Se APROVADO ou APROVADO_COM_RESSALVAS:
 
 2. Foreman pergunta ao usuario:
    "Esse agente se mostrou util. Quer promove-lo para a .codex/ permanente?"
@@ -76,13 +76,13 @@ Quando um agente merece virar permanente.
    - Remove instrucoes que so faziam sentido para a primeira execucao
 
 4. Salvar na pasta de promovidos:
-   .codex/F_Promoted/[Prefixo]_Agent_[Nome].md
+   .codex/F_AgentForge/F_Promoted/[Prefixo]_Agent_[Nome].md
 
 5. Criar diario do agente:
-   .codex/F_Promoted/[Prefixo]_Agent_[Nome]_DIARY.md
-   (usar F_Promoted/DIARY_TEMPLATE.md como base)
+   .codex/F_AgentForge/F_Promoted/[Prefixo]_Agent_[Nome]_DIARY.md
+   (usar F_AgentForge/F_Promoted/DIARY_TEMPLATE.md como base)
 
-6. Atualizar REGISTRY.md em F_Promoted/
+6. Atualizar REGISTRY.md em F_AgentForge/F_Promoted/
 
 7. Atualizar COLLECTIVE_MEMORY.md (se houve aprendizado na primeira execucao)
 

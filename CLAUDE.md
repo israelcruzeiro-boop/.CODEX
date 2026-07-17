@@ -56,6 +56,10 @@ bugfix, auditoria, release ou risco medio/alto:
 2. Ele deve selecionar o time certo e a ordem de acionamento.
 3. Se a tarefa nasce de ideia, legado ou feature grande, inclua
    `spec-architect` antes de arquitetura e execucao.
+   Classifique tambem o artefato pelo mapa
+   `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`; perfil `PARCIAL` ou `AUSENTE`
+   exige limitacao explicita e `agent-forge-foreman` quando a cobertura real
+   ficar abaixo de 70%.
 4. Se a tarefa envolve criar, auditar ou sincronizar documentacao estrutural,
    inclua `project-documentation-architect`.
 5. Se houver implementacao, bugfix ou refatoracao comportamental, inclua
@@ -69,15 +73,23 @@ bugfix, auditoria, release ou risco medio/alto:
 9. Se a tarefa envolver IA/LLM em producao (prompts de produto, RAG, evals,
    custo de tokens, guardrails, dados enviados a provedores), inclua
    `ai-integration-architect`.
+   Use `package-cli-sdk` para packages/CLI/SDK, `data-pipeline` para ETL/ELT,
+   `ml-engineering` para ML classico/MLOps e `infrastructure-as-code` para IaC.
 10. Se nenhum agente existente cobrir uma lacuna real, use
     `agent-forge-foreman`.
 
+Quando duas ou mais frentes forem independentes, planeje-as conforme
+`SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`: IDs, dependencias,
+read/write-sets, fingerprints, grupos paralelos, joins e envelope de resultado.
+Write-set nao sobrepoe read-set ou write-set concorrente sem snapshot/worktree
+imutavel.
+
 ## Gates Obrigatorios
 
-- Antes de implementar: planta tecnica do repo alvo existente e sincronizada
-  (`ARCHITECTURE.md` conforme `A_Architecture/A_Method_PlantaTecnica.md`); se
-  inexistente ou defasada, acionar `cross-stack-architect` +
-  `project-documentation-architect` antes dos executores.
+- Antes de implementar: `TARGET_ARCHITECTURE.md` rastreavel quando houver
+  sistema novo ou mudanca estrutural; quando ja existir codigo, exigir tambem
+  `ARCHITECTURE.md` AS-IS sincronizado. Acionar `cross-stack-architect` +
+  `project-documentation-architect` quando qualquer artefato aplicavel faltar.
 - Antes de implementar: `cetico` e, se relevante, `impact-validator`.
 - Durante implementacao: `gsd-tdd-cli-auditor`.
 - Mudancas de dados: `data-migrations` para schema, migrations e rollback.
@@ -118,6 +130,28 @@ Mudanca estrutural atualiza a planta no mesmo ciclo. Arquivo canonico:
 
 - `A_Architecture/A_Method_PlantaTecnica.md`
 
+Arquitetura planejada fica separada em `TARGET_ARCHITECTURE.md` + ADR. Modulos,
+dependencias e pattern map seguem:
+
+- `A_Architecture/A_Method_ModularArchitecture.md`
+- `A_Architecture/A_Method_PatternMap.md`
+- `A_Architecture/A_Reference_PatternCatalog.md`
+
+## Metodo Multiagente
+
+Para trabalho paralelo, usar:
+
+- `SUP_Supervisor/SUP_Method_MultiAgentDelivery.md`
+- `T_Templates/T_Template_MULTI_AGENT_PLAN.md`
+- `T_Templates/T_Template_AGENT_TASK.md`
+- `T_Templates/T_Template_AGENT_RESULT.md`
+
+O agente principal continua responsavel por integracao, reconciliacao de
+conflitos e veredito final.
+
+Valide o plano/envelopes nas fases aplicaveis com
+`RUNTIME_Bridge/scripts/validate_multi_agent.py`.
+
 ## Metodo Harness
 
 Toda implementacao relevante precisa de prova executavel:
@@ -138,6 +172,8 @@ Template:
 
 - `T_Templates/T_Template_CLI_AUDIT.md`
 
+Valide o artefato com `RUNTIME_Bridge/scripts/validate_cli_audit.py`.
+
 ## Politica De Organizacao
 
 - Nao mova, renomeie ou reescreva os agentes originais para adequar ao Claude.
@@ -150,7 +186,11 @@ Template:
 - Use `RUNTIME_Bridge/RUNTIME.md` como mapa de compatibilidade quando precisar
   entender como Codex, Claude e skills se conectam.
 - Depois de alterar wrappers ou agentes, rode:
-  `python RUNTIME_Bridge/scripts/validate_arsenal.py`.
+  `python RUNTIME_Bridge/scripts/run_quality_gate.py`.
+- Depois de checkout ou `git pull`, a partir de `PROJECT_ROOT`, rode
+  `python .codex/RUNTIME_Bridge/scripts/install_project_runtime.py --project-root .`
+  e depois o mesmo comando com `--check`. Ele tambem projeta as skills Codex em
+  `PROJECT_ROOT/.agents/skills`; nao copie wrappers ou skills manualmente.
 - `.codex/` deve estar sob git com remote no GitHub (o validador falha sem
   git). Edicao de agente so termina com commit + push. Copias em projetos sao
   checkouts do repositorio-template e sincronizam por `git pull`, nunca por

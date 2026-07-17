@@ -3,7 +3,7 @@
 ## Resultado
 
 **Modo:** COPIA_AUTORIZADA | ADAPTACAO_INSPIRADA
-**Veredito:** ALTA | MEDIA | BAIXA | QUESTIONAR
+**Nivel de paridade:** ALTA | MEDIA | BAIXA | NAO_AVALIADA
 **Referencia:** [imagem/url/figma]
 **Implementacao:** [path]
 
@@ -44,4 +44,3 @@
 - [ ] Screenshot desktop.
 - [ ] Screenshot mobile.
 - [ ] Acessibilidade basica.
-

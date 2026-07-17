@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@F`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/F_AgentForge/F_Agent_Foreman.md`
 - If running from inside the kit folder, use `F_AgentForge/F_Agent_Foreman.md`
 

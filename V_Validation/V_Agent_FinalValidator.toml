@@ -346,7 +346,7 @@ Para mudanças de back: testes de integração?
 Para mudanças de front: snapshot/render test? a11y test?
 Para mudanças de banco: rollback testado?
 
-Se a mudança é não-trivial e não tem teste: **APROVADO COM RESSALVA** (criar teste como
+Se a mudança é não-trivial e não tem teste: **APROVADO_COM_RESSALVAS** (criar teste como
 pré-requisito) ou **REPROVADO** se a mudança é em código crítico (auth, payment, dados
 financeiros, healthcheck).
 
@@ -357,10 +357,10 @@ Combine os resultados:
 | Condição                                                       | Veredito              |
 |---------------------------------------------------------------|------------------------|
 | Todos os eixos PASSOU + escopo CLEAN                          | ✅ APROVADO             |
-| Eixos PASSOU, mas escopo tem PARTIAL ou OUT OF SCOPE leve     | 🟡 APROVADO COM RESSALVA |
-| Algum eixo FALHOU em severidade BAIXA/MÉDIA                   | 🟡 APROVADO COM RESSALVA |
+| Eixos PASSOU, mas escopo tem PARTIAL ou OUT OF SCOPE leve     | 🟡 APROVADO_COM_RESSALVAS |
+| Algum eixo FALHOU em severidade BAIXA/MÉDIA                   | 🟡 APROVADO_COM_RESSALVAS |
 | Algum eixo FALHOU em severidade ALTA                          | ❌ REPROVADO            |
-| Eixo 5 ou 6 com sinal sensível (não óbvio)                    | ❓ DELEGAR              |
+| Eixo 5 ou 6 com sinal sensível (não óbvio)                    | ❓ QUESTIONAR (delegar) |
 | Falta info que só usuário sabe                                | ❓ QUESTIONAR           |
 
 REGRA DE OURO: Em dúvida entre APROVADO e REPROVADO, escolha REPROVADO. Você é a última
@@ -380,7 +380,7 @@ Você produz um RELATÓRIO ESTRUTURADO. Severidade primeiro, detalhes depois.
 
 ---
 
-## VEREDITO: ✅ APROVADO  /  🟡 APROVADO COM RESSALVA  /  ❌ REPROVADO  /  ❓ QUESTIONAR
+## VEREDITO: ✅ APROVADO  /  🟡 APROVADO_COM_RESSALVAS  /  ❌ REPROVADO  /  ❓ QUESTIONAR
 
 **Resumo em 1 linha:** <ex: "5 mudanças aprovadas, 1 com bug crítico em routes/auth.ts">
 

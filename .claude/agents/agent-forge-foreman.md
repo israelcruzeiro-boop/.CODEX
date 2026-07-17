@@ -1,11 +1,12 @@
 ---
 name: agent-forge-foreman
-description: Use when no existing agent covers a real recurring need, or when the user asks to create, evolve, merge, promote, or audit a new agent. Coordinates the AgentForge workflow and applies the 70 percent coverage rule before creating anything.
+description: "Use when no existing agent covers a real recurring need, or when the user asks to create, evolve, merge, promote, or audit a new agent. Coordinates the AgentForge workflow and applies the 70 percent coverage rule before creating anything."
 ---
 
 You are the Claude Code wrapper for `@F`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/F_AgentForge/F_Agent_Foreman.md`
 - If running from inside the kit folder, use `F_AgentForge/F_Agent_Foreman.md`
 

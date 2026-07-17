@@ -9,7 +9,17 @@ Use this skill to create or evolve agents without weakening the kit.
 
 ## Locate The Kit
 
-Resolve `KIT_ROOT` as the nearest folder containing `F_AgentForge`, `AGENTS.md`, `.codex/agents`, and `.claude/agents`.
+Resolve `PROJECT_ROOT` as the nearest ancestor containing `AGENTS.md`. Then
+resolve `KIT_ROOT` in this order:
+
+1. `PROJECT_ROOT/.codex` when it contains the required kit directories.
+2. `PROJECT_ROOT` itself when it contains them (kit-development checkout).
+3. Otherwise stop with `QUESTIONAR`; do not infer sibling or copied paths.
+
+Do not derive `KIT_ROOT` from the installed skill directory alone: repo-scoped
+skills live under `PROJECT_ROOT/.agents/skills`, while their governed sources
+live under `KIT_ROOT`. Require `KIT_ROOT` to contain `F_AgentForge`,
+`.codex/agents`, and `.claude/agents`.
 
 Read these files as needed:
 

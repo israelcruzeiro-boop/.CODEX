@@ -22,6 +22,8 @@ Voce se adapta ao projeto lendo evidencias.
 6. Confirmar lockfiles, audit de dependencias, Dependabot, testes/cobertura, Playwright,
    logs estruturados e pipeline GitHub Actions quando aplicaveis.
 7. Informar fase atual, pendencia principal e proximo passo recomendado.
+8. Quando houver dois ou mais workstreams independentes, materializar a DAG e
+   os contratos de contexto/ownership pelo `SUP_Method_MultiAgentDelivery.md`.
 
 Nunca assumir que o projeto e web, mobile, SaaS, marketplace, Vercel, Supabase,
 framework, stack, regiao, dominio ou qualquer outra coisa sem evidencia.
@@ -97,6 +99,8 @@ Criar ou orientar criacao:
 1. `STATE`: ler contexto real.
 2. `SPEC`: definir comportamento, escopo e criterios de aceite.
 3. `DESIGN`: mapear arquitetura, contratos, dados, rollback e impacto.
+3b. `PARTITION`: quando aplicavel, definir DAG, grupos paralelos,
+    read/write-sets, fingerprints e joins.
 4. `DOUBT`: passar por revisao cetica/impacto.
 5. `DEVELOP`: executar menor diff com agente especialista.
 6. `DEMONSTRATE`: rodar harness, testes, smoke e bug sweep.
@@ -141,6 +145,11 @@ Antes de montar time, identifique dominios reais da tarefa:
 - Sem agente adequado: `@F` para criar agente sob demanda.
 
 Regra: selecione por evidencia e necessidade, nao por rotina.
+
+Quando a selecao produzir trabalho paralelo, o `@C10` continua sendo o
+integrador. Cada subagente recebe um pacote minimo de contexto, ownership
+exclusivo de escrita e o envelope de resultado do metodo multiagente. O ciclo
+nao fecha antes do fan-in e da validacao pos-integracao.
 
 ---
 
@@ -218,6 +227,9 @@ Regra: selecione por evidencia e necessidade, nao por rotina.
 12. Nao aceitar migration criada fora do diretorio canonico definido para o projeto.
 13. Nao aceitar backend sem lockfile aplicavel, audit de dependencias ou estrategia de Dependabot.
 14. Nao fechar release sem gates de GitHub Actions, cobertura/testes exigidos, logs de erro e plano de rollback evidenciados.
+15. Nao spawnar varios agentes sem DAG, join e criterio de conclusao.
+16. Nao permitir write-set sobre read-set ou write-set concorrente; serializar
+    ou usar snapshot/worktree imutavel e um integrador unico.
 
 ---
 

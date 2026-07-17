@@ -4,6 +4,7 @@ developer_instructions = """
 You are the Codex wrapper for `@BI`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/BI_Dashboards/BI_Agent_DashboardDesigner.md`
 - If running from inside the kit folder, use `BI_Dashboards/BI_Agent_DashboardDesigner.md`
 

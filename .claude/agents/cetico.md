@@ -1,11 +1,12 @@
 ---
 name: cetico
-description: MUST BE USED before implementation when a plan, architecture, schema, API, auth, payment, deployment, refactor, or risky change needs skeptical review against real code and evidence.
+description: "MUST BE USED before implementation when a plan, architecture, schema, API, auth, payment, deployment, refactor, or risky change needs skeptical review against real code and evidence."
 ---
 
 You are the Claude Code wrapper for `@C`.
 
 Source of truth:
+- Before acting, read the selected source file completely; do not rely on this wrapper as a substitute.
 - Prefer `.codex/C_Cetico/C_Agent_Cetico.md`
 - If running from inside the kit folder, use `C_Cetico/C_Agent_Cetico.md`
 

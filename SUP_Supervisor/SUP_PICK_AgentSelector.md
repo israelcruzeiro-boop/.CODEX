@@ -32,6 +32,12 @@ Classifique:
 - Tipo: PLANEJAMENTO, IMPLEMENTACAO, REFATORACAO, CORRECAO, VALIDACAO, DEPLOY.
 - Risco: BAIXO, MEDIO, ALTO, CRITICO.
 - Contexto: projeto novo, projeto existente, legado, producao, auditoria.
+- Perfil por unidade conforme `C10_Maestro/C10_Method_ProjectProfiles.md`:
+  `WEB_FRONTEND`, `API_BACKEND`, `WORKER_AUTOMATION`, `MOBILE`, `DESKTOP`, `MONOREPO`, `CLI_SDK_PACKAGE`,
+  `DATA_ENGINEERING`, `ML_ENGINEERING`, `INFRASTRUCTURE_AS_CODE`, `AI_LLM`,
+  `EMBEDDED` ou `GAME`. Um monorepo pode ter varios perfis.
+- Status no `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml`: `OBSERVADO`,
+  `PARCIAL` ou `AUSENTE`. Nunca alegar cobertura total.
 
 ### 2. Mapear dominios envolvidos
 
@@ -43,6 +49,11 @@ Classifique:
 - Frontend/UX/design.
 - Mobile/plataformas/lojas.
 - Dados/migrations/queries.
+- CLI, packages, bibliotecas, SDKs, API/ABI e registries.
+- Data engineering: ETL/ELT, batch/stream, lineage, replay e qualidade.
+- ML classico/MLOps: datasets, treino, registry, serving, drift e retraining.
+- IaC: state, plan/apply, drift, policy e recovery.
+- Desktop, embedded/firmware ou game/engine, quando aplicavel.
 - Auth/autorizacao/PII/secrets.
 - Performance/cache/concorrencia/custo.
 - Testes/TDD/Harness/QA.
@@ -72,6 +83,10 @@ Escolha por necessidade:
 | Backend/API/dominio | `@B` |
 | Frontend/design/UX | `@D` |
 | Mobile | `@M` / `@IOS` conforme plataforma real |
+| CLI/packages/bibliotecas/SDKs | `@PKG` |
+| Data engineering/ETL/ELT | `@DE` |
+| ML classico/MLOps | `@ML` |
+| Infrastructure as Code | `@IAC` |
 | Environment/secrets | `@E` |
 | Credenciais/acesso externo | `@CRED` |
 | Seguranca | `@S` |
@@ -89,7 +104,9 @@ Escolha por necessidade:
 | Documentacao | `@DOC` |
 | Compliance geral/regulatorio | `@GOV` |
 | Compliance especifico | agente setorial aplicavel, se existir |
-| Lacuna real | `@F` para criar agente |
+| Desktop Windows/Linux | cobertura `PARCIAL`; `@F` para a lacuna especializada |
+| Embedded/firmware e game/engine | cobertura `AUSENTE`; `@F` antes de implementar |
+| Lacuna real abaixo de 70% | `@F` para criar agente |
 
 ### 4. Definir ordem
 
@@ -128,6 +145,13 @@ validadores especializados (@S, @P, @O, @PAY etc.)
     cross-stack e incluir `@A`, `@GSD`, `@Q`, `@V` e especialistas aplicaveis.
 12. Se houver risco de desorganizar a raiz, incluir `@DOC` e `@STD` para
     ownership, documentacao e padroes.
+13. Nao usar `@AI` como owner de ML classico; `@ML` cobre ML/MLOps e `@AI`
+    cobre LLM, prompts e RAG.
+14. Nao usar `@DATA` como owner de ETL; `@DE` cobre pipelines e `@DATA`
+    cobre estado persistente/migrations.
+15. Nao exigir Playwright para CLI/package/SDK nem GitHub Actions quando o
+    provider detectado for GitLab CI ou outro.
+16. Perfil `PARCIAL` ou `AUSENTE` exige limitacao e fallback `@F` explicitos.
 
 ---
 
@@ -142,6 +166,7 @@ validadores especializados (@S, @P, @O, @PAY etc.)
 **Tipo:** ...
 **Risco:** ...
 **Dominios:** ...
+**Perfis/status de cobertura:** ...
 **Evidencias:** ...
 
 ## Time selecionado

@@ -37,7 +37,7 @@
 ```
 Tarefa: [o que foi pedido]
 Contexto: [fase do projeto, arquivos envolvidos]
-Veredito WorkAuditor: [APROVADO | RESSALVA | REPROVADO]
+Veredito WorkAuditor: [APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO]
 Ressalvas: [se houver]
 Aprendizado: [o que este agente aprendeu com esta execucao]
 Contribuiu para COLLECTIVE_MEMORY: SIM | NAO

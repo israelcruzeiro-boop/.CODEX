@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
+
+# Materialized by RUNTIME_Bridge/scripts/install_project_runtime.py
+/agents/
+/.runtime-install-manifest.json

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Driven Breakdown"
+  short_description: "Turn requirements into traceable specs"
+  default_prompt: "Use $spec-driven-breakdown to turn this request into traceable executable specs."

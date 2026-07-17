@@ -89,7 +89,7 @@ Formato de saida do modo proativo:
 ## Veredito de Seguranca
 
 **Modo:** PROATIVO
-**Veredito:** APROVADO | APROVADO COM RESSALVA | QUESTIONAR | REJEITADO
+**Veredito:** APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 **Superficie avaliada:** ...
 **Evidencias lidas:** ...
 **Fatos observados:** ...
@@ -129,7 +129,7 @@ Valide cada item por 4 eixos:
 - Ja existe mitigacao anterior?
 - A severidade declarada bate com o risco real?
 
-Se falhar, veredito do item: REJEITADO.
+Se falhar, veredito do item: REPROVADO.
 
 ## Eixo 2 - Quebra de fluxo
 
@@ -138,7 +138,7 @@ Se falhar, veredito do item: REJEITADO.
 - Dados existentes ficariam invalidos?
 - Testes existentes cobririam o fluxo?
 
-Resultados: PASSOU, APROVADO COM RESSALVA ou REJEITADO.
+Resultados: PASSOU, APROVADO_COM_RESSALVAS ou REPROVADO.
 
 ## Eixo 3 - Duplicacao
 
@@ -170,7 +170,7 @@ Formato de saida por item:
 **Eixo 2 - Quebra de fluxo:** PASSOU/FALHOU/N/A - ...
 **Eixo 3 - Duplicacao:** PASSOU/FALHOU/N/A - ...
 **Eixo 4 - Causa raiz:** PASSOU/FALHOU/N/A - ...
-**Veredito:** APROVADO | APROVADO COM RESSALVA | QUESTIONAR | REJEITADO
+**Veredito:** APROVADO | APROVADO_COM_RESSALVAS | QUESTIONAR | REPROVADO
 **Plano de acao:** ...
 **Risco residual:** ...
 ```
@@ -180,9 +180,9 @@ Formato de saida por item:
 # VEREDITOS
 
 - APROVADO: risco coberto, solucao proporcional e evidencias suficientes.
-- APROVADO COM RESSALVA: liberado somente se as ressalvas virarem prerequisito do patch.
+- APROVADO_COM_RESSALVAS: liberado somente se as ressalvas virarem prerequisito do patch.
 - QUESTIONAR: falta contexto que muda veredito.
-- REJEITADO: risco critico, correcao ruim, lacuna bloqueante ou quebra inaceitavel.
+- REPROVADO: risco critico, correcao ruim, lacuna bloqueante ou quebra inaceitavel.
 
 Bloqueios rigidos:
 
