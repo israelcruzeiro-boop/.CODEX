@@ -1,5 +1,33 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-16 - Release 1.1.0 Publicada
+
+**Fase:** RELEASE
+
+**O que aconteceu:** o PR #1 foi integrado em `main` pelo merge commit
+`a18d834`. A tag anotada `v1.1.0` e a GitHub Release correspondente foram
+publicadas apontando para esse commit.
+
+**Evidencia:** `final_validator` aprovado; PR mergeable e checks verdes; CI
+pos-merge run `29545892490` com 4/4 jobs em Ubuntu/Windows e Python 3.11/3.14;
+quality gate com 200 testes; release publica em
+`https://github.com/israelcruzeiro-boop/.CODEX/releases/tag/v1.1.0`.
+
+**Perfil/artefato/canal:** runtime e governanca do Codex Agent Kit via Git tag e
+GitHub Release; sem registry, binario, migration ou dependencia nova.
+
+**Rollback:** fixar checkout no commit anterior aprovado e executar
+`install_project_runtime.py --check`; customizacoes divergentes permanecem
+preservadas como conflito.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** `v1.1.0` e a primeira tag publica; o baseline `1.0.0` permaneceu
+documentado no changelog, sem release separada.
+
+**Proximo passo:** P2 focado em forward-tests observados das skills e promocao
+de novos especialistas somente por demanda recorrente comprovada.
+
 ## 2026-07-16 - P1 Pronto Para PR
 
 **Fase:** P1_READY_FOR_PR

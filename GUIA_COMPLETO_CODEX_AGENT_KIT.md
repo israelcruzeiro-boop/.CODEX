@@ -32,8 +32,8 @@ Este e o baseline tecnico comprovado do runtime `1.1.0` depois do P0/P1:
 | Suíte local integrada | 200 testes verdes | `run_quality_gate.py` |
 | Matriz remota | 4/4 jobs verdes | Ubuntu/Windows com Python 3.11/3.14 |
 
-A matriz remota do snapshot P1 foi comprovada no GitHub Actions run
-`29544107944`. O runtime declara Python `>=3.11`, Linux e Windows como ambiente
+A matriz remota do merge publicado foi comprovada no GitHub Actions run
+`29545892490`. O runtime declara Python `>=3.11`, Linux e Windows como ambiente
 suportado. No host Windows local, quatro testes que exigem privilegio nativo de
 symlink podem usar skip justificado; a CI continua sendo a prova portavel.
 
@@ -988,15 +988,16 @@ comprovado neste ciclo.
 
 ## Proximo Passo Recomendado
 
-### Imediato - Integrar O P1
+### P0/P1 Integrados E Publicados
 
-1. Abrir PR de `codex/p1-dev-coverage` para `main`.
-2. Exigir o workflow `Arsenal continuous gate` verde e executar
-   `final_validator` sobre o diff completo.
-3. Revisar a trilha em `STATUS.md`, `LOG.md`, na spec P1 e no Harness antes do
-   merge.
-4. Depois do merge, aplicar o gate de `@REL` para tag/release `1.1.0` e atualizar
-   projetos consumidores por `git pull` + `install_project_runtime.py --check`.
+O PR #1 foi integrado em `main` com historico preservado. O merge commit
+`a18d834` passou pelo `final_validator`, pelo quality gate local e pela matriz
+remota Ubuntu/Windows com Python 3.11/3.14. A tag anotada e a GitHub Release
+`v1.1.0` foram publicadas apontando para esse commit.
+
+Projetos consumidores devem atualizar o checkout por `git pull` e executar
+`install_project_runtime.py --check`; wrappers e skills nao devem ser copiados
+manualmente.
 
 ### P2 - Provar Comportamento E Cobrir Demanda Real
 
