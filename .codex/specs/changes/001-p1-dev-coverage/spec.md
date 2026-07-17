@@ -191,7 +191,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | ID | Risco/pergunta/hipotese | Impacto | Dono/decisor | Evidencia para fechar | Bloqueia? |
 |---|---|---|---|---|---|
 | RISK-001 | Results observados dos 24 casos de skills ainda nao foram produzidos em contexto isolado. | Nao impede manifest lint, mas impede alegar execucao comportamental. | mantenedor de skills | EVD-004 com results completos ou declaracao explicita `execution_proven=false`. | NAO para DoR; SIM para alegar forward-test no DoD. |
-| RISK-002 | CI remoto Ubuntu/Windows ainda nao e evidencia inicial desta spec. | Pode revelar diferenca de path, encoding ou Python. | integrador raiz / `@O` | EVD-011 e FIT-001 passam sem falha em todos os jobs. | NAO para DoR; SIM para release. |
+| RISK-002 | O primeiro run remoto revelou diferencas de identidade e classificacao de paths entre runners; `e793dda` corrige os casos localmente. | O snapshot corrigido ainda pode divergir em Python 3.11/3.14 ou no symlink nativo dos runners. | integrador raiz / `@O` | EVD-011 e FIT-001 passam sem falha em todos os jobs do snapshot corrigido. | NAO para DoR; SIM para release. |
 | RISK-003 | Semantica especifica de registry, warehouse, model serving e provider IaC depende do projeto. | Generalizacao indevida produziria falsa cobertura. | `@PICK` e especialista do perfil | PROJECT_PROFILE do consumidor com limitacao/fallback e evidence ledger. | NAO; fallback `@F` e obrigatorio quando cobertura medida ficar abaixo de 70%. |
 | RISK-004 | Quality gate local em worktree com alteracoes intencionais pode falhar apenas no generated-drift-check. | Nao deve ser mascarado como gate verde. | integrador raiz | EVD-007 produzido em checkout limpo ou falha registrada antes do merge. | NAO para escrever a spec; SIM para merge. |
 
@@ -273,11 +273,11 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | EVD-004 | JSON do manifesto de casos; results observados permanecem evidencia separada. | 24 casos validos; `execution_proven=false` declarado no quality gate. | ate proxima mudanca material das skills / mantenedor de skills | PROVADO |
 | EVD-005 | Transcript dos testes multiagente. | 17 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
 | EVD-006 | Transcript dos testes Harness. | 15 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
-| EVD-007 | JSON do quality gate local em worktree limpo. | 8/8 gates e 198 testes no commit `af94406`. | ate release 1.1.0 / `@O` | PROVADO |
+| EVD-007 | JSON do quality gate local em worktree limpo. | 8/8 gates e 200 testes no commit `e793dda`. | ate release 1.1.0 / `@O` | PROVADO |
 | EVD-008 | Transcript dos testes do runtime/installer. | 23 testes por invocacao de modulo e suite integrada do commit `af94406`. | ate release 1.1.0 / integrador raiz | PROVADO |
 | EVD-009 | Transcript dos cenarios negativos por perfil. | 14 testes de coverage e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_dev_coverage | PROVADO |
 | EVD-010 | JSON do validador da spec canonica: uma change, zero erros e zero warnings. | stdout do TEST-010 executado em 2026-07-16 no handoff desta mudanca. | ate merge da spec / integrador raiz | PROVADO |
-| EVD-011 | URLs e logs dos quatro jobs remotos de FIT-001. | GitHub Actions da branch apos o push. | conforme retencao do CI e ate release 1.1.0 / `@O` | PLANEJADO |
+| EVD-011 | URLs e logs dos quatro jobs remotos de FIT-001. | Run inicial `29543436833` vermelho; rerun do snapshot corrigido ainda planejado. | conforme retencao do CI e ate release 1.1.0 / `@O` | PLANEJADO |
 
 **Teste falhando primeiro:** fixtures adversariais de cada validator devem retornar exit 1 ou finding esperado antes da implementação correspondente; o mapa/spec canonicos devem retornar exit 0.
 
@@ -285,7 +285,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **Bug sweep/regressao:** cobrir path traversal/reparse, wrapper/source drift, status/fallback incoerente, case count, ciclo/colisao/retry, PASS/FAIL mascarado, provider universal, manifest duplicado, diff sujo e compatibilidade Linux/Windows.
 
-**Ambientes nao validados e motivo:** CI remoto Ubuntu/Windows e forward-test isolado permanecem planejados; esta spec nao os marca como executados.
+**Ambientes nao validados e motivo:** o snapshot anterior executou na CI remota e falhou; Ubuntu/Windows com o snapshot corrigido e o forward-test isolado permanecem planejados. Esta spec nao os marca como aprovados.
 
 ## 12. Definition Of Done - DoD
 
@@ -300,9 +300,9 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **Veredito DoD:** APROVADO_COM_RESSALVAS
 
-**Justificativa/lacunas:** implementacao e gate local estao comprovados; a entrega permanece com uma unica ressalva operacional ate o primeiro push executar FIT-001 remotamente.
+**Justificativa/lacunas:** implementacao e gate local corrigido estao comprovados; a entrega permanece com uma unica ressalva operacional ate o rerun executar FIT-001 remotamente.
 
-**Lacuna nao bloqueante:** a matriz remota Ubuntu/Windows de FIT-001 ainda nao foi executada; isso impede merge/release, nao invalida o gate local.
+**Lacuna nao bloqueante:** a matriz remota Ubuntu/Windows ainda nao aprovou o snapshot corrigido; isso impede merge/release, nao invalida o gate local.
 
 **Acao:** fazer push da branch, observar os quatro jobs e rebaixar o veredito se qualquer combinacao de OS/Python falhar.
 
@@ -320,8 +320,8 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **LEARNINGS:** sim - cobertura declarada, manifest lint e execucao observada sao evidencias diferentes.
 
-**STATUS geral e por ambiente:** sim - `STATUS.md` separa gate local aprovado de CI remota pendente.
+**STATUS geral e por ambiente:** sim - `STATUS.md` separa gate local corrigido e aprovado do rerun remoto pendente.
 
 **Validacao da spec:** TEST-010 executado em 2026-07-16 com exit 0, uma change, zero erros e zero warnings.
 
-**Proximo passo obrigatorio:** `@O` confirma FIT-001 apos o push; merge, tag e release 1.1.0 permanecem proibidos ate a matriz remota ficar verde.
+**Proximo passo obrigatorio:** `@O` confirma FIT-001 apos publicar o snapshot corrigido; merge, tag e release 1.1.0 permanecem proibidos ate a matriz remota ficar verde.

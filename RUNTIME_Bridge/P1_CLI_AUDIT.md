@@ -10,13 +10,13 @@
 
 **Modulos/contratos:** MOD-001 a MOD-009 / CON-001 a CON-009
 
-**Branch/commit:** codex/p1-dev-coverage / af94406
+**Branch/commit:** codex/p1-dev-coverage / e793dda
 
 **Diretorio raiz:** C:\Users\israe\Downloads\.codex
 
 **Ambientes afetados:** agents, runtime bridge, skills, specs, docs e CI
 
-**Arquivos alterados:** 73 arquivos no commit af94406
+**Arquivos alterados:** implementacao P1 e tres arquivos de correcao de portabilidade no commit e793dda
 
 **Data:** 2026-07-16
 
@@ -38,17 +38,17 @@
 | 4 | EVD-004 | `python -B RUNTIME_Bridge/scripts/run_skill_contract_evals.py --json` | `C:\Users\israe\Downloads\.codex` | Provar o contrato deterministico das seis skills | 0 | PASS | 24 casos validos; `execution_proven=false` declarado |
 | 5 | EVD-005 | `python -B RUNTIME_Bridge/scripts/test_multi_agent_validator.py` | `C:\Users\israe\Downloads\.codex` | Provar DAG, fan-in, ledger, claims e joins | 0 | PASS | 17 testes focados passaram |
 | 6 | EVD-006 | `python -B RUNTIME_Bridge/scripts/test_cli_audit_validator.py` | `C:\Users\israe\Downloads\.codex` | Provar rastreabilidade e coerencia do Harness | 0 | PASS | 15 testes focados passaram |
-| 7 | EVD-007 | `python -B RUNTIME_Bridge/scripts/run_quality_gate.py --json` | `C:\Users\israe\Downloads\.codex` | Provar o snapshot commitado em worktree limpo | 0 | PASS | 8/8 gates; 198 testes; 4 skips Windows esperados |
+| 7 | EVD-007 | `python -B RUNTIME_Bridge/scripts/run_quality_gate.py --json` | `C:\Users\israe\Downloads\.codex` | Provar o snapshot commitado em worktree limpo | 0 | PASS | 8/8 gates; 200 testes; 4 skips Windows locais esperados |
 | 8 | EVD-008 | `python -B -m unittest RUNTIME_Bridge.scripts.test_project_runtime -v` | `C:\Users\israe\Downloads\.codex` | Provar manifesto unico, paths e instalador portavel | 0 | PASS | 23 testes passaram por invocacao de modulo |
 | 9 | EVD-009 | `python -B RUNTIME_Bridge/scripts/test_project_coverage.py` | `C:\Users\israe\Downloads\.codex` | Provar cenarios negativos e integridade do coverage map | 0 | PASS | 14 testes passaram |
 | 10 | EVD-010 | `python -B RUNTIME_Bridge/scripts/validate_specs.py . --json` | `C:\Users\israe\Downloads\.codex` | Validar a spec SDD canonica e sua rastreabilidade | 0 | PASS | 1 change, 0 erros e 0 warnings |
-| 11 | EVD-011 | `gh run watch` para `.github/workflows/arsenal-ci.yml` | `C:\Users\israe\Downloads\.codex` | Confirmar FIT-001 em Ubuntu/Windows e Python 3.11/3.14 | N/A | LACUNA | O workflow so pode produzir run remoto depois do push da branch |
+| 11 | EVD-011 | `gh run view 29543436833` e rerun de `.github/workflows/arsenal-ci.yml` | `C:\Users\israe\Downloads\.codex` | Confirmar FIT-001 em Ubuntu/Windows e Python 3.11/3.14 | N/A | LACUNA | Run inicial falhou e gerou `e793dda`; o snapshot corrigido ainda aguarda rerun |
 
 ## Saidas Relevantes
 
 ```text
 Quality gate: ok=true
-Unit and adversarial tests: 198 OK, 4 skipped on local Windows symlink privilege
+Unit and adversarial tests: 200 OK, 4 skipped on local Windows symlink privilege
 Spec validator: 1 change, 0 errors, 0 warnings
 Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 ```
@@ -57,11 +57,11 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 **Teste especifico:** 64 arquitetura + 43 runtime/Harness
 
-**Teste de regressao:** 198 testes integrados
+**Teste de regressao:** 200 testes integrados
 
 **Build/typecheck/lint:** compileall, wrapper parity, manifest validators e diff check no quality gate
 
-**Smoke:** quality gate completo no commit `af94406`
+**Smoke:** quality gate completo no commit `e793dda`
 
 ## Rastreabilidade Demonstrada
 
@@ -89,7 +89,7 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 **Status por ambiente atualizado em `STATUS.md`:** SIM
 
-**Ambientes sem validacao e motivo:** GitHub-hosted Ubuntu/Windows aguardam o primeiro push do snapshot P1; FIT-001 sera confirmado antes de merge/release
+**Ambientes sem validacao e motivo:** GitHub-hosted Ubuntu/Windows executaram o snapshot anterior e revelaram falhas de portabilidade; o snapshot corrigido `e793dda` aguarda rerun integral antes de merge/release
 
 **Migrations do ciclo:** N/A - nenhuma migration ou banco alterado
 
@@ -99,17 +99,19 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 ## Falhas
 
-- N/A - nenhuma falha local comprovada.
+- N/A - nenhuma falha comprovada no snapshot auditado `e793dda`. O run do
+  snapshot anterior esta registrado em EVD-011 e no `LOG.md` como antecedente
+  da correcao; o rerun permanece uma lacuna de ambiente.
 
 ## Veredito
 
 **Veredito:** APROVADO_COM_RESSALVAS
 
-**Justificativa:** todos os contratos e testes locais passaram no commit limpo; falta somente observar a matriz CI remota disparada pelo push.
+**Justificativa:** todos os contratos e testes locais passaram no commit limpo; falta provar o snapshot corrigido na matriz CI remota.
 
-**Proximo passo:** push da branch, acompanhar os quatro jobs e impedir merge/release se FIT-001 falhar.
+**Proximo passo:** publicar `e793dda`, acompanhar os quatro jobs e impedir merge/release se FIT-001 falhar.
 
-**Ressalva:** matriz GitHub-hosted Ubuntu/Windows ainda nao executada para este snapshot.
+**Ressalva:** matriz GitHub-hosted Ubuntu/Windows ainda nao executada para o snapshot corrigido.
 
 **Acao da ressalva:** executar e verificar `.github/workflows/arsenal-ci.yml` apos o push.
 
