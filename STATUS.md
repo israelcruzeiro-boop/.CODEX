@@ -2,21 +2,20 @@
 
 ## Estado Atual
 
-**Fase:** P1_READY_FOR_PR
+**Fase:** RELEASE_1_1_0_PUBLISHED
 
 **Ultima atualizacao:** 2026-07-16
 
 **Atualizado por:** integrador raiz com revisoes `@A`, `@SPEC`, `@GSD` e multiagente
 
-**Commit validado local e remotamente:** `bc05684`
+**Release publicada:** `v1.1.0` no commit `a18d834`
 
 ## Status Geral
 
-O P1 esta implementado, documentado e aprovado pelo gate local em worktree
-limpo. O source gate executou 8 etapas, 200 testes passaram e 4 testes de
-symlink foram pulados no Windows local por falta do privilegio nativo. A matriz
-GitHub-hosted do commit `bc05684` passou nos quatro jobs de Ubuntu/Windows com
-Python 3.11/3.14 no run `29544634947`. O branch esta pronto para selo final e PR.
+P0 e P1 foram integrados em `main` pelo PR #1 e publicados na release `v1.1.0`.
+O merge commit `a18d834` passou no source gate com 8 etapas, 200 testes e matriz
+GitHub-hosted verde nos quatro jobs de Ubuntu/Windows com Python 3.11/3.14 no
+run `29545892490`. A release publica aponta para esse commit imutavel.
 
 ## Status Por Ambiente
 
@@ -28,7 +27,8 @@ Python 3.11/3.14 no run `29544634947`. O branch esta pronto para selo final e PR
 | arquitetura/patterns | APROVADO | 64 testes focados; catalogo com 30 patterns | nenhum local |
 | perfis DEV | APROVADO_COM_RESSALVAS | 13 perfis + 13 cenarios | desktop/monorepo parciais; embedded/game ausentes |
 | skills | APROVADO_COM_RESSALVAS | 24 contratos deterministicos | forward-test completo das 24 invocacoes nao foi alegado |
-| CI | APROVADO | run `29544634947` no commit `bc05684` | nenhum gate remoto pendente |
+| CI | APROVADO | run `29545892490` no merge commit `a18d834` | nenhum gate remoto pendente |
+| release | PUBLICADA | tag `v1.1.0` e GitHub Release | primeira tag publica; baseline 1.0.0 permaneceu apenas no changelog |
 
 ## Concluido
 
@@ -41,13 +41,16 @@ Python 3.11/3.14 no run `29544634947`. O branch esta pronto para selo final e PR
 - [x] Tres revisoes independentes com correcoes incorporadas.
 - [x] Matriz remota Ubuntu/Windows e Python 3.11/3.14 integralmente verde.
 - [x] Guia completo sincronizado com o arsenal P1.
+- [x] PR #1 integrado em `main` com merge commit preservando o historico.
+- [x] Tag anotada e GitHub Release `v1.1.0` publicadas.
 
 ## Proximo Gate
 
 - [x] Push inicial de `codex/p1-dev-coverage` e diagnostico do primeiro run.
 - [x] Push do snapshot corrigido e matriz CI remota integralmente verde.
-- [ ] Selo `final_validator`, PR para `main` e revisao de merge.
-- [ ] Release/tag 1.1.0 somente depois do merge aprovado.
+- [x] Selo `final_validator`, PR para `main` e revisao de merge.
+- [x] Release/tag 1.1.0 depois do merge aprovado.
+- [ ] P2: produzir resultados forward-test observados para os 24 casos de skills.
 
 ## Banco E Migrations
 
