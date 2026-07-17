@@ -1,5 +1,22 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-16 - Guia Pratico Do @ONB
+
+**Fase:** DOCUMENTATION
+
+**O que aconteceu:** foi criado `GUIA_PRATICO_USO_ONB.md` para documentar a
+diferenca entre diagnostico, encaminhamento e execucao; o Modo Kickoff Completo;
+prompts para projeto novo e existente; coordenacao por `@C10`/`@PICK`; uso
+seguro de subagentes; instalacao do runtime e limites operacionais.
+
+**Evidencia:** o novo documento foi ligado a `GUIA_COMPLETO_CODEX_AGENT_KIT.md`
+e a conclusao foi registrada em `STATUS.md`.
+
+**Status:** APROVADO
+
+**Proximo passo:** usar o guia como entrada humana nos projetos consumidores e
+incorporar aprendizados dos forward-tests previstos para o P2.
+
 ## 2026-07-16 - Release 1.1.0 Publicada
 
 **Fase:** RELEASE

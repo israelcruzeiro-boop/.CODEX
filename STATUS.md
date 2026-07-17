@@ -43,6 +43,8 @@ run `29545892490`. A release publica aponta para esse commit imutavel.
 - [x] Guia completo sincronizado com o arsenal P1.
 - [x] PR #1 integrado em `main` com merge commit preservando o historico.
 - [x] Tag anotada e GitHub Release `v1.1.0` publicadas.
+- [x] Guia pratico de uso do `@ONB`, execucao coordenada e subagentes criado e
+  ligado ao guia completo.
 
 ## Proximo Gate
 
