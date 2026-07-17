@@ -14,6 +14,40 @@ Para operacao automatica dentro de um projeto, a fonte curta e `AGENTS.md`. Para
 instalar o kit em um produto real, copie ou adapte
 `C10_Maestro/C10_Agent_ProjectRules.md` para `PROJECT_ROOT/AGENTS.md`.
 
+## Estado Verificado Do Arsenal
+
+Este e o baseline tecnico comprovado do runtime `1.1.0` depois do P0/P1:
+
+| Capacidade | Estado atual | Evidencia canonica |
+|---|---:|---|
+| Agentes no manifesto | 46 | `RUNTIME_Bridge/AGENT_RUNTIME_MAP.toml` |
+| Wrappers Codex | 46 em paridade | `.codex/agents/*.toml` |
+| Wrappers Claude | 46 em paridade | `.claude/agents/*.md` |
+| Skills oficiais | 6/6 validas | `skills/*/SKILL.md` |
+| Perfis DEV | 13 | `RUNTIME_Bridge/PROJECT_COVERAGE_MAP.toml` |
+| Distribuicao dos perfis | 9 `OBSERVADO`, 2 `PARCIAL`, 2 `AUSENTE` | `validate_project_coverage.py` |
+| Especialistas promovidos no P1 | 4 | `@PKG`, `@DE`, `@ML`, `@IAC` |
+| Patterns e anti-patterns | 30 | `A_Architecture/A_Reference_PatternCatalog.md` |
+| Contratos de skills | 24 | `RUNTIME_Bridge/evals/skills/cases.toml` |
+| Suíte local integrada | 200 testes verdes | `run_quality_gate.py` |
+| Matriz remota | 4/4 jobs verdes | Ubuntu/Windows com Python 3.11/3.14 |
+
+A matriz remota do snapshot P1 foi comprovada no GitHub Actions run
+`29544107944`. O runtime declara Python `>=3.11`, Linux e Windows como ambiente
+suportado. No host Windows local, quatro testes que exigem privilegio nativo de
+symlink podem usar skip justificado; a CI continua sendo a prova portavel.
+
+O veredito precisa ser lido em duas camadas:
+
+- os contratos, wrappers, validadores, testes e a CI do P1 estao aprovados;
+- cobertura universal de qualquer projeto DEV nao e alegada: `DESKTOP` e
+  `MONOREPO` sao parciais, `EMBEDDED` e `GAME` estao ausentes, e os 24 casos de
+  skills ainda nao possuem um conjunto completo de resultados forward-test
+  observados (`execution_proven=false`).
+
+Esses limites sao intencionais e acionam `@F` ou uma nova rodada de evidencia;
+nao podem ser convertidos silenciosamente em cobertura total.
+
 ## Ideia Central
 
 O Codex Agent Kit nao e uma colecao solta de prompts. Ele e uma camada de
@@ -801,6 +835,30 @@ O kit empilha gates em vez de depender de um unico revisor:
 - `final_validator` revisa o diff final.
 - `@X` audita o processo.
 
+### Quality Gate Continuo Do Arsenal
+
+`RUNTIME_Bridge/scripts/run_quality_gate.py` e o ponto unico de verificacao
+local e da CI. Ele executa todas as etapas, mesmo quando uma falha, e retorna
+evidencia estruturada:
+
+1. `compileall` dos scripts do Runtime Bridge;
+2. paridade exata entre wrappers Codex e Claude;
+3. coerencia do manifesto, agentes, links, skills e contratos de veredito;
+4. integridade dos 13 perfis, owners, fontes, wrappers, cenarios e fallbacks;
+5. contratos deterministicos das seis skills;
+6. suíte unitaria e adversarial completa;
+7. `git diff --check`;
+8. deteccao de worktree ou artefato gerado divergente.
+
+O workflow `.github/workflows/arsenal-ci.yml` roda esse mesmo gate em Ubuntu e
+Windows, com Python 3.11 e 3.14, permissoes `contents: read`, actions fixadas por
+commit, timeout de 20 minutos e cancelamento de execucao obsoleta da mesma ref.
+
+Importante: o gate valida os 24 contratos de skills, mas nao transforma ausencia
+de resultados observados em sucesso de execucao. Enquanto nenhum arquivo de
+results completo for fornecido ao runner, ele deve continuar informando
+`execution_proven=false`.
+
 ### Memoria Operacional
 
 O ciclo so fecha quando a memoria fica atualizada:
@@ -927,6 +985,35 @@ Para fechar ciclo:
 C10_DOCUMENTADOR, atualize LOG, STATUS, DECISIONS e LEARNINGS conforme o que foi
 comprovado neste ciclo.
 ```
+
+## Proximo Passo Recomendado
+
+### Imediato - Integrar O P1
+
+1. Abrir PR de `codex/p1-dev-coverage` para `main`.
+2. Exigir o workflow `Arsenal continuous gate` verde e executar
+   `final_validator` sobre o diff completo.
+3. Revisar a trilha em `STATUS.md`, `LOG.md`, na spec P1 e no Harness antes do
+   merge.
+4. Depois do merge, aplicar o gate de `@REL` para tag/release `1.1.0` e atualizar
+   projetos consumidores por `git pull` + `install_project_runtime.py --check`.
+
+### P2 - Provar Comportamento E Cobrir Demanda Real
+
+O P2 recomendado nao e criar mais agentes por quantidade. A prioridade e:
+
+1. executar forward-tests representativos dos 24 casos de skills e versionar o
+   arquivo de results esperado por `run_skill_contract_evals.py`;
+2. testar selecao, boundary e non-trigger com mais de um tipo de pedido e
+   registrar divergencias de roteamento;
+3. promover cobertura `DESKTOP` ou `MONOREPO` somente quando projetos reais
+   demonstrarem recorrencia e ownership estavel;
+4. manter `EMBEDDED` e `GAME` em `@F` ate existir contexto suficiente para um
+   especialista bem construido;
+5. avaliar branch protection exigindo a matriz do arsenal antes de merge.
+
+O criterio de saida do P2 e evidencia observada de comportamento, nao apenas
+mais arquivos no catalogo.
 
 ## Regra Final
 
