@@ -43,6 +43,8 @@ MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 BACKTICK_PATH_RE = re.compile(
     r"`([^`\r\n]+?\.(?:md|toml|py|ya?ml))`", re.IGNORECASE
 )
+PATH_ERROR_OUTSIDE_ROOT = "path-outside-kit-root"
+PATH_ERROR_BROKEN_REPARSE = "broken-symlink-or-reparse-point"
 
 
 def _mask_nonsemantic_markdown(text: str) -> str:
@@ -206,34 +208,49 @@ def _validate_governed_path(
         return None
     candidate = kit / Path(*parts)
     root = kit.resolve(strict=True)
-    resolved = candidate.resolve(strict=False)
-    try:
-        resolved.relative_to(root)
-    except ValueError:
-        errors.append(f"{label}: resolved path escapes kit root: {value!r}.")
-        return None
-
-    current = kit
     try:
         relative = candidate.relative_to(kit)
     except ValueError:
-        errors.append(f"{label}: path is outside kit root: {value!r}.")
+        errors.append(
+            f"{label} [{PATH_ERROR_OUTSIDE_ROOT}]: path is outside kit root: {value!r}."
+        )
         return None
+
+    # Classify each link before resolving the complete candidate.  On Windows,
+    # resolving a dangling reparse point first can produce a misleading root-
+    # escape result; on POSIX, an external symlink otherwise bypasses the more
+    # specific reparse diagnostic.  The final resolved-path check below remains
+    # a fail-closed defense against link chains and changes during validation.
+    current = kit
     for part in relative.parts:
         current /= part
         if not _is_reparse(current):
             continue
         if not current.exists():
-            errors.append(f"{label}: broken symlink/reparse point: {current}.")
+            errors.append(
+                f"{label} [{PATH_ERROR_BROKEN_REPARSE}]: "
+                f"broken symlink/reparse point: {current}."
+            )
             return None
         target = current.resolve(strict=True)
         try:
             target.relative_to(root)
         except ValueError:
             errors.append(
-                f"{label}: symlink/reparse point resolves outside kit root: {current}."
+                f"{label} [{PATH_ERROR_OUTSIDE_ROOT}]: symlink/reparse point "
+                f"resolves outside kit root: {current}."
             )
             return None
+
+    resolved = candidate.resolve(strict=False)
+    try:
+        resolved.relative_to(root)
+    except ValueError:
+        errors.append(
+            f"{label} [{PATH_ERROR_OUTSIDE_ROOT}]: resolved path is outside "
+            f"kit root: {value!r}."
+        )
+        return None
 
     if must_exist and not candidate.exists():
         errors.append(f"{label}: path does not exist: {normalized}.")

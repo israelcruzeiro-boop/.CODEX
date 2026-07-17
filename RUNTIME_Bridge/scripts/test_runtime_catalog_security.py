@@ -262,6 +262,73 @@ class SyncSecurityTests(unittest.TestCase):
 
 
 class ValidatorPathSecurityTests(unittest.TestCase):
+    def test_external_reparse_is_classified_before_generic_resolution(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as outside:
+            kit = Path(directory)
+            link = kit / "linked.md"
+            link.write_text("link placeholder\n", encoding="utf-8")
+            external = Path(outside) / "external.md"
+            external.write_text("external\n", encoding="utf-8")
+            path_type = type(link)
+            original_resolve = path_type.resolve
+
+            def resolve(path: Path, strict: bool = False) -> Path:
+                if path == link:
+                    return external
+                return original_resolve(path, strict=strict)
+
+            errors: list[str] = []
+            with mock.patch.object(
+                validator, "_is_reparse", side_effect=lambda path: path == link
+            ), mock.patch.object(path_type, "resolve", autospec=True, side_effect=resolve):
+                self.assertIsNone(
+                    validator._validate_governed_path(
+                        kit, "linked.md", "linked source", errors, expect_file=True
+                    )
+                )
+            joined = "\n".join(errors)
+            self.assertIn(validator.PATH_ERROR_OUTSIDE_ROOT, joined)
+            self.assertIn("symlink/reparse point resolves outside kit root", joined)
+
+    def test_broken_reparse_is_classified_before_misleading_escape(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, tempfile.TemporaryDirectory() as outside:
+            kit = Path(directory)
+            link = kit / "broken.md"
+            external = Path(outside) / "missing.md"
+            path_type = type(link)
+            original_exists = path_type.exists
+            original_resolve = path_type.resolve
+
+            def exists(path: Path) -> bool:
+                if path == link:
+                    return False
+                return original_exists(path)
+
+            def resolve(path: Path, strict: bool = False) -> Path:
+                # Mirrors the misleading Windows strict=False result that
+                # previously ran before dangling-reparse classification.
+                if path == link:
+                    return external
+                return original_resolve(path, strict=strict)
+
+            errors: list[str] = []
+            with mock.patch.object(
+                validator, "_is_reparse", side_effect=lambda path: path == link
+            ), mock.patch.object(
+                path_type, "exists", autospec=True, side_effect=exists
+            ), mock.patch.object(
+                path_type, "resolve", autospec=True, side_effect=resolve
+            ):
+                self.assertIsNone(
+                    validator._validate_governed_path(
+                        kit, "broken.md", "broken source", errors, expect_file=True
+                    )
+                )
+            joined = "\n".join(errors)
+            self.assertIn(validator.PATH_ERROR_BROKEN_REPARSE, joined)
+            self.assertIn("broken symlink/reparse point", joined)
+            self.assertNotIn(validator.PATH_ERROR_OUTSIDE_ROOT, joined)
+
     def test_manifest_rejects_traversal_and_absolute_paths(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             kit = Path(directory)
@@ -311,7 +378,9 @@ class ValidatorPathSecurityTests(unittest.TestCase):
                 "skills": [],
             }
             validator._manifest_indexes(kit, manifest, errors)
-            self.assertIn("outside kit root", "\n".join(errors))
+            joined = "\n".join(errors)
+            self.assertIn(validator.PATH_ERROR_OUTSIDE_ROOT, joined)
+            self.assertIn("outside kit root", joined)
 
     def test_broken_symlink_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -327,7 +396,9 @@ class ValidatorPathSecurityTests(unittest.TestCase):
                     kit, "broken.md", "broken source", errors, expect_file=True
                 )
             )
-            self.assertIn("broken symlink/reparse point", "\n".join(errors))
+            joined = "\n".join(errors)
+            self.assertIn(validator.PATH_ERROR_BROKEN_REPARSE, joined)
+            self.assertIn("broken symlink/reparse point", joined)
 
 
 class GitPolicyTests(unittest.TestCase):

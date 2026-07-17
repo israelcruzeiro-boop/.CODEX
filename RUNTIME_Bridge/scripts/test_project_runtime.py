@@ -442,10 +442,14 @@ class ProjectRuntimeInstallerTest(unittest.TestCase):
         target = self.project_root / ".codex" / "agents" / "architect.toml"
         source.write_text('name = "architect-v2"\n', encoding="utf-8")
         original_atomic_write = installer._atomic_write
+        race_injected = False
 
         def race_target(path: Path, content: bytes, *, guard=None) -> None:
-            if path == target:
-                target.write_text('name = "concurrent-user-change"\n', encoding="utf-8")
+            nonlocal race_injected
+            # Windows CI can spell the same temp root with short and long names.
+            if path.samefile(target):
+                race_injected = True
+                path.write_text('name = "concurrent-user-change"\n', encoding="utf-8")
             original_atomic_write(path, content, guard=guard)
 
         with (
@@ -461,6 +465,10 @@ class ProjectRuntimeInstallerTest(unittest.TestCase):
                 refresh_managed=True,
             )
 
+        self.assertTrue(
+            race_injected,
+            "the concurrent target mutation was not injected",
+        )
         self.assertEqual(
             target.read_text(encoding="utf-8"),
             'name = "concurrent-user-change"\n',
