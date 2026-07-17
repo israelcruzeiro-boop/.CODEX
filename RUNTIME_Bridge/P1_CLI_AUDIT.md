@@ -10,13 +10,13 @@
 
 **Modulos/contratos:** MOD-001 a MOD-009 / CON-001 a CON-009
 
-**Branch/commit:** codex/p1-dev-coverage / e793dda
+**Branch/commit:** codex/p1-dev-coverage / bc05684
 
 **Diretorio raiz:** C:\Users\israe\Downloads\.codex
 
 **Ambientes afetados:** agents, runtime bridge, skills, specs, docs e CI
 
-**Arquivos alterados:** implementacao P1 e tres arquivos de correcao de portabilidade no commit e793dda
+**Arquivos alterados:** implementacao P1, correcao de portabilidade e guia completo sincronizado ate o commit bc05684
 
 **Data:** 2026-07-16
 
@@ -42,7 +42,7 @@
 | 8 | EVD-008 | `python -B -m unittest RUNTIME_Bridge.scripts.test_project_runtime -v` | `C:\Users\israe\Downloads\.codex` | Provar manifesto unico, paths e instalador portavel | 0 | PASS | 23 testes passaram por invocacao de modulo |
 | 9 | EVD-009 | `python -B RUNTIME_Bridge/scripts/test_project_coverage.py` | `C:\Users\israe\Downloads\.codex` | Provar cenarios negativos e integridade do coverage map | 0 | PASS | 14 testes passaram |
 | 10 | EVD-010 | `python -B RUNTIME_Bridge/scripts/validate_specs.py . --json` | `C:\Users\israe\Downloads\.codex` | Validar a spec SDD canonica e sua rastreabilidade | 0 | PASS | 1 change, 0 erros e 0 warnings |
-| 11 | EVD-011 | `gh run view 29543436833` e rerun de `.github/workflows/arsenal-ci.yml` | `C:\Users\israe\Downloads\.codex` | Confirmar FIT-001 em Ubuntu/Windows e Python 3.11/3.14 | N/A | LACUNA | Run inicial falhou e gerou `e793dda`; o snapshot corrigido ainda aguarda rerun |
+| 11 | EVD-011 | `gh run view 29544634947 --json status,conclusion,url,jobs` | `C:\Users\israe\Downloads\.codex` | Confirmar FIT-001 em Ubuntu/Windows e Python 3.11/3.14 | 0 | PASS | Quatro jobs completos e verdes no commit `bc05684` |
 
 ## Saidas Relevantes
 
@@ -51,6 +51,7 @@ Quality gate: ok=true
 Unit and adversarial tests: 200 OK, 4 skipped on local Windows symlink privilege
 Spec validator: 1 change, 0 errors, 0 warnings
 Skill contract runner: 24 cases valid; execution_proven=false declared honestly
+Remote fitness: run 29544634947, 4/4 jobs successful
 ```
 
 ## Testes E Provas
@@ -61,7 +62,7 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 **Build/typecheck/lint:** compileall, wrapper parity, manifest validators e diff check no quality gate
 
-**Smoke:** quality gate completo no commit `e793dda`
+**Smoke:** quality gate completo no commit `bc05684`
 
 ## Rastreabilidade Demonstrada
 
@@ -77,7 +78,7 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 | REQ-008 | MOD-008 / CON-008 | TASK-008 | TEST-008 | EVD-008 | PROVADO |
 | REQ-009 | MOD-009 / CON-009 | TASK-009 | TEST-009 | EVD-009 | PROVADO |
 | REQ-001 / NFR-006 | MOD-001 / CON-001 | TASK-008 | TEST-010 | EVD-010 | PROVADO |
-| REQ-007 / NFR-001 / NFR-003 | MOD-007 / CON-007 | TASK-007 | FIT-001 | EVD-011 | LACUNA |
+| REQ-007 / NFR-001 / NFR-003 | MOD-007 / CON-007 | TASK-007 | FIT-001 | EVD-011 | PROVADO |
 
 ## Lacunas
 
@@ -89,7 +90,7 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 **Status por ambiente atualizado em `STATUS.md`:** SIM
 
-**Ambientes sem validacao e motivo:** GitHub-hosted Ubuntu/Windows executaram o snapshot anterior e revelaram falhas de portabilidade; o snapshot corrigido `e793dda` aguarda rerun integral antes de merge/release
+**Ambientes sem validacao e motivo:** N/A - todos os ambientes obrigatorios do P1 foram validados localmente e em Ubuntu/Windows com Python 3.11/3.14
 
 **Migrations do ciclo:** N/A - nenhuma migration ou banco alterado
 
@@ -99,22 +100,14 @@ Skill contract runner: 24 cases valid; execution_proven=false declared honestly
 
 ## Falhas
 
-- N/A - nenhuma falha comprovada no snapshot auditado `e793dda`. O run do
+- N/A - nenhuma falha comprovada no snapshot auditado `bc05684`. O run do
   snapshot anterior esta registrado em EVD-011 e no `LOG.md` como antecedente
-  da correcao; o rerun permanece uma lacuna de ambiente.
+  da correcao, sem falha remanescente no snapshot atual.
 
 ## Veredito
 
-**Veredito:** APROVADO_COM_RESSALVAS
+**Veredito:** APROVADO
 
-**Justificativa:** todos os contratos e testes locais passaram no commit limpo; falta provar o snapshot corrigido na matriz CI remota.
+**Justificativa:** todos os contratos do P1, testes locais e quatro jobs de fitness remotos passaram no snapshot auditado.
 
-**Proximo passo:** publicar `e793dda`, acompanhar os quatro jobs e impedir merge/release se FIT-001 falhar.
-
-**Ressalva:** matriz GitHub-hosted Ubuntu/Windows ainda nao executada para o snapshot corrigido.
-
-**Acao da ressalva:** executar e verificar `.github/workflows/arsenal-ci.yml` apos o push.
-
-**Responsavel pela ressalva:** integrador raiz com `@O`.
-
-**Prazo/criterio da ressalva:** FIT-001 verde em Ubuntu/Windows e Python 3.11/3.14 antes de merge ou release.
+**Proximo passo:** executar o selo final de diff e abrir PR para `main`.

@@ -2,22 +2,21 @@
 
 ## Estado Atual
 
-**Fase:** P1_VALIDATION
+**Fase:** P1_READY_FOR_PR
 
 **Ultima atualizacao:** 2026-07-16
 
 **Atualizado por:** integrador raiz com revisoes `@A`, `@SPEC`, `@GSD` e multiagente
 
-**Commit local validado:** `e793dda`
+**Commit validado local e remotamente:** `bc05684`
 
 ## Status Geral
 
-O P1 esta implementado e aprovado pelo gate local em worktree limpo. O source
-gate executou 8 etapas, 200 testes passaram e 4 testes de symlink foram pulados
-no Windows local por falta do privilegio nativo. O primeiro run remoto revelou
-duas diferencas de path entre runners; as correcoes estao no commit `e793dda` e
-passaram localmente. A segunda matriz Ubuntu/Windows em Python 3.11/3.14 ainda
-e o gate de publicacao desta branch.
+O P1 esta implementado, documentado e aprovado pelo gate local em worktree
+limpo. O source gate executou 8 etapas, 200 testes passaram e 4 testes de
+symlink foram pulados no Windows local por falta do privilegio nativo. A matriz
+GitHub-hosted do commit `bc05684` passou nos quatro jobs de Ubuntu/Windows com
+Python 3.11/3.14 no run `29544634947`. O branch esta pronto para selo final e PR.
 
 ## Status Por Ambiente
 
@@ -29,7 +28,7 @@ e o gate de publicacao desta branch.
 | arquitetura/patterns | APROVADO | 64 testes focados; catalogo com 30 patterns | nenhum local |
 | perfis DEV | APROVADO_COM_RESSALVAS | 13 perfis + 13 cenarios | desktop/monorepo parciais; embedded/game ausentes |
 | skills | APROVADO_COM_RESSALVAS | 24 contratos deterministicos | forward-test completo das 24 invocacoes nao foi alegado |
-| CI | CORRECAO_VALIDADA_LOCALMENTE | run `29543436833` + commit `e793dda` | aguarda rerun integral do snapshot corrigido |
+| CI | APROVADO | run `29544634947` no commit `bc05684` | nenhum gate remoto pendente |
 
 ## Concluido
 
@@ -40,12 +39,15 @@ e o gate de publicacao desta branch.
 - [x] Validadores multiagente e Harness CLI.
 - [x] Quality gate local e CI versionada.
 - [x] Tres revisoes independentes com correcoes incorporadas.
+- [x] Matriz remota Ubuntu/Windows e Python 3.11/3.14 integralmente verde.
+- [x] Guia completo sincronizado com o arsenal P1.
 
 ## Proximo Gate
 
 - [x] Push inicial de `codex/p1-dev-coverage` e diagnostico do primeiro run.
-- [ ] Push do snapshot corrigido e matriz CI remota integralmente verde.
-- [ ] Merge/release/tag 1.1.0 somente depois do gate remoto e revisao final.
+- [x] Push do snapshot corrigido e matriz CI remota integralmente verde.
+- [ ] Selo `final_validator`, PR para `main` e revisao de merge.
+- [ ] Release/tag 1.1.0 somente depois do merge aprovado.
 
 ## Banco E Migrations
 

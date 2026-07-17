@@ -37,9 +37,9 @@ mudanca nao devem ser reutilizados em outra spec.
 
 **Fatos observados:** o P0 estabeleceu seis skills, wrappers Codex/Claude, validadores de specs/arquitetura e instalador; os casos versionados de skills e os quatro especialistas DEV nao existiam no baseline P0; desktop e monorepo nao possuem especialista dedicado completo; embedded/firmware e game/engine nao possuem especialista; o repositorio precisa distinguir manifesto de casos de um forward-test realmente observado.
 
-**Inferencias:** quatro gaps recorrentes justificam ownership dedicado para package/CLI/SDK, data engineering, ML classico/MLOps e IaC; coverage status sem owner, fonte, wrapper, cenario, limite e gate favorece falsa confianca; um gate unico reduz drift entre validadores e wrappers, desde que nao se apresente como prova de CI ainda nao executada.
+**Inferencias:** quatro gaps recorrentes justificam ownership dedicado para package/CLI/SDK, data engineering, ML classico/MLOps e IaC; coverage status sem owner, fonte, wrapper, cenario, limite e gate favorece falsa confianca; um gate unico reduz drift entre validadores e wrappers, e EVD-011 fornece a prova remota exigida para o snapshot corrigido.
 
-**Lacunas de contexto:** resultados observados de forward-test e execucoes remotas da matriz CI nao fazem parte da evidência inicial desta spec; thresholds de dominio, fornecedor e hardware continuam dependentes do projeto consumidor; essas lacunas nao bloqueiam o contrato de execucao, mas bloqueiam o DoD e a release ate produzirem as evidencias planejadas.
+**Lacunas de contexto:** resultados observados de forward-test continuam separados do manifest lint e nao sao alegados pelo P1; thresholds de dominio, fornecedor e hardware dependem do projeto consumidor. A matriz CI obrigatoria foi comprovada por EVD-011; as lacunas restantes limitam alegacoes de cobertura universal, nao o DoD deste escopo.
 
 ## 2. Escopo
 
@@ -191,7 +191,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | ID | Risco/pergunta/hipotese | Impacto | Dono/decisor | Evidencia para fechar | Bloqueia? |
 |---|---|---|---|---|---|
 | RISK-001 | Results observados dos 24 casos de skills ainda nao foram produzidos em contexto isolado. | Nao impede manifest lint, mas impede alegar execucao comportamental. | mantenedor de skills | EVD-004 com results completos ou declaracao explicita `execution_proven=false`. | NAO para DoR; SIM para alegar forward-test no DoD. |
-| RISK-002 | O primeiro run remoto revelou diferencas de identidade e classificacao de paths entre runners; `e793dda` corrige os casos localmente. | O snapshot corrigido ainda pode divergir em Python 3.11/3.14 ou no symlink nativo dos runners. | integrador raiz / `@O` | EVD-011 e FIT-001 passam sem falha em todos os jobs do snapshot corrigido. | NAO para DoR; SIM para release. |
+| RISK-002 | O primeiro run remoto revelou diferencas de identidade e classificacao de paths entre runners; `e793dda` corrigiu os casos. | Regressao futura de portabilidade se a matriz deixar de ser obrigatoria. | integrador raiz / `@O` | EVD-011 e FIT-001 passam sem falha em todos os jobs do snapshot corrigido. | MITIGADO por EVD-011; reabrir se a matriz regredir. |
 | RISK-003 | Semantica especifica de registry, warehouse, model serving e provider IaC depende do projeto. | Generalizacao indevida produziria falsa cobertura. | `@PICK` e especialista do perfil | PROJECT_PROFILE do consumidor com limitacao/fallback e evidence ledger. | NAO; fallback `@F` e obrigatorio quando cobertura medida ficar abaixo de 70%. |
 | RISK-004 | Quality gate local em worktree com alteracoes intencionais pode falhar apenas no generated-drift-check. | Nao deve ser mascarado como gate verde. | integrador raiz | EVD-007 produzido em checkout limpo ou falha registrada antes do merge. | NAO para escrever a spec; SIM para merge. |
 
@@ -224,7 +224,7 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | REQ-005 / AC-005 / NFR-006 | MOD-005 / CON-005 | TASK-005 | TEST-005 | EVD-005 | PROVADO |
 | REQ-006 / AC-006 / NFR-006 | MOD-006 / CON-006 | TASK-006 | TEST-006 | EVD-006 | PROVADO |
 | REQ-007 / AC-007 / NFR-002 | MOD-007 / CON-007 | TASK-007 | TEST-007 | EVD-007 | PROVADO |
-| REQ-007 / AC-007 / NFR-001 / NFR-003 | MOD-007 / CON-007 | TASK-007 | FIT-001 | EVD-011 | PLANEJADO |
+| REQ-007 / AC-007 / NFR-001 / NFR-003 | MOD-007 / CON-007 | TASK-007 | FIT-001 | EVD-011 | PROVADO |
 | REQ-008 / AC-008 / NFR-002 / NFR-004 | MOD-008 / CON-008 | TASK-008 | TEST-008 | EVD-008 | PROVADO |
 | REQ-001 / REQ-002 / REQ-003 / REQ-004 / REQ-005 / REQ-006 / REQ-007 / REQ-008 / REQ-009 | MOD-001 / MOD-002 / MOD-003 / MOD-004 / MOD-005 / MOD-006 / MOD-007 / MOD-008 / MOD-009 | TASK-008 | TEST-010 | EVD-010 | PROVADO |
 | REQ-009 / AC-009 / NFR-005 | MOD-009 / CON-009 | TASK-009 | TEST-009 | EVD-009 | PROVADO |
@@ -273,11 +273,11 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 | EVD-004 | JSON do manifesto de casos; results observados permanecem evidencia separada. | 24 casos validos; `execution_proven=false` declarado no quality gate. | ate proxima mudanca material das skills / mantenedor de skills | PROVADO |
 | EVD-005 | Transcript dos testes multiagente. | 17 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
 | EVD-006 | Transcript dos testes Harness. | 15 testes focados e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_runtime_ci | PROVADO |
-| EVD-007 | JSON do quality gate local em worktree limpo. | 8/8 gates e 200 testes no commit `e793dda`. | ate release 1.1.0 / `@O` | PROVADO |
+| EVD-007 | JSON do quality gate local em worktree limpo. | 8/8 gates e 200 testes no commit `bc05684`. | ate release 1.1.0 / `@O` | PROVADO |
 | EVD-008 | Transcript dos testes do runtime/installer. | 23 testes por invocacao de modulo e suite integrada do commit `af94406`. | ate release 1.1.0 / integrador raiz | PROVADO |
 | EVD-009 | Transcript dos cenarios negativos por perfil. | 14 testes de coverage e suite integrada do commit `af94406`. | ate release 1.1.0 / p1_dev_coverage | PROVADO |
 | EVD-010 | JSON do validador da spec canonica: uma change, zero erros e zero warnings. | stdout do TEST-010 executado em 2026-07-16 no handoff desta mudanca. | ate merge da spec / integrador raiz | PROVADO |
-| EVD-011 | URLs e logs dos quatro jobs remotos de FIT-001. | Run inicial `29543436833` vermelho; rerun do snapshot corrigido ainda planejado. | conforme retencao do CI e ate release 1.1.0 / `@O` | PLANEJADO |
+| EVD-011 | URLs e logs dos quatro jobs remotos de FIT-001. | Run `29544634947`: Ubuntu/Windows e Python 3.11/3.14, quatro jobs verdes no commit `bc05684`. | conforme retencao do CI e ate release 1.1.0 / `@O` | PROVADO |
 
 **Teste falhando primeiro:** fixtures adversariais de cada validator devem retornar exit 1 ou finding esperado antes da implementação correspondente; o mapa/spec canonicos devem retornar exit 0.
 
@@ -285,26 +285,26 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **Bug sweep/regressao:** cobrir path traversal/reparse, wrapper/source drift, status/fallback incoerente, case count, ciclo/colisao/retry, PASS/FAIL mascarado, provider universal, manifest duplicado, diff sujo e compatibilidade Linux/Windows.
 
-**Ambientes nao validados e motivo:** o snapshot anterior executou na CI remota e falhou; Ubuntu/Windows com o snapshot corrigido e o forward-test isolado permanecem planejados. Esta spec nao os marca como aprovados.
+**Ambientes nao validados e motivo:** N/A para o escopo obrigatorio do P1 - local, Ubuntu/Windows e Python 3.11/3.14 foram validados. Forward-tests isolados permanecem evidencia P2 separada e nao sao alegados por esta spec.
 
 ## 12. Definition Of Done - DoD
 
-- [x] Todos os `REQ-*`, `AC-*` e `NFR-*` ativos estao provados localmente ou possuem a ressalva FIT-001 explicitamente aceita.
+- [x] Todos os `REQ-*`, `AC-*` e `NFR-*` ativos estao provados local e remotamente quando aplicavel.
 - [x] A matriz `REQ/AC/NFR -> MOD/CON -> TASK -> TEST/FIT -> EVD` possui todos os elos planejados.
 - [x] Contratos e adapters foram validados com seus consumidores por TEST-002 e TEST-008.
 - [x] Harness integrado foi executado e recebeu veredito canonico.
-- [ ] Rollout, smoke, FIT-001, rollback/forward-fix e observabilidade foram demonstrados.
+- [x] Rollout, smoke, FIT-001, rollback/forward-fix e observabilidade foram demonstrados.
 - [x] Bug sweep completo foi executado sem mascarar falha conhecida ou lacuna critica.
 - [x] `ARCHITECTURE.md` nao foi alterado por intencao futura; TO-BE/ADR permanece N/A justificado para esta mudanca de governanca.
 - [x] LOG, STATUS geral/ambientes e changelog foram atualizados para o snapshot local.
 
-**Veredito DoD:** APROVADO_COM_RESSALVAS
+**Veredito DoD:** APROVADO
 
-**Justificativa/lacunas:** implementacao e gate local corrigido estao comprovados; a entrega permanece com uma unica ressalva operacional ate o rerun executar FIT-001 remotamente.
+**Justificativa/lacunas:** implementacao, gate local, portabilidade e matriz remota do snapshot corrigido estao comprovados; nenhuma lacuna bloqueante do P1 permanece.
 
-**Lacuna nao bloqueante:** a matriz remota Ubuntu/Windows ainda nao aprovou o snapshot corrigido; isso impede merge/release, nao invalida o gate local.
+**Lacuna nao bloqueante:** N/A para o DoD P1 - `execution_proven=false` limita apenas a alegacao de forward-test comportamental e esta explicitamente reservado ao P2.
 
-**Acao:** fazer push da branch, observar os quatro jobs e rebaixar o veredito se qualquer combinacao de OS/Python falhar.
+**Acao:** executar `final_validator`, abrir PR para `main` e manter FIT-001 como check obrigatorio antes do merge.
 
 **Dono:** integrador raiz com `@GSD`, `@Q`, `@O` e `@V`.
 
@@ -320,8 +320,8 @@ e um gate composto, preservando fallback explicito onde nao existe especialista.
 
 **LEARNINGS:** sim - cobertura declarada, manifest lint e execucao observada sao evidencias diferentes.
 
-**STATUS geral e por ambiente:** sim - `STATUS.md` separa gate local corrigido e aprovado do rerun remoto pendente.
+**STATUS geral e por ambiente:** sim - `STATUS.md` registra gate local e matriz remota aprovados.
 
 **Validacao da spec:** TEST-010 executado em 2026-07-16 com exit 0, uma change, zero erros e zero warnings.
 
-**Proximo passo obrigatorio:** `@O` confirma FIT-001 apos publicar o snapshot corrigido; merge, tag e release 1.1.0 permanecem proibidos ate a matriz remota ficar verde.
+**Proximo passo obrigatorio:** `@V` executa o selo final e o integrador abre PR; tag e release 1.1.0 permanecem posteriores ao merge aprovado.

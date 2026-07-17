@@ -1,5 +1,21 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-16 - P1 Pronto Para PR
+
+**Fase:** P1_READY_FOR_PR
+
+**O que aconteceu:** o guia completo foi sincronizado com o inventario atual e
+o snapshot `bc05684` passou novamente no quality gate local e na matriz remota.
+
+**Evidencia:** 8/8 gates locais; 200 testes; 46 wrappers Codex e 46 Claude; 6
+skills; 13 perfis; GitHub Actions run `29544634947` verde em Ubuntu/Windows e
+Python 3.11/3.14.
+
+**Status:** APROVADO
+
+**Proximo passo:** executar o selo final sobre `origin/main...HEAD` e abrir PR
+de `codex/p1-dev-coverage` para `main`.
+
 ## 2026-07-16 - Correcao De Portabilidade Da CI P1
 
 **Fase:** P1_VALIDATION
