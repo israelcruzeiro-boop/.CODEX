@@ -8,6 +8,8 @@ O versionamento segue SemVer; tags sao criadas somente depois de merge e CI verd
 ### Adicionado
 
 - Frente `MKT_Marketing` com `@MKT`, `@MKT:persona` e `@MKT:supermercado`.
+- Validador `@MKT:validator` em TOML para selo de marketing, SEO, landing pages,
+  claims, schema, conversao e medicao.
 - Perfil `MARKETING_LANDING` no mapa de cobertura.
 - Wrappers Codex/Claude para marketing SEO, persona/conversao e cliente oculto
   para supermercados.

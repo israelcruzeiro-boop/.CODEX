@@ -102,7 +102,7 @@ Todo agente deve usar o prefixo semantico no nome da pasta e do arquivo:
 | `IAC_` | Infrastructure as Code, state, drift, policy e apply seguro | `IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md` |
 | `IOS_` | iOS nativo, Apple platforms e App Store approval | `IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md` |
 | `M_` | Mobile, apps nativos/hibridos, lojas e release | `M_MobilePlaystore/M_Agent_MobilePlaystore.md` |
-| `MKT_` | Marketing, SEO, landing pages, persona, copy e conversao | `MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md` |
+| `MKT_` | Marketing, SEO, landing pages, persona, copy, conversao e validacao MKT | `MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md`, `MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml` |
 | `ML_` | ML classico e MLOps: datasets, treino, registry, serving e drift | `ML_MLEngineering/ML_Agent_MLEngineering.md` |
 | `MOD_` | Trust & Safety, denuncias e moderacao | `MOD_TrustSafety/MOD_Agent_TrustSafety.md` |
 | `O_` | Observabilidade, deploy e operacao | `O_Observability/O_Agent_DeployObservability.md` |
@@ -302,7 +302,7 @@ acionar o agente responsavel antes do selo final.
 | Packages/CLI/SDK | API/ABI, exit codes, stdout/stderr, matriz de versoes, packaging, publicacao e consumer tests estao definidos? | `@PKG` / `@DEP` / `@REL` |
 | IaC/plataforma | State, plan/apply, drift, policy-as-code, teardown e rollback de infra estao controlados? | `@IAC` / `@E` / `@O` / `@S` |
 | Produto/UX | Estados vazios, erros, permissoes, acessibilidade e copy foram considerados? | `@D` / `@I18N` |
-| Marketing/SEO | Persona, intencao de busca, conteudo util, on-page SEO, conversao, prova e medicao estao claros? | `@MKT` / `@MKT:persona` / `@BI` / `@D` |
+| Marketing/SEO | Persona, intencao de busca, conteudo util, on-page SEO, conversao, prova e medicao estao claros? | `@MKT` / `@MKT:persona` / `@MKT:validator` / `@BI` / `@D` |
 | IA/LLM | Prompts versionados, evals, custo de tokens, fallback e dados enviados a provedores estao sob controle? | `@AI` |
 | ML/MLOps | Dataset, leakage, treino, metricas, registry, serving, drift e retraining estao sob controle? | `@ML` / `@DATA` / `@O` |
 | Compliance | Ha requisito legal, loja, pagamento, dado sensivel ou setor regulado? | `@GOV` / `@REG` / `@PAY` / `@S` |
@@ -361,7 +361,7 @@ Use o prefixo para marcar rapido no chat:
 - `@IAC` para Infrastructure as Code, state, plan/apply, drift, policy e teardown seguro.
 - `@IOS` para iOS nativo, Apple platforms, TestFlight e App Store approval.
 - `@M` para mobile, apps nativos/hibridos, lojas e release.
-- `@MKT` para marketing, SEO, sites, landing pages, persona, copy, conversao e crescimento organico; use `@MKT:persona` para mensagem/persona e `@MKT:supermercado` para cliente oculto em supermercados.
+- `@MKT` para marketing, SEO, sites, landing pages, persona, copy, conversao e crescimento organico; use `@MKT:persona` para mensagem/persona, `@MKT:supermercado` para cliente oculto em supermercados e `@MKT:validator` para selo MKT/SEO antes de deploy ou campanha.
 - `@ML` para ML classico/MLOps; `@AI` continua dono de LLM, prompts, RAG e evals generativos.
 - `@MOD` para trust & safety, denuncias e moderacao.
 - `@P` para performance.

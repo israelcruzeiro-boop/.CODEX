@@ -1,5 +1,23 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-23 - Validador MKT/SEO Em TOML
+
+**Fase:** P2_SPECIALIST_VALIDATION
+
+**O que aconteceu:** a frente `MKT_Marketing` foi revalidada e ganhou
+`MKT_Agent_MarketingSEOValidator.toml` como `@MKT:validator`, um portao
+read-only para auditar landing pages, SEO, persona, claims, schema, conversao,
+medicao e entregas dos agentes `@MKT`, `@MKT:persona` e `@MKT:supermercado`.
+
+**Evidencia:** criado `MKT_VALIDATION_REPORT.md`; o perfil
+`MARKETING_LANDING` agora inclui `@MKT:validator` como gate; o manifesto runtime
+inclui o novo agente e seu wrapper Codex/Claude.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** ainda falta forward-test em landing real de cliente oculto para
+supermercados.
+
 ## 2026-07-23 - Especialistas MKT Para SEO E Landing Pages
 
 **Fase:** P2_SPECIALIST_EXPANSION

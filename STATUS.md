@@ -23,7 +23,7 @@ forward-test em landing real antes de alegar efetividade de campo.
 | Ambiente/unidade | Status | Evidencia | Bloqueios/lacunas |
 |---|---|---|---|
 | agentes e wrappers | APROVADO | 49 Codex + 49 Claude em paridade | nenhum local |
-| marketing/SEO | APROVADO_COM_RESSALVAS | `MKT_Marketing/*`, `@MKT`, `@MKT:persona`, `@MKT:supermercado` | forward-test em landing real pendente |
+| marketing/SEO | APROVADO_COM_RESSALVAS | `MKT_Marketing/*`, `@MKT`, `@MKT:persona`, `@MKT:supermercado`, `@MKT:validator` | forward-test em landing real pendente |
 | runtime bridge | APROVADO | `run_quality_gate.py`, 200 testes | 4 skips de symlink limitados ao host Windows local |
 | specs | APROVADO | `validate_specs.py`: 1 change, 0 erros/warnings | nenhum |
 | arquitetura/patterns | APROVADO | 64 testes focados; catalogo com 30 patterns | nenhum local |
@@ -49,6 +49,8 @@ forward-test em landing real antes de alegar efetividade de campo.
   ligado ao guia completo.
 - [x] Frente `MKT_Marketing` criada com agentes de SEO/landing pages,
   persona/conversao e supermercados/cliente oculto.
+- [x] Validador `@MKT:validator` criado em TOML para auditar se a entrega MKT
+  esta pronta antes de deploy, campanha ou handoff.
 
 ## Proximo Gate
 
