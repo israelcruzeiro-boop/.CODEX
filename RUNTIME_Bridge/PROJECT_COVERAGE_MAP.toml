@@ -30,6 +30,14 @@ scope = "classical machine learning and MLOps"
 excludes = ["LLM prompts and RAG", "generic ETL ownership"]
 
 [[specialists]]
+id = "MKT"
+alias = "@MKT"
+source = "MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md"
+wrapper = ".codex/agents/marketing-seo-growth.toml"
+scope = "marketing sites, landing pages, SEO, persona-fit, conversion copy and growth evidence"
+excludes = ["visual design system ownership", "paid media account operations", "guaranteed ranking claims"]
+
+[[specialists]]
 id = "IAC"
 alias = "@IAC"
 source = "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md"
@@ -49,6 +57,19 @@ release = ["detected CI provider", "web deploy or static publication"]
 limitations = ["framework-specific behavior still requires repository evidence"]
 fallback = []
 evidence = ["D_Design/D_Agent_Design.md", "Q_Quality/Q_Agent_TestEngineer.md"]
+
+[[profiles]]
+id = "MARKETING_LANDING"
+label = "Marketing site and landing page"
+status = "OBSERVADO"
+scenario = "MARKETING_LANDING_ROUTE"
+owners = ["@MKT", "@MKT:persona", "@D"]
+gates = ["@SPEC", "@GSD", "@Q", "@S", "@P", "@BI", "@V"]
+tests = ["content/SEO audit", "metadata/schema validation", "accessibility", "browser smoke for web UI", "analytics event smoke when configured"]
+release = ["detected web deploy or static publication", "Search Console/analytics follow-up when available"]
+limitations = ["SEO evidence and SERP behavior require current official/source validation; rankings are never guaranteed"]
+fallback = []
+evidence = ["MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md", "MKT_Marketing/MKT_Agent_PersonaConversionStrategist.md", "D_Design/D_Agent_Design.md"]
 
 [[profiles]]
 id = "API_BACKEND"
@@ -214,6 +235,15 @@ expected_owners = ["@D"]
 fixture = "Browser user interface with components, navigation, accessibility states and a detected frontend build."
 expected_route = "Route visual ownership to @D and activate only the gates supported by the repository and risk."
 expected_limit = "Framework-specific behavior and browser tooling still require direct repository evidence."
+
+[[profile_scenarios]]
+id = "MARKETING_LANDING_ROUTE"
+profile = "MARKETING_LANDING"
+expected_status = "OBSERVADO"
+expected_owners = ["@MKT", "@MKT:persona", "@D"]
+fixture = "Marketing site or landing page with persona, search intent, on-page SEO, structured data, conversion copy, proof, CTA, and browser-accessible user experience."
+expected_route = "Route growth, SEO and messaging to @MKT/@MKT:persona while visual implementation and accessibility stay coordinated with @D."
+expected_limit = "Search evidence, Google guidance and competitor SERP behavior must be revalidated at execution time; no ranking guarantee is allowed."
 
 [[profile_scenarios]]
 id = "API_BACKEND_ROUTE"

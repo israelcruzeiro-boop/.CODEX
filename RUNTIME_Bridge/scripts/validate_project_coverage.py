@@ -16,6 +16,7 @@ from typing import Any
 STATUSES = {"OBSERVADO", "PARCIAL", "AUSENTE"}
 REQUIRED_PROFILES = {
     "WEB_FRONTEND",
+    "MARKETING_LANDING",
     "API_BACKEND",
     "WORKER_AUTOMATION",
     "MOBILE",
@@ -33,6 +34,7 @@ REQUIRED_SPECIALISTS = {
     "@PKG": "PKG_PackageSDK/PKG_Agent_PackageCLISDK.md",
     "@DE": "DE_DataEngineering/DE_Agent_DataPipeline.md",
     "@ML": "ML_MLEngineering/ML_Agent_MLEngineering.md",
+    "@MKT": "MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md",
     "@IAC": "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md",
 }
 REQUIRED_NEGATIVE_SCENARIOS = {
@@ -212,7 +214,7 @@ def validate_data(kit: Path, data: dict[str, Any]) -> list[str]:
 
     if specialist_aliases != set(REQUIRED_SPECIALISTS):
         errors.append(
-            "Specialist aliases must exactly be @PKG, @DE, @ML and @IAC; "
+            "Specialist aliases must exactly match the canonical specialist set; "
             f"found {sorted(specialist_aliases)}."
         )
     for alias, source in REQUIRED_SPECIALISTS.items():

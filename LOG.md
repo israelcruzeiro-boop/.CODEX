@@ -1,5 +1,28 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-23 - Especialistas MKT Para SEO E Landing Pages
+
+**Fase:** P2_SPECIALIST_EXPANSION
+
+**O que aconteceu:** foi criada a frente `MKT_Marketing` com tres agentes:
+`@MKT` para marketing/SEO/landing pages, `@MKT:persona` para persona/copy/
+conversao e `@MKT:supermercado` para cliente oculto em supermercados. Os
+wrappers Codex e Claude foram adicionados e o runtime passou a reconhecer o
+perfil `MARKETING_LANDING`.
+
+**Evidencia:** fontes oficiais atuais do Google Search Central foram
+consultadas para calibrar Search Essentials, conteudo util, structured data e
+Core Web Vitals. O kit agora registra 49 wrappers Codex e 49 wrappers Claude.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** os agentes foram promovidos por demanda recorrente clara, mas
+ainda precisam de forward-test em um site real para medir utilidade operacional.
+
+**Proximo passo:** executar `run_quality_gate.py` e, em uso real, aplicar
+`@MKT:supermercado` a uma landing de cliente oculto para supermercados com
+WorkAuditor.
+
 ## 2026-07-16 - Guia Pratico Do @ONB
 
 **Fase:** DOCUMENTATION

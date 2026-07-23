@@ -242,6 +242,24 @@ alias = "@M"
 purpose = "Own mobile behavior, permissions, offline sync, stores, and releases."
 
 [[agents]]
+name = "marketing-seo-growth"
+source = "MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md"
+alias = "@MKT"
+purpose = "Audit and improve marketing sites, landing pages, SEO, search intent, conversion, useful content, structured data, and growth evidence."
+
+[[agents]]
+name = "persona-conversion-strategist"
+source = "MKT_Marketing/MKT_Agent_PersonaConversionStrategist.md"
+alias = "@MKT:persona"
+purpose = "Own persona, positioning, conversion copy, value proposition, proof, CTAs, objections, FAQs, and buyer-message fit."
+
+[[agents]]
+name = "supermarket-hidden-shopper-growth"
+source = "MKT_Marketing/MKT_Agent_SupermarketHiddenShopperGrowth.md"
+alias = "@MKT:supermercado"
+purpose = "Own B2B marketing and landing pages for supermarket hidden-shopper solutions, grocery retail personas, operational pain, proof, and SEO."
+
+[[agents]]
 name = "ml-engineering"
 source = "ML_MLEngineering/ML_Agent_MLEngineering.md"
 alias = "@ML"
