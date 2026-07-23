@@ -137,6 +137,10 @@ independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 6. `A_Architecture`: valida desenho desacoplado, contratos, fronteiras e riscos antes de codar.
 7. `C_Cetico`: revisa plano contra codigo real antes da implementacao.
 8. `V_Validation/impact_validator`: revisa plano e impacto cross-stack.
+8b. `MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml`: entra desde a
+primeira validacao quando o perfil tocar site, landing page, campanha, SEO,
+copy, oferta comercial, persona, schema, CTA ou medicao; valida de novo antes
+de entrega/deploy/campanha.
 9. `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`: transforma o plano em criterio de aceite, TDD proporcional e Harness CLI.
 10. `S_Seguranca/security_validator`: entra quando tocar auth, PII, secrets, upload, headers, permissoes ou pagamentos.
 11. `P_Performance/performance_validator`: entra quando tocar hot path, cache, queries, listas grandes, imagens, filas, concorrencia ou custo.
@@ -361,7 +365,7 @@ Use o prefixo para marcar rapido no chat:
 - `@IAC` para Infrastructure as Code, state, plan/apply, drift, policy e teardown seguro.
 - `@IOS` para iOS nativo, Apple platforms, TestFlight e App Store approval.
 - `@M` para mobile, apps nativos/hibridos, lojas e release.
-- `@MKT` para marketing, SEO, sites, landing pages, persona, copy, conversao e crescimento organico; use `@MKT:persona` para mensagem/persona, `@MKT:supermercado` para cliente oculto em supermercados e `@MKT:validator` para selo MKT/SEO antes de deploy ou campanha.
+- `@MKT` para marketing, SEO, sites, landing pages, persona, copy, conversao e crescimento organico; use `@MKT:persona` para mensagem/persona, `@MKT:supermercado` para cliente oculto em supermercados e `@MKT:validator` desde a primeira validacao e antes de deploy ou campanha.
 - `@ML` para ML classico/MLOps; `@AI` continua dono de LLM, prompts, RAG e evals generativos.
 - `@MOD` para trust & safety, denuncias e moderacao.
 - `@P` para performance.

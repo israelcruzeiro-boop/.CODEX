@@ -46,7 +46,8 @@ Os agentes agora tem uma cadeia melhor:
 1. `@MKT:persona` define mensagem, persona e conversao.
 2. `@MKT` alinha SEO, conteudo, schema e pagina.
 3. `@MKT:supermercado` especializa a oferta de cliente oculto para supermercados.
-4. `@MKT:validator` audita o resultado com criterios objetivos.
+4. `@MKT:validator` valida o plano antes da execucao e audita o resultado com
+   criterios objetivos antes de entrega, deploy ou campanha.
 
 Ressalva restante: ainda falta forward-test em uma landing real para medir se o
 fluxo gera recomendacoes boas em campo.

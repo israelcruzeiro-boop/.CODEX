@@ -1,5 +1,22 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-23 - MKT Validator Como Gate Inicial
+
+**Fase:** P2_SPECIALIST_VALIDATION
+
+**O que aconteceu:** o `@MKT:validator` foi ajustado para atuar em duas
+passagens: valida plano/brief desde a primeira validacao de perfis
+`MARKETING_LANDING` e valida novamente a entrega antes de deploy, campanha ou
+handoff comercial.
+
+**Evidencia:** `AGENTS.md`, `PROJECT_COVERAGE_MAP.toml`,
+`MKT_Agent_MarketingSEOValidator.toml` e wrapper Codex foram atualizados para
+posicionar o validador antes da execucao MKT e antes da entrega final.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** continua pendente o forward-test em landing real.
+
 ## 2026-07-23 - Validador MKT/SEO Em TOML
 
 **Fase:** P2_SPECIALIST_VALIDATION

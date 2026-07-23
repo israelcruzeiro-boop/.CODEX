@@ -23,7 +23,7 @@ forward-test em landing real antes de alegar efetividade de campo.
 | Ambiente/unidade | Status | Evidencia | Bloqueios/lacunas |
 |---|---|---|---|
 | agentes e wrappers | APROVADO | 49 Codex + 49 Claude em paridade | nenhum local |
-| marketing/SEO | APROVADO_COM_RESSALVAS | `MKT_Marketing/*`, `@MKT`, `@MKT:persona`, `@MKT:supermercado`, `@MKT:validator` | forward-test em landing real pendente |
+| marketing/SEO | APROVADO_COM_RESSALVAS | `MKT_Marketing/*`, `@MKT`, `@MKT:persona`, `@MKT:supermercado`, `@MKT:validator` como gate inicial e final | forward-test em landing real pendente |
 | runtime bridge | APROVADO | `run_quality_gate.py`, 200 testes | 4 skips de symlink limitados ao host Windows local |
 | specs | APROVADO | `validate_specs.py`: 1 change, 0 erros/warnings | nenhum |
 | arquitetura/patterns | APROVADO | 64 testes focados; catalogo com 30 patterns | nenhum local |
