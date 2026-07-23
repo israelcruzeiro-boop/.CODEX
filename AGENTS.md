@@ -102,6 +102,7 @@ Todo agente deve usar o prefixo semantico no nome da pasta e do arquivo:
 | `IAC_` | Infrastructure as Code, state, drift, policy e apply seguro | `IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md` |
 | `IOS_` | iOS nativo, Apple platforms e App Store approval | `IOS_AppleAppstore/IOS_Agent_AppleNativeAppstore.md` |
 | `M_` | Mobile, apps nativos/hibridos, lojas e release | `M_MobilePlaystore/M_Agent_MobilePlaystore.md` |
+| `MKT_` | Marketing, SEO, landing pages, persona, copy, conversao e validacao MKT | `MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md`, `MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml` |
 | `ML_` | ML classico e MLOps: datasets, treino, registry, serving e drift | `ML_MLEngineering/ML_Agent_MLEngineering.md` |
 | `MOD_` | Trust & Safety, denuncias e moderacao | `MOD_TrustSafety/MOD_Agent_TrustSafety.md` |
 | `O_` | Observabilidade, deploy e operacao | `O_Observability/O_Agent_DeployObservability.md` |
@@ -136,11 +137,15 @@ independentes, cria DAG, ownership, pacotes de contexto, fan-out e fan-in.
 6. `A_Architecture`: valida desenho desacoplado, contratos, fronteiras e riscos antes de codar.
 7. `C_Cetico`: revisa plano contra codigo real antes da implementacao.
 8. `V_Validation/impact_validator`: revisa plano e impacto cross-stack.
+8b. `MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml`: entra desde a
+primeira validacao quando o perfil tocar site, landing page, campanha, SEO,
+copy, oferta comercial, persona, schema, CTA ou medicao; valida de novo antes
+de entrega/deploy/campanha.
 9. `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`: transforma o plano em criterio de aceite, TDD proporcional e Harness CLI.
 10. `S_Seguranca/security_validator`: entra quando tocar auth, PII, secrets, upload, headers, permissoes ou pagamentos.
 11. `P_Performance/performance_validator`: entra quando tocar hot path, cache, queries, listas grandes, imagens, filas, concorrencia ou custo.
 12. `DEP_Dependencies`: garante lockfiles, audit/SCA, Dependabot e higiene de supply-chain antes de aprovar dependencias.
-13. Agente executor especializado, escolhido pelo perfil real: `B_BackendDomain`, `DATA_Database`, `DE_DataEngineering`, `D_Design`, `E_Environment`, `IAC_PlatformEngineering`, `ML_MLEngineering`, `PKG_PackageSDK`, `GEO_Location`, `I18N_LocalizationUX`, `IOS_AppleAppstore`, `M_MobilePlaystore`, `MOD_TrustSafety`, `PAY_PaymentsMarketplace`, `BI_Dashboards`, `BUG_Debugger`, etc.
+13. Agente executor especializado, escolhido pelo perfil real: `B_BackendDomain`, `DATA_Database`, `DE_DataEngineering`, `D_Design`, `E_Environment`, `IAC_PlatformEngineering`, `MKT_Marketing`, `ML_MLEngineering`, `PKG_PackageSDK`, `GEO_Location`, `I18N_LocalizationUX`, `IOS_AppleAppstore`, `M_MobilePlaystore`, `MOD_TrustSafety`, `PAY_PaymentsMarketplace`, `BI_Dashboards`, `BUG_Debugger`, etc.
 14. `GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md`: audita comandos reais, bug sweep e lacunas antes de QA/final.
 15. `Q_Quality`: seleciona e implementa testes proporcionais ao artefato e ao risco: unitarios, contrato/consumidor, integracao, sistema, UI ou hardware quando aplicavel.
 16. `O_Observability`: implementa ou ajusta a pipeline CI/CD observada no projeto, sem impor GitHub Actions quando outro provedor for a fonte real.
@@ -301,6 +306,7 @@ acionar o agente responsavel antes do selo final.
 | Packages/CLI/SDK | API/ABI, exit codes, stdout/stderr, matriz de versoes, packaging, publicacao e consumer tests estao definidos? | `@PKG` / `@DEP` / `@REL` |
 | IaC/plataforma | State, plan/apply, drift, policy-as-code, teardown e rollback de infra estao controlados? | `@IAC` / `@E` / `@O` / `@S` |
 | Produto/UX | Estados vazios, erros, permissoes, acessibilidade e copy foram considerados? | `@D` / `@I18N` |
+| Marketing/SEO | Persona, intencao de busca, conteudo util, on-page SEO, conversao, prova e medicao estao claros? | `@MKT` / `@MKT:persona` / `@MKT:validator` / `@BI` / `@D` |
 | IA/LLM | Prompts versionados, evals, custo de tokens, fallback e dados enviados a provedores estao sob controle? | `@AI` |
 | ML/MLOps | Dataset, leakage, treino, metricas, registry, serving, drift e retraining estao sob controle? | `@ML` / `@DATA` / `@O` |
 | Compliance | Ha requisito legal, loja, pagamento, dado sensivel ou setor regulado? | `@GOV` / `@REG` / `@PAY` / `@S` |
@@ -359,6 +365,7 @@ Use o prefixo para marcar rapido no chat:
 - `@IAC` para Infrastructure as Code, state, plan/apply, drift, policy e teardown seguro.
 - `@IOS` para iOS nativo, Apple platforms, TestFlight e App Store approval.
 - `@M` para mobile, apps nativos/hibridos, lojas e release.
+- `@MKT` para marketing, SEO, sites, landing pages, persona, copy, conversao e crescimento organico; use `@MKT:persona` para mensagem/persona, `@MKT:supermercado` para cliente oculto em supermercados e `@MKT:validator` desde a primeira validacao e antes de deploy ou campanha.
 - `@ML` para ML classico/MLOps; `@AI` continua dono de LLM, prompts, RAG e evals generativos.
 - `@MOD` para trust & safety, denuncias e moderacao.
 - `@P` para performance.

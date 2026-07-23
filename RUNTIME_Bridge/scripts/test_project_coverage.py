@@ -113,9 +113,9 @@ class ProjectCoverageTests(unittest.TestCase):
         self.assertEqual(0, proc.returncode, proc.stdout + proc.stderr)
         payload = json.loads(proc.stdout)
         self.assertTrue(payload["ok"])
-        self.assertEqual(13, payload["profiles"])
-        self.assertEqual(4, payload["specialists"])
-        self.assertEqual(13, payload["profile_scenarios"])
+        self.assertEqual(14, payload["profiles"])
+        self.assertEqual(5, payload["specialists"])
+        self.assertEqual(14, payload["profile_scenarios"])
 
 
 if __name__ == "__main__":

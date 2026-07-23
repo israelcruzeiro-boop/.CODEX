@@ -1,5 +1,63 @@
 # LOG - Codex Agent Kit
 
+## 2026-07-23 - MKT Validator Como Gate Inicial
+
+**Fase:** P2_SPECIALIST_VALIDATION
+
+**O que aconteceu:** o `@MKT:validator` foi ajustado para atuar em duas
+passagens: valida plano/brief desde a primeira validacao de perfis
+`MARKETING_LANDING` e valida novamente a entrega antes de deploy, campanha ou
+handoff comercial.
+
+**Evidencia:** `AGENTS.md`, `PROJECT_COVERAGE_MAP.toml`,
+`MKT_Agent_MarketingSEOValidator.toml` e wrapper Codex foram atualizados para
+posicionar o validador antes da execucao MKT e antes da entrega final.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** continua pendente o forward-test em landing real.
+
+## 2026-07-23 - Validador MKT/SEO Em TOML
+
+**Fase:** P2_SPECIALIST_VALIDATION
+
+**O que aconteceu:** a frente `MKT_Marketing` foi revalidada e ganhou
+`MKT_Agent_MarketingSEOValidator.toml` como `@MKT:validator`, um portao
+read-only para auditar landing pages, SEO, persona, claims, schema, conversao,
+medicao e entregas dos agentes `@MKT`, `@MKT:persona` e `@MKT:supermercado`.
+
+**Evidencia:** criado `MKT_VALIDATION_REPORT.md`; o perfil
+`MARKETING_LANDING` agora inclui `@MKT:validator` como gate; o manifesto runtime
+inclui o novo agente e seu wrapper Codex/Claude.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** ainda falta forward-test em landing real de cliente oculto para
+supermercados.
+
+## 2026-07-23 - Especialistas MKT Para SEO E Landing Pages
+
+**Fase:** P2_SPECIALIST_EXPANSION
+
+**O que aconteceu:** foi criada a frente `MKT_Marketing` com tres agentes:
+`@MKT` para marketing/SEO/landing pages, `@MKT:persona` para persona/copy/
+conversao e `@MKT:supermercado` para cliente oculto em supermercados. Os
+wrappers Codex e Claude foram adicionados e o runtime passou a reconhecer o
+perfil `MARKETING_LANDING`.
+
+**Evidencia:** fontes oficiais atuais do Google Search Central foram
+consultadas para calibrar Search Essentials, conteudo util, structured data e
+Core Web Vitals. O kit agora registra 49 wrappers Codex e 49 wrappers Claude.
+
+**Status:** APROVADO_COM_RESSALVAS
+
+**Ressalva:** os agentes foram promovidos por demanda recorrente clara, mas
+ainda precisam de forward-test em um site real para medir utilidade operacional.
+
+**Proximo passo:** executar `run_quality_gate.py` e, em uso real, aplicar
+`@MKT:supermercado` a uma landing de cliente oculto para supermercados com
+WorkAuditor.
+
 ## 2026-07-16 - Guia Pratico Do @ONB
 
 **Fase:** DOCUMENTATION

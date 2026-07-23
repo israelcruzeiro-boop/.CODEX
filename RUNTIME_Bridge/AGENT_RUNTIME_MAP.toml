@@ -31,6 +31,7 @@ contract_files = [
   "GSD_DeliveryDiscipline/GSD_Agent_TDDCLIAuditor.md",
   "IAC_PlatformEngineering/IAC_Agent_InfrastructureAsCode.md",
   "ML_MLEngineering/ML_Agent_MLEngineering.md",
+  "MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml",
   "P_Performance/P_Agent_PerformanceValidator.toml",
   "PKG_PackageSDK/PKG_Agent_PackageCLISDK.md",
   "S_Seguranca/S_Agent_SecurityValidator.toml",
@@ -240,6 +241,30 @@ name = "mobile-playstore"
 source = "M_MobilePlaystore/M_Agent_MobilePlaystore.md"
 alias = "@M"
 purpose = "Own mobile behavior, permissions, offline sync, stores, and releases."
+
+[[agents]]
+name = "marketing-seo-growth"
+source = "MKT_Marketing/MKT_Agent_SEOGrowthStrategist.md"
+alias = "@MKT"
+purpose = "Audit and improve marketing sites, landing pages, SEO, search intent, conversion, useful content, structured data, and growth evidence."
+
+[[agents]]
+name = "marketing-seo-validator"
+source = "MKT_Marketing/MKT_Agent_MarketingSEOValidator.toml"
+alias = "@MKT:validator"
+purpose = "Validate marketing, SEO, landing pages, persona fit, claims, structured data, conversion, measurement, and MKT agent readiness."
+
+[[agents]]
+name = "persona-conversion-strategist"
+source = "MKT_Marketing/MKT_Agent_PersonaConversionStrategist.md"
+alias = "@MKT:persona"
+purpose = "Own persona, positioning, conversion copy, value proposition, proof, CTAs, objections, FAQs, and buyer-message fit."
+
+[[agents]]
+name = "supermarket-hidden-shopper-growth"
+source = "MKT_Marketing/MKT_Agent_SupermarketHiddenShopperGrowth.md"
+alias = "@MKT:supermercado"
+purpose = "Own B2B marketing and landing pages for supermarket hidden-shopper solutions, grocery retail personas, operational pain, proof, and SEO."
 
 [[agents]]
 name = "ml-engineering"

@@ -2,26 +2,28 @@
 
 ## Estado Atual
 
-**Fase:** RELEASE_1_1_0_PUBLISHED
+**Fase:** P2_MARKETING_SPECIALISTS_READY
 
-**Ultima atualizacao:** 2026-07-16
+**Ultima atualizacao:** 2026-07-23
 
-**Atualizado por:** integrador raiz com revisoes `@A`, `@SPEC`, `@GSD` e multiagente
+**Atualizado por:** integrador raiz via `@F`/AgentForge
 
 **Release publicada:** `v1.1.0` no commit `a18d834`
 
 ## Status Geral
 
 P0 e P1 foram integrados em `main` pelo PR #1 e publicados na release `v1.1.0`.
-O merge commit `a18d834` passou no source gate com 8 etapas, 200 testes e matriz
-GitHub-hosted verde nos quatro jobs de Ubuntu/Windows com Python 3.11/3.14 no
-run `29545892490`. A release publica aponta para esse commit imutavel.
+Depois da release, o P2 iniciou com especialistas de marketing/SEO para sites,
+landing pages, persona, copy e a vertical de cliente oculto para supermercados.
+O snapshot atual passou nos contratos locais do runtime; ainda precisa de
+forward-test em landing real antes de alegar efetividade de campo.
 
 ## Status Por Ambiente
 
 | Ambiente/unidade | Status | Evidencia | Bloqueios/lacunas |
 |---|---|---|---|
-| agentes e wrappers | APROVADO | 46 Codex + 46 Claude em paridade | nenhum |
+| agentes e wrappers | APROVADO | 49 Codex + 49 Claude em paridade | nenhum local |
+| marketing/SEO | APROVADO_COM_RESSALVAS | `MKT_Marketing/*`, `@MKT`, `@MKT:persona`, `@MKT:supermercado`, `@MKT:validator` como gate inicial e final | forward-test em landing real pendente |
 | runtime bridge | APROVADO | `run_quality_gate.py`, 200 testes | 4 skips de symlink limitados ao host Windows local |
 | specs | APROVADO | `validate_specs.py`: 1 change, 0 erros/warnings | nenhum |
 | arquitetura/patterns | APROVADO | 64 testes focados; catalogo com 30 patterns | nenhum local |
@@ -45,6 +47,10 @@ run `29545892490`. A release publica aponta para esse commit imutavel.
 - [x] Tag anotada e GitHub Release `v1.1.0` publicadas.
 - [x] Guia pratico de uso do `@ONB`, execucao coordenada e subagentes criado e
   ligado ao guia completo.
+- [x] Frente `MKT_Marketing` criada com agentes de SEO/landing pages,
+  persona/conversao e supermercados/cliente oculto.
+- [x] Validador `@MKT:validator` criado em TOML para auditar se a entrega MKT
+  esta pronta antes de deploy, campanha ou handoff.
 
 ## Proximo Gate
 
@@ -53,6 +59,8 @@ run `29545892490`. A release publica aponta para esse commit imutavel.
 - [x] Selo `final_validator`, PR para `main` e revisao de merge.
 - [x] Release/tag 1.1.0 depois do merge aprovado.
 - [ ] P2: produzir resultados forward-test observados para os 24 casos de skills.
+- [ ] P2: forward-test do `@MKT:supermercado` em uma landing real de cliente
+  oculto para supermercados.
 
 ## Banco E Migrations
 

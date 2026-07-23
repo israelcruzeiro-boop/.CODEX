@@ -3,6 +3,19 @@
 Todas as mudancas relevantes do Codex Agent Kit sao registradas neste arquivo.
 O versionamento segue SemVer; tags sao criadas somente depois de merge e CI verde.
 
+## [Unreleased]
+
+### Adicionado
+
+- Frente `MKT_Marketing` com `@MKT`, `@MKT:persona` e `@MKT:supermercado`.
+- Validador `@MKT:validator` em TOML para selo de marketing, SEO, landing pages,
+  claims, schema, conversao e medicao.
+- `@MKT:validator` posicionado como gate desde a primeira validacao em perfis
+  de marketing/landing, alem do selo final antes de deploy/campanha.
+- Perfil `MARKETING_LANDING` no mapa de cobertura.
+- Wrappers Codex/Claude para marketing SEO, persona/conversao e cliente oculto
+  para supermercados.
+
 ## [1.1.0] - 2026-07-16
 
 ### Adicionado
